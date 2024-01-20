@@ -30,8 +30,8 @@ public class MessagingNode {
             Thread serverThread = new Thread(server);
             serverThread.start();
 
+            System.out.println("Sending Data");
             Thread.sleep(5000);
-            System.out.println("Trying to Send: ");
 
             for(int i  = 0; i < 5; i++){
                 Message message = new Message();
