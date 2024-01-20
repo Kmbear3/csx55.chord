@@ -26,11 +26,14 @@ public class MessagingNode {
         int serverPort = Integer.parseInt(args[1]);
 
         try {
-            while(true){
-                TCPServerThread server = new TCPServerThread(8000);
-                Thread serverThread = new Thread(server);
-                serverThread.start();
+            TCPServerThread server = new TCPServerThread(8000);
+            Thread serverThread = new Thread(server);
+            serverThread.start();
 
+            Thread.sleep(5000);
+            System.out.println("Trying to Send: ");
+
+            for(int i  = 0; i < 5; i++){
                 Message message = new Message();
                 Socket socket = new Socket(serverName, serverPort);
                 TCPSender tcps = new TCPSender(socket);
@@ -39,6 +42,8 @@ public class MessagingNode {
 
         } catch (IOException e) {
             System.err.println("MessagingNode: error in main");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
