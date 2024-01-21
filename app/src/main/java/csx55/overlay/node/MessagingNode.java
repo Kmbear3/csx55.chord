@@ -7,9 +7,10 @@ import java.net.Socket;
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
+import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
 
-public class MessagingNode {
+public class MessagingNode implements Node{
     int sendTracker = 0;  // number of messages sent
     int receiveTracker = 0;  // number of messages that were received
     int relayTracker = 0; // Number of messages that were relayed.
@@ -25,8 +26,8 @@ public class MessagingNode {
         String serverName = args[0];
         int serverPort = Integer.parseInt(args[1]);
 
-        try {
-            TCPServerThread server = new TCPServerThread(8000);
+        try { 
+            TCPServerThread server = new TCPServerThread(8000); //TODO: remove initalized port
             Thread serverThread = new Thread(server);
             serverThread.start();
 
@@ -45,5 +46,11 @@ public class MessagingNode {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onEvent(Event event) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
     }
 }

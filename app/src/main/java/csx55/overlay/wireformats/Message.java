@@ -38,7 +38,7 @@ public class Message implements Event, Protocol {
 
     @Override
     public int getType() {
-        return this.MESSAGE_TYPE;
+        return Protocol.MESSAGE;
     }
 
     @Override
