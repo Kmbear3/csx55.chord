@@ -25,13 +25,8 @@ public class Message implements Event, Protocol {
     public Message(byte[] marshalledBytes) throws IOException {
         ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-
-        // int messageTypeLength = din.readInt();
-        // byte[] identifierBytes = new byte[messageTypeLength];
-        // din.readFully(identifierBytes);
-        // String messageType = new String(identifierBytes);
+       
         int messageType = din.readInt();
-
         payload = din.readInt();
 
         System.out.println("Unmarshalling: Message Type: " + messageType);
@@ -51,11 +46,6 @@ public class Message implements Event, Protocol {
         byte[] marshalledBytes = null;
         ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-
-        // byte[] messageTypeBytes = MESSAGE_TYPE.getBytes();
-        // int elementLength = messageTypeBytes.length;
-        // dout.writeInt(elementLength);
-        // dout.write(messageTypeBytes);
 
         dout.writeInt(Protocol.MESSAGE);
         this.payload = createPayload();
