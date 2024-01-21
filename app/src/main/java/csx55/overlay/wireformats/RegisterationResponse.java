@@ -14,6 +14,10 @@ public class RegisterationResponse implements Event, Protocol{
     // successful. The number of messaging nodes currently constituting the overlay is (5)”. 
     
 
+    public RegisterationResponse(byte[] unmarshalledBytes) {
+        //TODO Auto-generated constructor stub
+    }
+
     @Override
     public int getType() {
         // TODO Auto-generated method stub

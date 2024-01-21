@@ -15,6 +15,10 @@ public class RegistrationRequest implements Event, Protocol {
     int port;
     byte[] marshalledBytes;
 
+    public RegistrationRequest(byte[] data) {
+        //TODO Auto-generated constructor stub
+    }
+
     @Override
     public int getType() {
         return Protocol.REGISTER_REQUEST;

@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import csx55.overlay.wireformats.Event;
+import csx55.overlay.wireformats.EventFactory;
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.RegistrationRequest;
 
 public class TCPReceiverThread implements Runnable {
 
@@ -28,9 +31,11 @@ public class TCPReceiverThread implements Runnable {
                 byte[] data = new byte[dataLength];
                 din.readFully(data, 0, dataLength);
 
-                // TODO: Needs to get data --> Call EventManager.java
+                int type = din.readInt(); //This may throw off how messages are parsed
 
-                Message message = new Message(data);
+                Event event = EventFactory.getEvent(type, data);
+
+                
 
             } catch (SocketException se) {
                 System.out.println(se.getMessage());

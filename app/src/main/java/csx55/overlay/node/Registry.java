@@ -18,11 +18,19 @@ public class Registry implements Node {
     }
 
     public static void main(String[] args){
-        TCPServerThread tcpServer = new TCPServerThread(7000);
+        int port = Integer.parseInt(args[0]);
+
+        TCPServerThread tcpServer = new TCPServerThread(port);
         Thread serverThread = new Thread(tcpServer);
         serverThread.start();
+
         
-        
+
+
+
+
+
+
 
 
     }
