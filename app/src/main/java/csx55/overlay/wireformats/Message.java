@@ -9,8 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public class Message implements Event {
-    final String MESSAGE_TYPE = "MESSAGE";
+public class Message implements Event, Protocol {
+    final int MESSAGE_TYPE = Protocol.MESSAGE;
     int payload;
     byte[] marshalledBytes;
 
@@ -26,10 +26,11 @@ public class Message implements Event {
         ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 
-        int messageTypeLength = din.readInt();
-        byte[] identifierBytes = new byte[messageTypeLength];
-        din.readFully(identifierBytes);
-        String messageType = new String(identifierBytes);
+        // int messageTypeLength = din.readInt();
+        // byte[] identifierBytes = new byte[messageTypeLength];
+        // din.readFully(identifierBytes);
+        // String messageType = new String(identifierBytes);
+        int messageType = din.readInt();
 
         payload = din.readInt();
 
@@ -41,7 +42,7 @@ public class Message implements Event {
     }
 
     @Override
-    public String getType() {
+    public int getType() {
         return this.MESSAGE_TYPE;
     }
 
@@ -51,11 +52,12 @@ public class Message implements Event {
         ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 
-        byte[] messageTypeBytes = MESSAGE_TYPE.getBytes();
-        int elementLength = messageTypeBytes.length;
-        dout.writeInt(elementLength);
-        dout.write(messageTypeBytes);
+        // byte[] messageTypeBytes = MESSAGE_TYPE.getBytes();
+        // int elementLength = messageTypeBytes.length;
+        // dout.writeInt(elementLength);
+        // dout.write(messageTypeBytes);
 
+        dout.writeInt(Protocol.MESSAGE);
         this.payload = createPayload();
         dout.writeInt(this.payload);
 
