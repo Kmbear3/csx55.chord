@@ -17,6 +17,7 @@ public class MessagingNode implements Node{
     long sendSummation = 0; // Sum of value that it has sent 
     long receiveSummation = 0;  // Sum of the payloads that it has received 
 
+    
 
     public static void configureServerConnection(int port, String hostname){
 

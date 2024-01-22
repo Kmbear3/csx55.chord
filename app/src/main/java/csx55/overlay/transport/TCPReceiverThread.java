@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import csx55.overlay.node.Node;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.EventFactory;
 import csx55.overlay.wireformats.Message;
@@ -14,10 +15,12 @@ public class TCPReceiverThread implements Runnable {
 
     private Socket socket;
     private DataInputStream din;
+    private Node node;
     
-    public TCPReceiverThread(Socket socket) throws IOException {
+    public TCPReceiverThread(Node node, Socket socket) throws IOException {
         this.socket = socket;
         din = new DataInputStream(socket.getInputStream());
+        this.node = node;
     }
 
     public void run() {
@@ -33,8 +36,10 @@ public class TCPReceiverThread implements Runnable {
 
                 int type = din.readInt(); //This may throw off how messages are parsed
 
-                Event event = EventFactory.getEvent(type, data);
+                System.out.println("TCPR: value of type: " + type);
 
+                Event event = EventFactory.getEvent(type, data);
+                this.node.onEvent(event);
                 
 
             } catch (SocketException se) {
