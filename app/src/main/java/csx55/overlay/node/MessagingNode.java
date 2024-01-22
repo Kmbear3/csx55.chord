@@ -17,27 +17,26 @@ public class MessagingNode implements Node{
     long sendSummation = 0; // Sum of value that it has sent 
     long receiveSummation = 0;  // Sum of the payloads that it has received 
 
-    
-
-    public static void configureServerConnection(int port, String hostname){
-
+    @Override
+    public void onEvent(Event event) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
     }
 
-    public static void main(String[] args){
-        String serverName = args[0];
-        int serverPort = Integer.parseInt(args[1]);
+    public static void configureServer(Node node){
+        TCPServerThread server = new TCPServerThread(node); //TODO: remove initalized port
+        Thread serverThread = new Thread(server);
+        serverThread.start();
+    }
 
+    public static void sendData(String server, int port){
         try { 
-            TCPServerThread server = new TCPServerThread(8000); //TODO: remove initalized port
-            Thread serverThread = new Thread(server);
-            serverThread.start();
-
             System.out.println("Sending Data");
             Thread.sleep(5000);
 
             for(int i  = 0; i < 5; i++){
                 Message message = new Message();
-                Socket socket = new Socket(serverName, serverPort);
+                Socket socket = new Socket(server, port);
                 TCPSender tcps = new TCPSender(socket);
                 tcps.sendData(message.getMessage());
             }
@@ -49,9 +48,9 @@ public class MessagingNode implements Node{
         }
     }
 
-    @Override
-    public void onEvent(Event event) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
+    public static void main(String[] args){
+        String registryName = args[0];
+        int registryPort = Integer.parseInt(args[1]);
+        sendData(registryName, registryPort);
     }
 }
