@@ -41,9 +41,9 @@ public class TCPServerThread implements Runnable{
 
     public String getIP(){
         try {
-            
+
             InetAddress inetAddress = InetAddress.getLocalHost();
-            return inetAddress.getHostAddress();
+            return inetAddress.getHostName();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();

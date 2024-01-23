@@ -14,7 +14,30 @@ public class RegisterationResponse implements Event, Protocol{
     // Additional Info (String): 
 
     // “Registration request
-    // successful. The number of messaging nodes currently constituting the overlay is (5)”. 
+    // successful. The number of messaging nodes currently constituting the overlay is (5)”.
+
+    public interface StatusCode {
+        byte SUCCESS = 0;
+        byte FAILURE = 1; 
+    }
+
+    int MESSAGE_TYPE = Protocol.REGISTER_RESPONSE;
+    byte statusCode;
+    String additionalInfo;
+    byte[] marshalledBytes;
+    
+    public RegisterationResponse(byte statusCode, String additionalInfo){
+        try {
+        
+        this.statusCode = statusCode;
+        this.additionalInfo = additionalInfo;
+        this.marshalledBytes = getBytes();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     
 
     public RegisterationResponse(byte[] marshalledBytes) {
@@ -36,8 +59,7 @@ public class RegisterationResponse implements Event, Protocol{
 
     @Override
     public int getType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getType'");
+        return Protocol.REGISTER_RESPONSE;
     }
 
     @Override

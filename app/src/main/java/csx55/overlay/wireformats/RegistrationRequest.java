@@ -76,4 +76,12 @@ public class RegistrationRequest implements Event, Protocol {
         
         return marshalledBytes;
     }
+
+    public String getIP(){
+        return this.IP;
+    }
+
+    public int getPort(){
+        return this.port;
+    }
 }
