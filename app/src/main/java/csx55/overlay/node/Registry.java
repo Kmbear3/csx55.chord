@@ -25,6 +25,7 @@ public class Registry implements Node {
                 System.out.println("MESSAGE");
                 break;
             case Protocol.REGISTER_REQUEST:
+                registerNode(event);
                 System.out.println("REGISTER_REQUEST");
                 break;
             default:
