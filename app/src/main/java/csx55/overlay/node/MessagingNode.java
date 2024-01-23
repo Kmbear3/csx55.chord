@@ -1,6 +1,7 @@
 package csx55.overlay.node;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -10,6 +11,7 @@ import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.RegistrationRequest;
 
 public class MessagingNode implements Node{
     // Maybe move to StatisticsCollectorAndDisplay (?)
@@ -20,11 +22,20 @@ public class MessagingNode implements Node{
     long receiveSummation = 0;  // Sum of the payloads that it has received 
 
     Socket registrySocket;
+    String messagingNodeIP;
+    int messagingNodePort; 
+
+    TCPServerThread server;
 
     public MessagingNode(String registryIP, int registryPort){
         try {
-            Socket registrySocket = new Socket(registryIP, registryPort);
-            
+            this.registrySocket = new Socket(registryIP, registryPort);
+            server = new TCPServerThread(this);
+
+            this.messagingNodeIP = server.getIP();
+            this.messagingNodePort = server.getPort();
+        
+            RegistrationRequest regReq = new RegistrationRequest(messagingNodeIP, messagingNodePort);
 
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
