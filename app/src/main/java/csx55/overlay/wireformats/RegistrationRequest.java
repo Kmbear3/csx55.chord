@@ -25,7 +25,7 @@ public class RegistrationRequest implements Event, Protocol {
         try {
             this.IP = IP;
             this.port = port;
-            
+
             marshalledBytes = getBytes();
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,7 +67,7 @@ public class RegistrationRequest implements Event, Protocol {
         dout.writeInt(elementLength);
         dout.write(IPBytes);
 
-        dout.write(this.port);
+        dout.writeInt(this.port);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();
