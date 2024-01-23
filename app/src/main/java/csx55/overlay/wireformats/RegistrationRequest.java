@@ -21,7 +21,18 @@ public class RegistrationRequest implements Event, Protocol {
     int port;
     byte[] marshalledBytes;
 
-    public RegistrationRequest(byte[] data) throws IOException{
+    public RegistrationRequest(String IP, int port){
+        try {
+            this.IP = IP;
+            this.port = port;
+            
+            marshalledBytes = getBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public RegistrationRequest(byte[] marshalledBytes) throws IOException{
         ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 

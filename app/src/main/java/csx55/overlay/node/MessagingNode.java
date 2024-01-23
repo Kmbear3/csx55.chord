@@ -3,6 +3,7 @@ package csx55.overlay.node;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
@@ -18,6 +19,22 @@ public class MessagingNode implements Node{
     long sendSummation = 0; // Sum of value that it has sent 
     long receiveSummation = 0;  // Sum of the payloads that it has received 
 
+    Socket registrySocket;
+
+    public MessagingNode(String registryIP, int registryPort){
+        try {
+            Socket registrySocket = new Socket(registryIP, registryPort);
+            
+
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onEvent(Event event) {
         // TODO Auto-generated method stub
@@ -25,7 +42,7 @@ public class MessagingNode implements Node{
     }
 
     public static void configureServer(Node node){
-        TCPServerThread server = new TCPServerThread(node); //TODO: remove initalized port
+        TCPServerThread server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
         serverThread.start();
     }
@@ -54,11 +71,12 @@ public class MessagingNode implements Node{
         }
     }
 
+
     public static void main(String[] args){
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);
-        sendData(registryName, registryPort);
-
         
+        // sendData(registryName, registryPort);
+
     }
 }
