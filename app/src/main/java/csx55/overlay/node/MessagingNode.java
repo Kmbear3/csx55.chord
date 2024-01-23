@@ -42,11 +42,15 @@ public class MessagingNode implements Node{
                 tcps.sendData(message.getMessage());
             }
 
+            System.out.println("finished printing messages: sleeping for 5s");
+            Thread.sleep(5000);
+            
         } catch (IOException e) {
             System.err.println("MessagingNode: error in main");
-        // } catch (InterruptedException e) {
-        //     e.printStackTrace();
-        // }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+
         }
     }
 

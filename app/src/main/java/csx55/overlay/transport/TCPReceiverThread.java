@@ -34,10 +34,6 @@ public class TCPReceiverThread implements Runnable {
                 byte[] data = new byte[dataLength];
                 din.readFully(data, 0, dataLength);
 
-                // int type = din.readInt(); //This may throw off how messages are parsed
-
-                // System.out.println("TCPR: value of type: " + type);
-
                 System.out.println("Received Message");
                 Event event = EventFactory.getEvent(data);
                 this.node.onEvent(event);
