@@ -18,7 +18,7 @@ public class Registry implements Node {
 
     @Override
     public void onEvent(Event event) {
-        System.out.println("Received Event!" + event.getType());
+        System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
 
         switch(event.getType()){
             case Protocol.MESSAGE:

@@ -29,8 +29,7 @@ public class Message implements Event, Protocol {
         int messageType = din.readInt();
         payload = din.readInt();
 
-        System.out.println("Unmarshalling: Message Type: " + messageType);
-        System.out.println("Unmarshalling: Message Payload: " + payload);
+        System.out.println("Inside Message() Type: " + messageType + "---- Payload: " + payload);
 
         baInputStream.close();
         din.close();
@@ -51,8 +50,7 @@ public class Message implements Event, Protocol {
         this.payload = createPayload();
         dout.writeInt(this.payload);
 
-        System.out.println("Marshalling: Message Type: " + MESSAGE_TYPE);
-        System.out.println("Marshalling: Message Payload: " + payload);
+        System.out.println("Inside Message.getBytes() Type: " + Protocol.MESSAGE + "---- Payload: " + this.payload);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();

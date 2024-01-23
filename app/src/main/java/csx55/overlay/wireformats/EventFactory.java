@@ -1,5 +1,8 @@
 package csx55.overlay.wireformats;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import csx55.overlay.wireformats.*;
 
@@ -10,15 +13,21 @@ public class EventFactory {
 
      //use getShape method to get object of type shape 
 
-    public static Event getEvent(int messageType, byte[] unmarshalledBytes){
+    public static Event getEvent(byte[] marshalledBytes){
+        ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
+        DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+        
         try {
+            int messageType = din.readInt();
+
+            System.out.println("Inside EventFactory.getEvent() -- Message Type: " + messageType);
             switch(messageType){
                 case Protocol.MESSAGE:
-                    return new Message(unmarshalledBytes);
+                    return new Message(marshalledBytes);
                 case Protocol.REGISTER_REQUEST:
-                    return new RegistrationRequest(unmarshalledBytes);
+                    return new RegistrationRequest(marshalledBytes);
                 case Protocol.REGISTER_RESPONSE:
-                    return new RegisterationResponse(unmarshalledBytes);
+                    return new RegisterationResponse(marshalledBytes);
                 default:
                     return null;
             
