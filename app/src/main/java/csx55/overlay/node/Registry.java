@@ -11,13 +11,15 @@ public class Registry implements Node {
     int port;
 
     public Registry(int port){
+        System.out.println("Creating Registry");
         this.port = port;
         configureServer(this, port);
     }
 
     @Override
     public void onEvent(Event event) {
-        System.out.println("Received Event!");
+        System.out.println("Received Event!" + event.getType());
+
         switch(event.getType()){
             case Protocol.MESSAGE:
                 System.out.println("MESSAGE");

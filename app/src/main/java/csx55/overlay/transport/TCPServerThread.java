@@ -33,6 +33,7 @@ public class TCPServerThread implements Runnable{
         try{
             while(true){
                 Socket socket = serverSocket.accept();
+                System.out.println("Accepted Connection");
                 TCPReceiverThread tcpr = new TCPReceiverThread(this.node, socket);
                 Thread tcprThread = new Thread(tcpr);
                 tcprThread.start();

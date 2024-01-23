@@ -11,6 +11,7 @@ import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
 
 public class MessagingNode implements Node{
+    // Maybe move to StatisticsCollectorAndDisplay (?)
     int sendTracker = 0;  // number of messages sent
     int receiveTracker = 0;  // number of messages that were received
     int relayTracker = 0; // Number of messages that were relayed.
@@ -32,19 +33,20 @@ public class MessagingNode implements Node{
     public static void sendData(String server, int port){
         try { 
             System.out.println("Sending Data");
-            Thread.sleep(5000);
+            Socket socket = new Socket(server, port);
 
+            // Thread.sleep(5000);
             for(int i  = 0; i < 5; i++){
                 Message message = new Message();
-                Socket socket = new Socket(server, port);
                 TCPSender tcps = new TCPSender(socket);
                 tcps.sendData(message.getMessage());
             }
 
         } catch (IOException e) {
             System.err.println("MessagingNode: error in main");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
         }
     }
 
@@ -52,5 +54,7 @@ public class MessagingNode implements Node{
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);
         sendData(registryName, registryPort);
+
+        
     }
 }

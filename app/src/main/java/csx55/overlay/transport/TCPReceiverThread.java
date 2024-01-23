@@ -28,7 +28,7 @@ public class TCPReceiverThread implements Runnable {
 
         while (socket != null) {
             try {
-            
+                
                 dataLength = din.readInt();
 
                 byte[] data = new byte[dataLength];
@@ -38,6 +38,7 @@ public class TCPReceiverThread implements Runnable {
 
                 System.out.println("TCPR: value of type: " + type);
 
+                System.out.println("Received Message");
                 Event event = EventFactory.getEvent(type, data);
                 this.node.onEvent(event);
                 
