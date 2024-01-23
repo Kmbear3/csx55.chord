@@ -9,8 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public class Message implements Event {
-    final String MESSAGE_TYPE = "MESSAGE";
+public class Message implements Event, Protocol {
+    final int MESSAGE_TYPE = Protocol.MESSAGE;
     int payload;
     byte[] marshalledBytes;
 
@@ -25,24 +25,19 @@ public class Message implements Event {
     public Message(byte[] marshalledBytes) throws IOException {
         ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-
-        int messageTypeLength = din.readInt();
-        byte[] identifierBytes = new byte[messageTypeLength];
-        din.readFully(identifierBytes);
-        String messageType = new String(identifierBytes);
-
+       
+        int messageType = din.readInt();
         payload = din.readInt();
 
-        System.out.println("Unmarshalling: Message Type: " + messageType);
-        System.out.println("Unmarshalling: Message Payload: " + payload);
+        System.out.println("Inside Message() Type: " + messageType + "---- Payload: " + payload);
 
         baInputStream.close();
         din.close();
     }
 
     @Override
-    public String getType() {
-        return this.MESSAGE_TYPE;
+    public int getType() {
+        return Protocol.MESSAGE;
     }
 
     @Override
@@ -51,16 +46,11 @@ public class Message implements Event {
         ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 
-        byte[] messageTypeBytes = MESSAGE_TYPE.getBytes();
-        int elementLength = messageTypeBytes.length;
-        dout.writeInt(elementLength);
-        dout.write(messageTypeBytes);
-
+        dout.writeInt(Protocol.MESSAGE);
         this.payload = createPayload();
         dout.writeInt(this.payload);
 
-        System.out.println("Marshalling: Message Type: " + MESSAGE_TYPE);
-        System.out.println("Marshalling: Message Payload: " + payload);
+        System.out.println("Inside Message.getBytes() Type: " + Protocol.MESSAGE + "---- Payload: " + this.payload);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();
