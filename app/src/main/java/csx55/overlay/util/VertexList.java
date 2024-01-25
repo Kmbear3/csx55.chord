@@ -1,6 +1,7 @@
 package csx55.overlay.util;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.plaf.nimbus.State;
@@ -17,7 +18,7 @@ public class VertexList {
         this.registeredVertexs = new ConcurrentHashMap<>();
     }
 
-    public void registerVertex(Event event){
+    public void registerVertex(Event event, Socket socket){
         
         try {
             RegistrationRequest regReq = new RegistrationRequest(event.getBytes());

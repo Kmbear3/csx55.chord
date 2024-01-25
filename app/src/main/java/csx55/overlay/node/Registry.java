@@ -28,7 +28,7 @@ public class Registry implements Node {
                 System.out.println("MESSAGE");
                 break;
             case Protocol.REGISTER_REQUEST:
-                vertexList.registerVertex(event);
+                vertexList.registerVertex(event, socket);
                 break;
             default:
                 System.out.println("Protocol Unmatched!");
