@@ -51,11 +51,6 @@ public class MessagingNode implements Node{
         }
     }
 
-    @Override
-    public void onEvent(Event event) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
-    }
     
     @Override
     public void onEvent(Event event, Socket socket) {

@@ -20,7 +20,7 @@ public class Registry implements Node {
     }
 
     @Override
-    public void onEvent(Event event) {
+    public void onEvent(Event event, Socket socket) {
         System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
 
         switch(event.getType()){
@@ -34,12 +34,6 @@ public class Registry implements Node {
                 System.out.println("Protocol Unmatched!");
                 System.exit(0);
         }
-    }
-
-    @Override
-    public void onEvent(Event event, Socket socket) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
     }
 
     public void configureServer(Node node, int port){
