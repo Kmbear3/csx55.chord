@@ -16,11 +16,6 @@ public class RegisterationResponse implements Event, Protocol{
     // “Registration request
     // successful. The number of messaging nodes currently constituting the overlay is (5)”.
 
-    public interface StatusCode {
-        byte SUCCESS = 0;
-        byte FAILURE = 1; 
-    }
-
     int MESSAGE_TYPE = Protocol.REGISTER_RESPONSE;
     byte statusCode;
     String additionalInfo;
