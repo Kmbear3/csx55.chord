@@ -56,6 +56,12 @@ public class MessagingNode implements Node{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
     }
+    
+    @Override
+    public void onEvent(Event event, Socket socket) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
+    }
 
     public static void configureServer(Node node){
         TCPServerThread server = new TCPServerThread(node); 

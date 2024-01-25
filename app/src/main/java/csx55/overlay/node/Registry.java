@@ -1,5 +1,6 @@
 package csx55.overlay.node;
 
+import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
 import csx55.overlay.transport.TCPServerThread;
@@ -33,6 +34,12 @@ public class Registry implements Node {
                 System.out.println("Protocol Unmatched!");
                 System.exit(0);
         }
+    }
+
+    @Override
+    public void onEvent(Event event, Socket socket) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
     }
 
     public void configureServer(Node node, int port){
