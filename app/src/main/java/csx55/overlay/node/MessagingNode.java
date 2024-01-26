@@ -9,8 +9,10 @@ import java.net.UnknownHostException;
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
+import csx55.overlay.util.CLIHandler;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.Protocol;
 import csx55.overlay.wireformats.RegistrationRequest;
 
 public class MessagingNode implements Node{
@@ -31,6 +33,9 @@ public class MessagingNode implements Node{
         try {
             Socket registrySocket = new Socket(registryIP, registryPort);
             this.registrySender = new TCPSender(registrySocket);
+            TCPReceiverThread registryReceiver = new TCPReceiverThread(this, registrySocket);
+            Thread registryReceiverThread = new Thread(registryReceiver);
+            registryReceiverThread.start();
 
             this.server = new TCPServerThread(this);
 
@@ -54,8 +59,18 @@ public class MessagingNode implements Node{
     
     @Override
     public void onEvent(Event event, Socket socket) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
+        System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
+        switch(event.getType()){
+            case Protocol.MESSAGE:
+                System.out.println("MESSAGE");
+                break;
+            case Protocol.REGISTER_RESPONSE:
+                System.out.println("Received registration Response");
+                break;
+            default:
+                System.out.println("Protocol Unmatched!");
+                System.exit(0);
+        }
     }
 
     public static void configureServer(Node node){
@@ -92,7 +107,9 @@ public class MessagingNode implements Node{
     public static void main(String[] args){
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);
-        
         MessagingNode messagingNode = new MessagingNode(registryName, registryPort);
+
+        CLIHandler cliHandler = new CLIHandler();
+        cliHandler.readInstructions();
     }
 }
