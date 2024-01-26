@@ -21,27 +21,29 @@ public class VertexList {
 
     public void registerVertex(Event event, Socket socket){
         try {
-            System.out.println("VertexList.registerVertex");
             RegistrationRequest regReq = new RegistrationRequest(event.getBytes());
             Vertex vertex = new Vertex(regReq.getIP(), regReq.getPort(), socket);
 
             RegisterationResponse registerationResponse;
             
-            if(inList(vertex) == false){
-                correctIP(vertex);
+            if(inList(vertex) == false && correctIP(vertex) == true){
                 registeredVertexs.put(vertex.getID(), vertex);
                 byte statusCode = StatusCodes.SUCCESS;
                 String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }   
+            else if(correctIP(vertex) == false){
+                byte statusCode = StatusCodes.FAILURE_IP;
+                String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
+                registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
+            }
             else{
+                // Already in Overlay
                 byte statusCode = StatusCodes.FAILURE;
                 String additionalInfo = registrationInfo(StatusCodes.FAILURE);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }
 
-            System.out.println("Trying to send repsponse back");
-            
             TCPSender tcpSender = new TCPSender(vertex.getSocket());
             tcpSender.sendData(registerationResponse.getBytes());
 
@@ -57,7 +59,7 @@ public class VertexList {
 
     public boolean inList(Vertex vertex){
         // Lets do correctness verification here.
-        return false;
+        return registeredVertexs.containsKey(vertex.getID());
     }
 
     public boolean correctIP(Vertex vertex){

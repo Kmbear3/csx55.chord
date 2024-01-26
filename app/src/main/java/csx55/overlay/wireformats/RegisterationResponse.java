@@ -45,7 +45,7 @@ public class RegisterationResponse implements Event, Protocol{
 
             int type = din.readInt();
 
-            byte statusCode = din.readByte();
+            this.statusCode = din.readByte();
         
             int infoLength = din.readInt();
             byte[] infoBytes = new byte[infoLength];
@@ -86,7 +86,6 @@ public class RegisterationResponse implements Event, Protocol{
         baOutputStream.close();
         dout.close();
         
-        System.out.println("Made it to bottom getBytes()");
         return marshalledBytes;
     }
 
