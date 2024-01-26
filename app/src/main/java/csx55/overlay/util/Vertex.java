@@ -23,6 +23,10 @@ public class Vertex {
         return this.socket;
     }
 
+    public String getIP(){
+        return this.IP;
+    }
+
     public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + "---");
         System.out.println("--- Vertex Socket: " + getSocket() + "---");

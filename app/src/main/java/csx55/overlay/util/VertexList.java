@@ -1,6 +1,7 @@
 package csx55.overlay.util;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +28,7 @@ public class VertexList {
             RegisterationResponse registerationResponse;
             
             if(inList(vertex) == false){
+                correctIP(vertex);
                 registeredVertexs.put(vertex.getID(), vertex);
                 byte statusCode = StatusCodes.SUCCESS;
                 String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
@@ -58,12 +60,29 @@ public class VertexList {
         return false;
     }
 
+    public boolean correctIP(Vertex vertex){
+        // Checks to see if node ip match socket ip
+        Socket socket = vertex.getSocket(); 
+        InetAddress inAd = socket.getInetAddress();
+        String remoteAdd = inAd.getHostName();
+
+        int endIndex = remoteAdd.indexOf(".");
+        System.out.println("Vertex IP: " + vertex.getIP());
+        System.out.println("Socket IP: " + remoteAdd.substring(0, endIndex));
+        String requestString = vertex.getIP();
+        String socketString = remoteAdd.substring(0, endIndex);
+
+        return requestString.equals(socketString);
+    }
+
     public String registrationInfo(byte statusCode){
         switch(statusCode){
             case StatusCodes.SUCCESS:
                 return "Registration request successful. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
             case StatusCodes.FAILURE:
-                return "Registration request unsuccessful. Node already in overlay";
+                return "Registration request unsuccessful. Node already in overlay. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
+            case StatusCodes.FAILURE_IP:
+                return "Registration request unsuccessful. IP in request mismatches the InputStream IP. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
             default:
                 return "Issue with registration";
         }
