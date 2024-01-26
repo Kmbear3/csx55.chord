@@ -13,6 +13,7 @@ import csx55.overlay.util.CLIHandler;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
 import csx55.overlay.wireformats.Protocol;
+import csx55.overlay.wireformats.RegisterationResponse;
 import csx55.overlay.wireformats.RegistrationRequest;
 
 public class MessagingNode implements Node{
@@ -59,17 +60,24 @@ public class MessagingNode implements Node{
     
     @Override
     public void onEvent(Event event, Socket socket) {
-        System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
-        switch(event.getType()){
-            case Protocol.MESSAGE:
-                System.out.println("MESSAGE");
-                break;
-            case Protocol.REGISTER_RESPONSE:
-                System.out.println("Received registration Response");
-                break;
-            default:
-                System.out.println("Protocol Unmatched!");
-                System.exit(0);
+        try {
+            System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
+            switch(event.getType()){
+                case Protocol.MESSAGE:
+                    System.out.println("MESSAGE");
+                    break;
+                case Protocol.REGISTER_RESPONSE:
+                    System.out.println("Received registration Response");
+                    RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
+                    regRes.getInfo();
+                    break;
+                default:
+                    System.out.println("Protocol Unmatched!");
+                    System.exit(0);
+            }
+        } catch (IOException e) {
+            System.err.println("Error: MessagingNode.onEvent()");
+            e.printStackTrace();
         }
     }
 

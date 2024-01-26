@@ -1,6 +1,7 @@
 package csx55.overlay.util;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,26 +21,29 @@ public class VertexList {
 
     public void registerVertex(Event event, Socket socket){
         try {
-            System.out.println("VertexList.registerVertex");
             RegistrationRequest regReq = new RegistrationRequest(event.getBytes());
             Vertex vertex = new Vertex(regReq.getIP(), regReq.getPort(), socket);
 
             RegisterationResponse registerationResponse;
             
-            if(inList(vertex) == false){
+            if(inList(vertex) == false && correctIP(vertex) == true){
                 registeredVertexs.put(vertex.getID(), vertex);
                 byte statusCode = StatusCodes.SUCCESS;
                 String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }   
+            else if(correctIP(vertex) == false){
+                byte statusCode = StatusCodes.FAILURE_IP;
+                String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
+                registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
+            }
             else{
+                // Already in Overlay
                 byte statusCode = StatusCodes.FAILURE;
                 String additionalInfo = registrationInfo(StatusCodes.FAILURE);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }
 
-            System.out.println("Trying to send repsponse back");
-            
             TCPSender tcpSender = new TCPSender(vertex.getSocket());
             tcpSender.sendData(registerationResponse.getBytes());
 
@@ -55,7 +59,22 @@ public class VertexList {
 
     public boolean inList(Vertex vertex){
         // Lets do correctness verification here.
-        return false;
+        return registeredVertexs.containsKey(vertex.getID());
+    }
+
+    public boolean correctIP(Vertex vertex){
+        // Checks to see if node ip match socket ip
+        Socket socket = vertex.getSocket(); 
+        InetAddress inAd = socket.getInetAddress();
+        String remoteAdd = inAd.getHostName();
+
+        int endIndex = remoteAdd.indexOf(".");
+        System.out.println("Vertex IP: " + vertex.getIP());
+        System.out.println("Socket IP: " + remoteAdd.substring(0, endIndex));
+        String requestString = vertex.getIP();
+        String socketString = remoteAdd.substring(0, endIndex);
+
+        return requestString.equals(socketString);
     }
 
     public String registrationInfo(byte statusCode){
@@ -63,7 +82,9 @@ public class VertexList {
             case StatusCodes.SUCCESS:
                 return "Registration request successful. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
             case StatusCodes.FAILURE:
-                return "Registration request unsuccessful. Node already in overlay";
+                return "Registration request unsuccessful. Node already in overlay. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
+            case StatusCodes.FAILURE_IP:
+                return "Registration request unsuccessful. IP in request mismatches the InputStream IP. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
             default:
                 return "Issue with registration";
         }
