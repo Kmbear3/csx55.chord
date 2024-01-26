@@ -19,10 +19,10 @@ public class VertexList {
     }
 
     public void registerVertex(Event event, Socket socket){
-        
         try {
+            System.out.println("VertexList.registerVertex");
             RegistrationRequest regReq = new RegistrationRequest(event.getBytes());
-            Vertex vertex = new Vertex(regReq.getIP(), regReq.getPort());
+            Vertex vertex = new Vertex(regReq.getIP(), regReq.getPort(), socket);
 
             RegisterationResponse registerationResponse;
             
@@ -37,8 +37,10 @@ public class VertexList {
                 String additionalInfo = registrationInfo(StatusCodes.FAILURE);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }
+
+            System.out.println("Trying to send repsponse back");
             
-            TCPSender tcpSender = new TCPSender(null);
+            TCPSender tcpSender = new TCPSender(vertex.getSocket());
             tcpSender.sendData(registerationResponse.getBytes());
 
         } catch (IOException e) {

@@ -86,6 +86,7 @@ public class RegisterationResponse implements Event, Protocol{
         baOutputStream.close();
         dout.close();
         
+        System.out.println("Made it to bottom getBytes()");
         return marshalledBytes;
     }
 }
