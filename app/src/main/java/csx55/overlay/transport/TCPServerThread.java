@@ -1,8 +1,10 @@
 package csx55.overlay.transport;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import csx55.overlay.node.Node;
 
@@ -10,10 +12,15 @@ public class TCPServerThread implements Runnable{
     ServerSocket serverSocket;
     Node node;
 
+    String IP;
+    int port;
+
     public TCPServerThread(Node node){
         try{
+            
             this.node = node;
             serverSocket = new ServerSocket(0);
+
         }catch(IOException ioe){
             System.err.println("TCPServerThread: Error in default constructor");
         }
@@ -26,6 +33,22 @@ public class TCPServerThread implements Runnable{
         }catch(IOException ioe){
             System.err.println("TCPServerThread: Error in constructor");
         }
+    }
+
+    public int getPort(){
+        return serverSocket.getLocalPort();
+    }
+
+    public String getIP(){
+        try {
+
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            return inetAddress.getHostName();
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return "Error inside TCPServerThread.getIP()";
     }
 
     @Override

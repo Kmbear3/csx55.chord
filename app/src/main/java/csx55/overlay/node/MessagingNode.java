@@ -1,14 +1,19 @@
 package csx55.overlay.node;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
+import csx55.overlay.util.CLIHandler;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.Protocol;
+import csx55.overlay.wireformats.RegistrationRequest;
 
 public class MessagingNode implements Node{
     // Maybe move to StatisticsCollectorAndDisplay (?)
@@ -18,14 +23,58 @@ public class MessagingNode implements Node{
     long sendSummation = 0; // Sum of value that it has sent 
     long receiveSummation = 0;  // Sum of the payloads that it has received 
 
+    String messagingNodeIP;
+    int messagingNodePort; 
+
+    TCPServerThread server;
+    TCPSender registrySender;
+
+    public MessagingNode(String registryIP, int registryPort){
+        try {
+            Socket registrySocket = new Socket(registryIP, registryPort);
+            this.registrySender = new TCPSender(registrySocket);
+            TCPReceiverThread registryReceiver = new TCPReceiverThread(this, registrySocket);
+            Thread registryReceiverThread = new Thread(registryReceiver);
+            registryReceiverThread.start();
+
+            this.server = new TCPServerThread(this);
+
+            this.messagingNodeIP = server.getIP();
+            this.messagingNodePort = server.getPort();
+
+            System.out.print("Inside MessagingNode(IP, port) --- IP: " + this.messagingNodeIP + " --- Port: " + this.messagingNodePort);
+
+            RegistrationRequest regReq = new RegistrationRequest(messagingNodeIP, messagingNodePort);
+            registrySender.sendData(regReq.getBytes());
+
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    
     @Override
-    public void onEvent(Event event) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEvent'");
+    public void onEvent(Event event, Socket socket) {
+        System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
+        switch(event.getType()){
+            case Protocol.MESSAGE:
+                System.out.println("MESSAGE");
+                break;
+            case Protocol.REGISTER_RESPONSE:
+                System.out.println("Received registration Response");
+                break;
+            default:
+                System.out.println("Protocol Unmatched!");
+                System.exit(0);
+        }
     }
 
     public static void configureServer(Node node){
-        TCPServerThread server = new TCPServerThread(node); //TODO: remove initalized port
+        TCPServerThread server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
         serverThread.start();
     }
@@ -54,11 +103,13 @@ public class MessagingNode implements Node{
         }
     }
 
+
     public static void main(String[] args){
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);
-        sendData(registryName, registryPort);
+        MessagingNode messagingNode = new MessagingNode(registryName, registryPort);
 
-        
+        CLIHandler cliHandler = new CLIHandler();
+        cliHandler.readInstructions();
     }
 }

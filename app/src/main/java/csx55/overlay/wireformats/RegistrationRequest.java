@@ -21,7 +21,18 @@ public class RegistrationRequest implements Event, Protocol {
     int port;
     byte[] marshalledBytes;
 
-    public RegistrationRequest(byte[] data) throws IOException{
+    public RegistrationRequest(String IP, int port){
+        try {
+            this.IP = IP;
+            this.port = port;
+
+            marshalledBytes = getBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public RegistrationRequest(byte[] marshalledBytes) throws IOException{
         ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 
@@ -56,7 +67,7 @@ public class RegistrationRequest implements Event, Protocol {
         dout.writeInt(elementLength);
         dout.write(IPBytes);
 
-        dout.write(this.port);
+        dout.writeInt(this.port);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();
@@ -64,5 +75,13 @@ public class RegistrationRequest implements Event, Protocol {
         dout.close();
         
         return marshalledBytes;
+    }
+
+    public String getIP(){
+        return this.IP;
+    }
+
+    public int getPort(){
+        return this.port;
     }
 }
