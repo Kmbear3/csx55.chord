@@ -89,4 +89,8 @@ public class RegisterationResponse implements Event, Protocol{
         System.out.println("Made it to bottom getBytes()");
         return marshalledBytes;
     }
+
+    public void getInfo(){
+        System.out.println(additionalInfo);
+    }
 }
