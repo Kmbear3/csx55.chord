@@ -43,11 +43,16 @@ public class Registry implements Node {
         serverThread.start();
     }
 
+    // TODO: BAD BAD BAD NOT THREADSAFE FIXXXX MEEEEEEE  
+    public VertexList getRegistry(){
+        return vertexList;
+    }
+
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Registry registry = new Registry(port);
 
-        CLIHandler cli = new CLIHandler();
+        CLIHandler cli = new CLIHandler(registry);
         while(true){
             cli.readInstructions();
         }

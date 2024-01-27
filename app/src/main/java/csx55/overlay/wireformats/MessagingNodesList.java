@@ -2,6 +2,7 @@ package csx55.overlay.wireformats;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import csx55.overlay.util.Vertex;
 
@@ -39,5 +40,10 @@ public class MessagingNodesList implements Event, Protocol {
     public byte[] getBytes() throws IOException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getBytes'");
+    }
+
+    public ArrayList<Vertex> getPeers() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPeers'");
     }
 }

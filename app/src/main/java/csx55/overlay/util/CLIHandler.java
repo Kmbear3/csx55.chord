@@ -3,15 +3,23 @@ package csx55.overlay.util;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import csx55.overlay.node.MessagingNode;
 import csx55.overlay.node.Node;
+import csx55.overlay.node.Registry;
 
 public class CLIHandler {
     Scanner scan;
+    Registry registry;
     // Node node;
 
-    public CLIHandler(){
+    public CLIHandler(Registry registry){
        this.scan = new Scanner(System.in);
+       this.registry = registry;
     }
+
+    // public CLIHandler(MessagingNode messagingNode){
+    //     this.scan = new Scanner(System.in);
+    //  }
     
     public void readInstructions(){
         String instruction = scan.nextLine(); // need parser
@@ -29,7 +37,7 @@ public class CLIHandler {
                     System.out.println("number of connections: " + numberOfConnections);
                     // node.setUpOverlay();
                     // Parse input -- to produce number of connections
-                    OverlayCreator overlayCreator = new OverlayCreator(numberOfConnections);
+                    OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                     break;
                 }
                 else{

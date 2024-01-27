@@ -5,13 +5,18 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
+import csx55.overlay.util.Vertex;
+import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.Event;
+import csx55.overlay.wireformats.InitiatePeerConnection;
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.MessagingNodesList;
 import csx55.overlay.wireformats.Protocol;
 import csx55.overlay.wireformats.RegisterationResponse;
 import csx55.overlay.wireformats.RegistrationRequest;
@@ -29,6 +34,8 @@ public class MessagingNode implements Node{
 
     TCPServerThread server;
     TCPSender registrySender;
+
+    VertexList peerList = new VertexList();
 
     public MessagingNode(String registryIP, int registryPort){
         try {
@@ -57,7 +64,6 @@ public class MessagingNode implements Node{
         }
     }
 
-    
     @Override
     public void onEvent(Event event, Socket socket) {
         try {
@@ -70,6 +76,26 @@ public class MessagingNode implements Node{
                     System.out.println("Received registration Response");
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     regRes.getInfo();
+                    break;
+                    
+                case Protocol.INITIATE_PEER_CONNECTION:
+                    InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
+                    Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
+                    this.peerList.addToList(vertex);
+                    break;
+
+                case Protocol.MESSAGING_NODES_LIST:
+                    MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
+                    ArrayList<Vertex> peers = nodesList.getPeers();
+
+                    if(peers.size() > 0){
+                        for(Vertex peer : peers){
+                            this.peerList.addToList(peer);
+                        }
+                    }
+
+                    System.out.println("All connections are established. Number of connections: " + peerList.size());
+
                     break;
                 default:
                     System.out.println("Protocol Unmatched!");
@@ -87,29 +113,29 @@ public class MessagingNode implements Node{
         serverThread.start();
     }
 
-    public static void sendData(String server, int port){
-        try { 
-            System.out.println("Sending Data");
-            Socket socket = new Socket(server, port);
+    // public static void sendData(String server, int port){
+    //     try { 
+    //         System.out.println("Sending Data");
+    //         Socket socket = new Socket(server, port);
 
-            // Thread.sleep(5000);
-            for(int i  = 0; i < 5; i++){
-                Message message = new Message();
-                TCPSender tcps = new TCPSender(socket);
-                tcps.sendData(message.getMessage());
-            }
+    //         // Thread.sleep(5000);
+    //         for(int i  = 0; i < 5; i++){
+    //             Message message = new Message();
+    //             TCPSender tcps = new TCPSender(socket);
+    //             tcps.sendData(message.getMessage());
+    //         }
 
-            System.out.println("finished printing messages: sleeping for 5s");
-            Thread.sleep(5000);
+    //         System.out.println("finished printing messages: sleeping for 5s");
+    //         Thread.sleep(5000);
             
-        } catch (IOException e) {
-            System.err.println("MessagingNode: error in main");
+    //     } catch (IOException e) {
+    //         System.err.println("MessagingNode: error in main");
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    //     } catch (InterruptedException e) {
+    //         e.printStackTrace();
 
-        }
-    }
+    //     }
+    // }
 
 
     public static void main(String[] args){
@@ -117,7 +143,7 @@ public class MessagingNode implements Node{
         int registryPort = Integer.parseInt(args[1]);
         MessagingNode messagingNode = new MessagingNode(registryName, registryPort);
 
-        CLIHandler cliHandler = new CLIHandler();
-        cliHandler.readInstructions();
+        // CLIHandler cliHandler = new CLIHandler(messagingNode);
+        // cliHandler.readInstructions();
     }
 }

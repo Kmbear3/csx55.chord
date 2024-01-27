@@ -3,6 +3,7 @@ package csx55.overlay.util;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.plaf.nimbus.State;
@@ -52,6 +53,16 @@ public class VertexList {
             e.printStackTrace();
         }
     }
+    
+    public void addToList(Vertex vertex){
+        registeredVertexs.put(vertex.getID(), vertex);
+    }
+
+
+    public Collection<Vertex> getValues(){
+        return registeredVertexs.values();
+    }
+
 
     public void deregisterVertex(){
         // TODO: implement
@@ -88,5 +99,9 @@ public class VertexList {
             default:
                 return "Issue with registration";
         }
+    }
+
+    public int size(){
+        return registeredVertexs.size();
     }
 }
