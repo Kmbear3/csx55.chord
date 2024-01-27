@@ -1,20 +1,73 @@
 package csx55.overlay.wireformats;
 
-public class InitiatePeerConnection {
-    public InitiatePeerConnection(byte[] bytes) {
-        //TODO Auto-generated constructor stub
-    }
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class InitiatePeerConnection implements Event, Protocol{
+   
     int MESSAGE_TYPE = Protocol.INITIATE_PEER_CONNECTION;
     String IP;
     int port;
     byte[] marshalledBytes;
-    public String getIP() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIP'");
+
+
+    public InitiatePeerConnection(byte[] marshalledBytes) throws IOException{
+        ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
+        DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+
+        int type = din.readInt();
+
+        int IPlenth = din.readInt();
+        byte[] IPBytes = new byte[IPlenth];
+        din.readFully(IPBytes);
+        this.IP = new String(IPBytes);
+
+        this.port = din.readInt();
+        
+        baInputStream.close();
+        din.close();
+
     }
+
+    public String getIP() {
+        return this.IP;
+    }
+
     public int getPort() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPort'");
+       return this.port;
+    }
+
+    @Override
+    public int getType() {
+        return this.MESSAGE_TYPE;
+    }
+
+    @Override
+    public byte[] getBytes() throws IOException {
+        byte[] marshalledBytes = null;
+        ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+        DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+
+        dout.writeInt(this.MESSAGE_TYPE);   
+
+        byte[] IPBytes = this.IP.getBytes();
+        int elementLength = IPBytes.length;
+        dout.writeInt(elementLength);
+        dout.write(IPBytes);
+
+        dout.writeInt(this.port);
+
+        dout.flush();
+        this.marshalledBytes = baOutputStream.toByteArray();
+        baOutputStream.close();
+        dout.close();
+        
+        return marshalledBytes;
     }
 
 
