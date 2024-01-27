@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
 import csx55.overlay.transport.TCPServerThread;
+import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Protocol;
@@ -45,5 +46,10 @@ public class Registry implements Node {
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Registry registry = new Registry(port);
+
+        CLIHandler cli = new CLIHandler();
+        while(true){
+            cli.readInstructions();
+        }
     }
 }
