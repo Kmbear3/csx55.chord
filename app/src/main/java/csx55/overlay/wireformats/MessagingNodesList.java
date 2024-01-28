@@ -62,6 +62,7 @@ public class MessagingNodesList implements Event, Protocol {
 
     public MessagingNodesList(ArrayList<Vertex> vertexPeers){
         this.vertexPeers = vertexPeers;
+        this.numberOfPeers = vertexPeers.size();
     }
 
     @Override
@@ -79,8 +80,8 @@ public class MessagingNodesList implements Event, Protocol {
 
         dout.writeInt(this.numberOfPeers);   
 
-        for(int i = 0; i < numberOfPeers; i++) {
-            Vertex vertex = vertexPeers.get(i);
+        for(int i = 0; i < this.numberOfPeers; i++) {
+            Vertex vertex = this.vertexPeers.get(i);
             String vertexID = vertex.getID();
 
             byte[] IDBytes = vertexID.getBytes();
