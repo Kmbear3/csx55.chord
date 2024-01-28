@@ -2,6 +2,7 @@ package csx55.overlay.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
@@ -25,7 +26,7 @@ public class OverlayCreator {
 
             for(Vertex vertex : registeredList.getValues()){
                 vertex.printVertex();
-                ArrayList<Vertex> peerList = constructPeerLists(registeredList);
+                ArrayList<Vertex> peerList = constructPeerLists(vertex);
                 
                 MessagingNodesList nodesList = new MessagingNodesList(peerList);
                 TCPSender MNSender = new TCPSender(vertex.getSocket());
@@ -39,13 +40,22 @@ public class OverlayCreator {
 
     }
 
-    public ArrayList<Vertex> constructPeerLists(VertexList vertexList){
+    public ArrayList<Vertex> constructPeerLists(Vertex messagingNode){
         ArrayList<Vertex> peerList = new ArrayList<>();
+
+
+        
 
 
         return peerList;
     }
 
-
+    public ArrayList<Vertex> constructRing(VertexList registeVertexList){
+        
+        
+        
+        return null;
+        
+    }
 
 }

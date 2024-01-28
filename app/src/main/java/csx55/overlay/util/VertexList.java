@@ -3,6 +3,7 @@ package csx55.overlay.util;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,6 +16,7 @@ import csx55.overlay.wireformats.RegistrationRequest;
 
 public class VertexList {
     ConcurrentHashMap<String, Vertex> registeredVertexs;  
+    ArrayList<String> vertexIDs; 
 
     public VertexList(){
         this.registeredVertexs = new ConcurrentHashMap<>();
@@ -28,7 +30,7 @@ public class VertexList {
             RegisterationResponse registerationResponse;
             
             if(inList(vertex) == false && correctIP(vertex) == true){
-                registeredVertexs.put(vertex.getID(), vertex);
+                addToList(vertex);
                 byte statusCode = StatusCodes.SUCCESS;
                 String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
@@ -56,6 +58,7 @@ public class VertexList {
     
     public void addToList(Vertex vertex){
         registeredVertexs.put(vertex.getID(), vertex);
+        vertexIDs.add(vertex.getID());
     }
 
 
@@ -63,8 +66,12 @@ public class VertexList {
         return registeredVertexs.values();
     }
 
+    public ArrayList<String> getVertexNames(){
+        return vertexIDs;
+    }
 
     public void deregisterVertex(){
+        // Remove from conncurrent hashmap and arraylist of IDS
         // TODO: implement
     }
 
