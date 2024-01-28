@@ -1,9 +1,17 @@
 package csx55.overlay.wireformats;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import csx55.overlay.transport.TCPSender;
 import csx55.overlay.util.Vertex;
 
 public class MessagingNodesList implements Event, Protocol {
@@ -16,10 +24,39 @@ public class MessagingNodesList implements Event, Protocol {
 
     // messagingnode_hostname:portnum
 
+    final int MESSAGE_TYPE = Protocol.MESSAGING_NODES_LIST;
     byte[] marshalledBytes;
+    int numberOfPeers;
     ArrayList<Vertex> vertexPeers;
 
-    public MessagingNodesList(byte[] marshalledBytes){
+
+    public MessagingNodesList(byte[] marshalledBytes, String myIP, int myPort) throws IOException {
+        ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
+        DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+
+        int type = din.readInt();
+        this.numberOfPeers = din.readInt();
+
+        for(int i = 0; i < this.numberOfPeers; i++){
+            int IDLength = din.readInt();
+            byte[] IDBytes = new byte[IDLength];
+            din.readFully(IDBytes);
+            String vertexID = new String(IDBytes);
+
+            String IP = vertexID.substring(0, vertexID.indexOf(":"));
+            int port = Integer.parseInt(vertexID.substring(vertexID.indexOf(":") + 1, vertexID.length()));
+
+            Socket peerSocket = new Socket(IP, port);
+            TCPSender sender = new TCPSender(peerSocket);
+            InitiatePeerConnection peerConnection = new InitiatePeerConnection(myIP, myPort);
+            sender.sendData(peerConnection.getBytes());
+
+            Vertex peer = new Vertex(IP, port, peerSocket);
+            vertexPeers.add(peer);
+        }
+
+        baInputStream.close();
+        din.close();
 
     }
 
@@ -27,23 +64,42 @@ public class MessagingNodesList implements Event, Protocol {
         this.vertexPeers = vertexPeers;
     }
 
-
     @Override
     public int getType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getType'");
+        return MESSAGE_TYPE;
     }
-
-
 
     @Override
     public byte[] getBytes() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBytes'");
+        byte[] marshalledBytes = null;
+        ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+        DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+
+        dout.writeInt(this.MESSAGE_TYPE);   
+
+        dout.writeInt(this.numberOfPeers);   
+
+        for(int i = 0; i < numberOfPeers; i++) {
+            Vertex vertex = vertexPeers.get(i);
+            String vertexID = vertex.getID();
+
+            byte[] IDBytes = vertexID.getBytes();
+
+            int elementLength = IDBytes.length;
+            dout.writeInt(elementLength);
+            dout.write(IDBytes);
+        }
+
+
+        dout.flush();
+        marshalledBytes = baOutputStream.toByteArray();
+        baOutputStream.close();
+        dout.close();
+        
+        return marshalledBytes;
     }
 
     public ArrayList<Vertex> getPeers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPeers'");
+        return vertexPeers;
     }
 }

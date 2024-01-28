@@ -15,6 +15,10 @@ public class InitiatePeerConnection implements Event, Protocol{
     int port;
     byte[] marshalledBytes;
 
+    public InitiatePeerConnection(String IP, int port){
+        this.IP = IP;
+        this.port = port;
+    }
 
     public InitiatePeerConnection(byte[] marshalledBytes) throws IOException{
         ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);

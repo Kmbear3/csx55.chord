@@ -77,7 +77,7 @@ public class MessagingNode implements Node{
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     regRes.getInfo();
                     break;
-                    
+
                 case Protocol.INITIATE_PEER_CONNECTION:
                     InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
                     Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
@@ -85,7 +85,8 @@ public class MessagingNode implements Node{
                     break;
 
                 case Protocol.MESSAGING_NODES_LIST:
-                    MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
+                    MessagingNodesList nodesList = new MessagingNodesList(event.getBytes(), this.messagingNodeIP, this.messagingNodePort);
+                    
                     ArrayList<Vertex> peers = nodesList.getPeers();
 
                     if(peers.size() > 0){
