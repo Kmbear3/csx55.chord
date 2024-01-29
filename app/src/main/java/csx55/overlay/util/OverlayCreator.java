@@ -17,28 +17,29 @@ public class OverlayCreator {
     public OverlayCreator(Registry registry, int numberOfConnections){
         this.numberOfConnections = numberOfConnections;
         this.registeredNodes = registry.getRegistry();
-        constructRing(this.registeredNodes);
+        constructOverlay();
+        
     }   
 
-    // public void constructOverlay(){
-    //     try {
-    //         VertexList registeredList = registry.getRegistry();
+    public void constructOverlay(){
+        try {
             
-    //         for(Vertex vertex : registeredList.getValues()){
-    //             vertex.printVertex();
-    //             ArrayList<Vertex> peerList = constructPeerLists(vertex);
+            constructRing(registeredNodes);
+
+            for(Vertex vertex : registeredNodes.getValues()){
+                vertex.printVertex();
                 
-    //             MessagingNodesList nodesList = new MessagingNodesList(peerList);
-    //             TCPSender MNSender = new TCPSender(vertex.getSocket());
-    //             MNSender.sendData(nodesList.getBytes());
-    //         }
+                MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections());
+                TCPSender MNSender = new TCPSender(vertex.getSocket());
+                MNSender.sendData(nodesList.getBytes());
+            }
 
-    //     } catch (IOException e) {
-    //         // TODO Auto-generated catch block
-    //         e.printStackTrace();
-    //     }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-    // }
+    }
 
     // public ArrayList<Vertex> constructPeerLists(Vertex messagingNode){
     //     ArrayList<Vertex> peerList = new ArrayList<>();
@@ -58,9 +59,9 @@ public class OverlayCreator {
             Vertex node = registeVertexList.get(names.get(i)); 
             node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
 
-            System.out.println("Connection Index: " + connectionIndex);
-            System.out.println("Index: " + i);
-            node.printVertex();
+            // System.out.println("Connection Index: " + connectionIndex);
+            // System.out.println("Index: " + i);
+            // node.printVertex();
 
             connectionIndex++;
 

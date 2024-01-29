@@ -28,6 +28,8 @@ public class EventFactory {
                     return new RegistrationRequest(marshalledBytes);
                 case Protocol.REGISTER_RESPONSE:
                     return new RegisterationResponse(marshalledBytes);
+                case Protocol.MESSAGING_NODES_LIST:
+                    return new MessagingNodesList(marshalledBytes);
                 default:
                     return null;
             

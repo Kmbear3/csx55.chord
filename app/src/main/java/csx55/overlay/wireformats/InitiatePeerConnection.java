@@ -13,7 +13,6 @@ public class InitiatePeerConnection implements Event, Protocol{
     int MESSAGE_TYPE = Protocol.INITIATE_PEER_CONNECTION;
     String IP;
     int port;
-    byte[] marshalledBytes;
 
     public InitiatePeerConnection(String IP, int port){
         this.IP = IP;
@@ -67,7 +66,7 @@ public class InitiatePeerConnection implements Event, Protocol{
         dout.writeInt(this.port);
 
         dout.flush();
-        this.marshalledBytes = baOutputStream.toByteArray();
+        marshalledBytes = baOutputStream.toByteArray();
         baOutputStream.close();
         dout.close();
         

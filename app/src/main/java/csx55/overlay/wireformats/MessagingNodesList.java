@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,10 @@ public class MessagingNodesList implements Event, Protocol {
     final int MESSAGE_TYPE = Protocol.MESSAGING_NODES_LIST;
     byte[] marshalledBytes;
     int numberOfPeers;
-    ArrayList<Vertex> vertexPeers;
+    ArrayList<Vertex> vertexPeers = new ArrayList<>();
 
 
-    public MessagingNodesList(byte[] marshalledBytes, String myIP, int myPort) throws IOException {
+    public MessagingNodesList(byte[] marshalledBytes) throws IOException {
         ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 
@@ -48,7 +49,22 @@ public class MessagingNodesList implements Event, Protocol {
 
             Socket peerSocket = new Socket(IP, port);
             TCPSender sender = new TCPSender(peerSocket);
+
+            int myPort = peerSocket.getLocalPort();
+
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            String myIP = inetAddress.getHostName();
+
+            System.out.println("My IP: " + myIP);
+            System.out.println("My port: " + myPort);
+
+            
+
             InitiatePeerConnection peerConnection = new InitiatePeerConnection(myIP, myPort);
+
+            System.out.println(peerSocket);
+            System.out.println(peerConnection.getBytes());
+            
             sender.sendData(peerConnection.getBytes());
 
             Vertex peer = new Vertex(IP, port, peerSocket);
@@ -58,8 +74,11 @@ public class MessagingNodesList implements Event, Protocol {
         baInputStream.close();
         din.close();
 
+        System.out.println("Made it through getBytes");
+
     }
 
+    
     public MessagingNodesList(ArrayList<Vertex> vertexPeers){
         this.vertexPeers = vertexPeers;
         this.numberOfPeers = vertexPeers.size();

@@ -85,7 +85,7 @@ public class MessagingNode implements Node{
                     break;
 
                 case Protocol.MESSAGING_NODES_LIST:
-                    MessagingNodesList nodesList = new MessagingNodesList(event.getBytes(), this.messagingNodeIP, this.messagingNodePort);
+                    MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
                     
                     ArrayList<Vertex> peers = nodesList.getPeers();
 

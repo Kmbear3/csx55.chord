@@ -39,7 +39,7 @@ public class Vertex {
         for(Vertex neighbor : vertexConnections){
             System.out.print(neighbor.getID() + ", ");
         }
-        System.out.print(" ---");
+        System.out.println(" ---");
 
     }
 
@@ -49,6 +49,10 @@ public class Vertex {
     }
 
     public int getNumberOfConnections(){
-        return numberOfConnections;
+        return this.numberOfConnections;
+    }
+
+    public ArrayList<Vertex> getVertexConnections(){
+        return this.vertexConnections;
     }
 }
