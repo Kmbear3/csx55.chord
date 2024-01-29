@@ -12,45 +12,41 @@ import csx55.overlay.wireformats.MessagingNodesList;
 public class OverlayCreator {
     // Needs registered nodes
     int numberOfConnections;
-    Registry registry;
+    VertexList registeredNodes;
 
     public OverlayCreator(Registry registry, int numberOfConnections){
         this.numberOfConnections = numberOfConnections;
-        this.registry = registry;
-        constructOverlay();
+        this.registeredNodes = registry.getRegistry();
+        constructRing(this.registeredNodes);
     }   
 
-    public void constructOverlay(){
-        try {
-            VertexList registeredList = registry.getRegistry();
+    // public void constructOverlay(){
+    //     try {
+    //         VertexList registeredList = registry.getRegistry();
             
-            for(Vertex vertex : registeredList.getValues()){
-                vertex.printVertex();
-                ArrayList<Vertex> peerList = constructPeerLists(vertex);
+    //         for(Vertex vertex : registeredList.getValues()){
+    //             vertex.printVertex();
+    //             ArrayList<Vertex> peerList = constructPeerLists(vertex);
                 
-                MessagingNodesList nodesList = new MessagingNodesList(peerList);
-                TCPSender MNSender = new TCPSender(vertex.getSocket());
-                MNSender.sendData(nodesList.getBytes());
-            }
+    //             MessagingNodesList nodesList = new MessagingNodesList(peerList);
+    //             TCPSender MNSender = new TCPSender(vertex.getSocket());
+    //             MNSender.sendData(nodesList.getBytes());
+    //         }
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    //     } catch (IOException e) {
+    //         // TODO Auto-generated catch block
+    //         e.printStackTrace();
+    //     }
 
-    }
+    // }
 
-    public ArrayList<Vertex> constructPeerLists(Vertex messagingNode){
-        ArrayList<Vertex> peerList = new ArrayList<>();
+    // public ArrayList<Vertex> constructPeerLists(Vertex messagingNode){
+    //     ArrayList<Vertex> peerList = new ArrayList<>();
 
+    //     return peerList;
+    // }
 
-        
-
-
-        return peerList;
-    }
-
-    public ArrayList<Vertex> constructRing(VertexList registeVertexList){
+    public void constructRing(VertexList registeVertexList){
         ArrayList<String> names = registeVertexList.getVertexNames();
 
         int connectionIndex = 1;
@@ -62,11 +58,13 @@ public class OverlayCreator {
             Vertex node = registeVertexList.get(names.get(i)); 
             node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
 
+            System.out.println("Connection Index: " + connectionIndex);
+            System.out.println("Index: " + i);
+            node.printVertex();
+
             connectionIndex++;
+
         }
-        
-        
-        return null;
         
     }
 
