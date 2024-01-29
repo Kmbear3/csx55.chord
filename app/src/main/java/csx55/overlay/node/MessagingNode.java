@@ -67,7 +67,7 @@ public class MessagingNode implements Node{
     @Override
     public void onEvent(Event event, Socket socket) {
         try {
-            System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
+            System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
             switch(event.getType()){
                 case Protocol.MESSAGE:
                     System.out.println("MESSAGE");
@@ -95,8 +95,7 @@ public class MessagingNode implements Node{
                             this.peerList.addToList(peer);
                         }
                     }
-                    
-
+        
                     System.out.println("All connections are established. Number of connections: " + peerList.size());
                     break;
                 default:

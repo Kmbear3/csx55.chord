@@ -55,15 +55,15 @@ public class MessagingNodesList implements Event, Protocol {
             InetAddress inetAddress = InetAddress.getLocalHost();
             String myIP = inetAddress.getHostName();
 
-            System.out.println("My IP: " + myIP);
-            System.out.println("My port: " + myPort);
+            // System.out.println("My IP: " + myIP);
+            // System.out.println("My port: " + myPort);
 
             
 
             InitiatePeerConnection peerConnection = new InitiatePeerConnection(myIP, myPort);
 
-            System.out.println(peerSocket);
-            System.out.println(peerConnection.getBytes());
+            // System.out.println(peerSocket);
+            // System.out.println(peerConnection.getBytes());
 
             sender.sendData(peerConnection.getBytes());
 
