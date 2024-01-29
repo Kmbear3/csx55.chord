@@ -79,6 +79,7 @@ public class MessagingNode implements Node{
                     break;
 
                 case Protocol.INITIATE_PEER_CONNECTION:
+                    System.out.println("Received a Peerconnection Request");
                     InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
                     Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
                     this.peerList.addToList(vertex);
@@ -96,7 +97,6 @@ public class MessagingNode implements Node{
                     }
 
                     System.out.println("All connections are established. Number of connections: " + peerList.size());
-
                     break;
                 default:
                     System.out.println("Protocol Unmatched!");
