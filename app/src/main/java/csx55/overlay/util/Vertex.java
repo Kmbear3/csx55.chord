@@ -17,6 +17,7 @@ public class Vertex {
         this.port = port;
         this.id = IP + ":" + port;
         this.socket = socket;
+        this.vertexConnections = new ArrayList<>();
     }
 
     public String getID(){
@@ -34,7 +35,12 @@ public class Vertex {
     public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + " ---");
         System.out.println("--- Vertex Socket: " + getSocket() + " ---");
-        System.out.println("--- Neighbors: " + vertexConnections.toString() + " ---");
+        System.out.print("--- Neighbors: ");
+        for(Vertex neighbor : vertexConnections){
+            System.out.print(neighbor.getID() + ", ");
+        }
+        System.out.print(" ---");
+
     }
 
     public void addNeighbor(Vertex vertex){

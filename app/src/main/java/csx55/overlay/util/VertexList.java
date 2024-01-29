@@ -20,6 +20,7 @@ public class VertexList {
 
     public VertexList(){
         this.registeredVertexs = new ConcurrentHashMap<>();
+        this.vertexIDs = new ArrayList<>();
     }
 
     public void registerVertex(Event event, Socket socket){
