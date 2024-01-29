@@ -57,7 +57,7 @@ public class VertexList {
         }
     }
     
-    public void addToList(Vertex vertex){
+    synchronized public void addToList(Vertex vertex){
         registeredVertexs.put(vertex.getID(), vertex);
         vertexIDs.add(vertex.getID());
     }

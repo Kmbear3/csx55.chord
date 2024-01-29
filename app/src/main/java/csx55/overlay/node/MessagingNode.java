@@ -82,7 +82,6 @@ public class MessagingNode implements Node{
                     InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
                     Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
                     this.peerList.addToList(vertex);
-                    peerList.printVertexList();
                     break;
 
                 case Protocol.MESSAGING_NODES_LIST:
