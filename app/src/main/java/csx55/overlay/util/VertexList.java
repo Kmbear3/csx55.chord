@@ -116,4 +116,14 @@ public class VertexList {
     public Vertex get(String keyName){
         return registeredVertexs.get(keyName);
     }
+
+    public void printVertexList(){
+        System.out.print("--- VertexList: " );
+
+        for(String name : this.vertexIDs){
+            System.out.print(name + ", ");
+        }
+        System.out.println("---" );
+
+    }
 }

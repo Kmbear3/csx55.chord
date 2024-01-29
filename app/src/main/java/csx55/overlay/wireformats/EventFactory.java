@@ -20,7 +20,7 @@ public class EventFactory {
         try {
             int messageType = din.readInt();
 
-            System.out.println("Inside EventFactory.getEvent() -- Message Type: " + messageType);
+            // System.out.println("Inside EventFactory.getEvent() -- Message Type: " + messageType);
             switch(messageType){
                 case Protocol.MESSAGE:
                     return new Message(marshalledBytes);

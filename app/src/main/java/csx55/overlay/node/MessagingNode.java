@@ -50,7 +50,7 @@ public class MessagingNode implements Node{
             this.messagingNodeIP = this.server.getIP();
             this.messagingNodePort = this.server.getPort();
 
-            System.out.print("Inside MessagingNode(IP, port) --- IP: " + this.messagingNodeIP + " --- Port: " + this.messagingNodePort);
+            System.out.println("Inside MessagingNode(IP, port) --- IP: " + this.messagingNodeIP + " --- Port: " + this.messagingNodePort);
 
             RegistrationRequest regReq = new RegistrationRequest(messagingNodeIP, messagingNodePort);
             registrySender.sendData(regReq.getBytes());
@@ -67,13 +67,12 @@ public class MessagingNode implements Node{
     @Override
     public void onEvent(Event event, Socket socket) {
         try {
-            System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
+            // System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
             switch(event.getType()){
                 case Protocol.MESSAGE:
                     System.out.println("MESSAGE");
                     break;
                 case Protocol.REGISTER_RESPONSE:
-                    System.out.println("Received registration Response");
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     regRes.getInfo();
                     break;
@@ -83,6 +82,7 @@ public class MessagingNode implements Node{
                     InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
                     Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
                     this.peerList.addToList(vertex);
+                    peerList.printVertexList();
                     break;
 
                 case Protocol.MESSAGING_NODES_LIST:
@@ -93,9 +93,11 @@ public class MessagingNode implements Node{
                     if(peers.size() > 0){
                         for(Vertex peer : peers){
                             this.peerList.addToList(peer);
+                            sendInitiateConnectionRequest(peer);
                         }
                     }
-        
+                    
+                    peerList.printVertexList();
                     System.out.println("All connections are established. Number of connections: " + peerList.size());
                     break;
                 default:
@@ -106,6 +108,17 @@ public class MessagingNode implements Node{
             System.err.println("Error: MessagingNode.onEvent()");
             e.printStackTrace();
         }
+    }
+
+    public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
+        System.out.println("PeerIntitate - My IP: " + this.messagingNodeIP);
+        System.out.println("PeerIntitate - My port: " + this.messagingNodePort);
+
+        InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
+        
+        Socket peerSocket = vertex.getSocket();
+        TCPSender tcpSender = new TCPSender(peerSocket);
+        tcpSender.sendData(peerConnection.getBytes());
     }
 
     public void configureServer(Node node){

@@ -48,24 +48,19 @@ public class MessagingNodesList implements Event, Protocol {
             int port = Integer.parseInt(vertexID.substring(vertexID.indexOf(":") + 1, vertexID.length()));
 
             Socket peerSocket = new Socket(IP, port);
-            TCPSender sender = new TCPSender(peerSocket);
+            // TCPSender sender = new TCPSender(peerSocket);
 
-            int myPort = peerSocket.getLocalPort();
+            // int myPort = peerSocket.getLocalPort();
 
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            String myIP = inetAddress.getHostName();
+            // InetAddress inetAddress = InetAddress.getLocalHost();
+            // String myIP = inetAddress.getHostName();
 
-            // System.out.println("My IP: " + myIP);
-            // System.out.println("My port: " + myPort);
+            // System.out.println("PeerIntitate - My IP: " + myIP);
+            // System.out.println("PeerIntitate - My port: " + myPort);
 
-            
+            // InitiatePeerConnection peerConnection = new InitiatePeerConnection(myIP, myPort);
 
-            InitiatePeerConnection peerConnection = new InitiatePeerConnection(myIP, myPort);
-
-            // System.out.println(peerSocket);
-            // System.out.println(peerConnection.getBytes());
-
-            sender.sendData(peerConnection.getBytes());
+            // sender.sendData(peerConnection.getBytes());
 
             Vertex peer = new Vertex(IP, port, peerSocket);
             vertexPeers.add(peer);

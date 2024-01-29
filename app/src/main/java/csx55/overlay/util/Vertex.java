@@ -34,7 +34,7 @@ public class Vertex {
 
     public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + " ---");
-        System.out.println("--- Vertex Socket: " + getSocket() + " ---");
+        // System.out.println("--- Vertex Socket: " + getSocket() + " ---");
         System.out.print("--- Neighbors: ");
         for(Vertex neighbor : vertexConnections){
             System.out.print(neighbor.getID() + ", ");
