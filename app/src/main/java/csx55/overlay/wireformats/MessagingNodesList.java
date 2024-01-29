@@ -64,7 +64,7 @@ public class MessagingNodesList implements Event, Protocol {
 
             System.out.println(peerSocket);
             System.out.println(peerConnection.getBytes());
-            
+
             sender.sendData(peerConnection.getBytes());
 
             Vertex peer = new Vertex(IP, port, peerSocket);
@@ -73,8 +73,6 @@ public class MessagingNodesList implements Event, Protocol {
 
         baInputStream.close();
         din.close();
-
-        System.out.println("Made it through getBytes");
 
     }
 

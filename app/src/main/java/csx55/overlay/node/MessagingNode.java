@@ -45,10 +45,10 @@ public class MessagingNode implements Node{
             Thread registryReceiverThread = new Thread(registryReceiver);
             registryReceiverThread.start();
 
-            this.server = new TCPServerThread(this);
+            configureServer(this);
 
-            this.messagingNodeIP = server.getIP();
-            this.messagingNodePort = server.getPort();
+            this.messagingNodeIP = this.server.getIP();
+            this.messagingNodePort = this.server.getPort();
 
             System.out.print("Inside MessagingNode(IP, port) --- IP: " + this.messagingNodeIP + " --- Port: " + this.messagingNodePort);
 
@@ -95,6 +95,7 @@ public class MessagingNode implements Node{
                             this.peerList.addToList(peer);
                         }
                     }
+                    
 
                     System.out.println("All connections are established. Number of connections: " + peerList.size());
                     break;
@@ -108,8 +109,8 @@ public class MessagingNode implements Node{
         }
     }
 
-    public static void configureServer(Node node){
-        TCPServerThread server = new TCPServerThread(node); 
+    public void configureServer(Node node){
+        this.server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
         serverThread.start();
     }
