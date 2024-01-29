@@ -111,4 +111,8 @@ public class VertexList {
     public int size(){
         return registeredVertexs.size();
     }
+
+    public Vertex get(String keyName){
+        return registeredVertexs.get(keyName);
+    }
 }

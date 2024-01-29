@@ -32,8 +32,9 @@ public class Vertex {
     }
 
     public void printVertex(){
-        System.out.println("--- Vertex Id: " + getID() + "---");
-        System.out.println("--- Vertex Socket: " + getSocket() + "---");
+        System.out.println("--- Vertex Id: " + getID() + " ---");
+        System.out.println("--- Vertex Socket: " + getSocket() + " ---");
+        System.out.println("--- Neighbors: " + vertexConnections.toString() + " ---");
     }
 
     public void addNeighbor(Vertex vertex){

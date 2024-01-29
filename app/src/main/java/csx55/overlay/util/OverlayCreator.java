@@ -23,7 +23,7 @@ public class OverlayCreator {
     public void constructOverlay(){
         try {
             VertexList registeredList = registry.getRegistry();
-
+            
             for(Vertex vertex : registeredList.getValues()){
                 vertex.printVertex();
                 ArrayList<Vertex> peerList = constructPeerLists(vertex);
@@ -51,7 +51,19 @@ public class OverlayCreator {
     }
 
     public ArrayList<Vertex> constructRing(VertexList registeVertexList){
-        
+        ArrayList<String> names = registeVertexList.getVertexNames();
+
+        int connectionIndex = 1;
+        for(int i = 0; i < names.size(); i ++){
+            if(i == names.size() - 1){
+                connectionIndex = 0;
+            }
+            
+            Vertex node = registeVertexList.get(names.get(i)); 
+            node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
+
+            connectionIndex++;
+        }
         
         
         return null;
