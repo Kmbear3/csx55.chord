@@ -1,6 +1,7 @@
 package csx55.overlay.node;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -78,7 +79,6 @@ public class MessagingNode implements Node{
                     break;
 
                 case Protocol.INITIATE_PEER_CONNECTION:
-                    System.out.println("Received a Peerconnection Request");
                     InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
                     Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
                     this.peerList.addToList(vertex);
@@ -95,9 +95,15 @@ public class MessagingNode implements Node{
                             sendInitiateConnectionRequest(peer);
                         }
                     }
-                    
+
                     peerList.printVertexList();
-                    System.out.println("All connections are established. Number of connections: " + peerList.size());
+                    System.out.println("All connections are established. Number of connections: " + peers.size());
+
+                    Thread.sleep(3000);
+
+                    System.out.print("Connection: " );
+                    peerList.printVertexList();
+
                     break;
                 default:
                     System.out.println("Protocol Unmatched!");
@@ -106,15 +112,14 @@ public class MessagingNode implements Node{
         } catch (IOException e) {
             System.err.println("Error: MessagingNode.onEvent()");
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
     public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
-        System.out.println("PeerIntitate - My IP: " + this.messagingNodeIP);
-        System.out.println("PeerIntitate - My port: " + this.messagingNodePort);
-
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
-        
         Socket peerSocket = vertex.getSocket();
         TCPSender tcpSender = new TCPSender(peerSocket);
         tcpSender.sendData(peerConnection.getBytes());
