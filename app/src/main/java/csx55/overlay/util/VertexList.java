@@ -3,6 +3,8 @@ package csx55.overlay.util;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.plaf.nimbus.State;
@@ -14,9 +16,11 @@ import csx55.overlay.wireformats.RegistrationRequest;
 
 public class VertexList {
     ConcurrentHashMap<String, Vertex> registeredVertexs;  
+    ArrayList<String> vertexIDs; 
 
     public VertexList(){
         this.registeredVertexs = new ConcurrentHashMap<>();
+        this.vertexIDs = new ArrayList<>();
     }
 
     public void registerVertex(Event event, Socket socket){
@@ -27,7 +31,7 @@ public class VertexList {
             RegisterationResponse registerationResponse;
             
             if(inList(vertex) == false && correctIP(vertex) == true){
-                registeredVertexs.put(vertex.getID(), vertex);
+                addToList(vertex);
                 byte statusCode = StatusCodes.SUCCESS;
                 String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
@@ -52,8 +56,23 @@ public class VertexList {
             e.printStackTrace();
         }
     }
+    
+    synchronized public void addToList(Vertex vertex){
+        registeredVertexs.put(vertex.getID(), vertex);
+        vertexIDs.add(vertex.getID());
+    }
+
+
+    public Collection<Vertex> getValues(){
+        return registeredVertexs.values();
+    }
+
+    public ArrayList<String> getVertexNames(){
+        return vertexIDs;
+    }
 
     public void deregisterVertex(){
+        // Remove from conncurrent hashmap and arraylist of IDS
         // TODO: implement
     }
 
@@ -88,5 +107,23 @@ public class VertexList {
             default:
                 return "Issue with registration";
         }
+    }
+
+    public int size(){
+        return registeredVertexs.size();
+    }
+
+    public Vertex get(String keyName){
+        return registeredVertexs.get(keyName);
+    }
+
+    synchronized public void printVertexList(){
+        System.out.print("--- VertexList: " );
+
+        for(String name : this.vertexIDs){
+            System.out.print(name + ", ");
+        }
+        System.out.println("---" );
+
     }
 }

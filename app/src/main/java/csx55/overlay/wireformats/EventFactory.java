@@ -20,7 +20,7 @@ public class EventFactory {
         try {
             int messageType = din.readInt();
 
-            System.out.println("Inside EventFactory.getEvent() -- Message Type: " + messageType);
+            // System.out.println("Inside EventFactory.getEvent() -- Message Type: " + messageType);
             switch(messageType){
                 case Protocol.MESSAGE:
                     return new Message(marshalledBytes);
@@ -28,6 +28,10 @@ public class EventFactory {
                     return new RegistrationRequest(marshalledBytes);
                 case Protocol.REGISTER_RESPONSE:
                     return new RegisterationResponse(marshalledBytes);
+                case Protocol.MESSAGING_NODES_LIST:
+                    return new MessagingNodesList(marshalledBytes);
+                case Protocol.INITIATE_PEER_CONNECTION:
+                    return new InitiatePeerConnection(marshalledBytes);
                 default:
                     return null;
             

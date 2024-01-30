@@ -34,7 +34,6 @@ public class TCPReceiverThread implements Runnable {
                 byte[] data = new byte[dataLength];
                 din.readFully(data, 0, dataLength);
 
-                System.out.println("Received Message");
                 Event event = EventFactory.getEvent(data);
                 this.node.onEvent(event, socket);
                 

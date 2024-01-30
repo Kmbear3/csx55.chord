@@ -74,7 +74,7 @@ public class RegisterationResponse implements Event, Protocol{
         dout.writeInt(Protocol.REGISTER_RESPONSE);
         dout.writeByte(this.statusCode);
 
-        System.out.println("Inside RegResponse.getBytes() Type: " + Protocol.REGISTER_RESPONSE + "---- status: " + this.statusCode);
+        // System.out.println("Inside RegResponse.getBytes() Type: " + Protocol.REGISTER_RESPONSE + "---- status: " + this.statusCode);
         
         byte[] additionalInfoBytes = this.additionalInfo.getBytes();
         int elementLength = additionalInfoBytes.length;
