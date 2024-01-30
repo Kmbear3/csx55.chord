@@ -117,7 +117,7 @@ public class VertexList {
         return registeredVertexs.get(keyName);
     }
 
-    public void printVertexList(){
+    synchronized public void printVertexList(){
         System.out.print("--- VertexList: " );
 
         for(String name : this.vertexIDs){
