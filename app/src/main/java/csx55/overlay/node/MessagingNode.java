@@ -14,13 +14,7 @@ import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
-import csx55.overlay.wireformats.Event;
-import csx55.overlay.wireformats.InitiatePeerConnection;
-import csx55.overlay.wireformats.Message;
-import csx55.overlay.wireformats.MessagingNodesList;
-import csx55.overlay.wireformats.Protocol;
-import csx55.overlay.wireformats.RegisterationResponse;
-import csx55.overlay.wireformats.RegistrationRequest;
+import csx55.overlay.wireformats.*;
 
 public class MessagingNode implements Node{
     // Maybe move to StatisticsCollectorAndDisplay (?)
@@ -105,6 +99,9 @@ public class MessagingNode implements Node{
                     peerList.printVertexList();
 
                     break;
+                case Protocol.TASK_INITIATE:
+                    TaskInitiate task = new TaskInitiate(event.getBytes());
+                    break;
                 default:
                     System.out.println("Protocol Unmatched!");
                     System.exit(0);
@@ -131,29 +128,6 @@ public class MessagingNode implements Node{
         serverThread.start();
     }
 
-    // public static void sendData(String server, int port){
-    //     try { 
-    //         System.out.println("Sending Data");
-    //         Socket socket = new Socket(server, port);
-
-    //         // Thread.sleep(5000);
-    //         for(int i  = 0; i < 5; i++){
-    //             Message message = new Message();
-    //             TCPSender tcps = new TCPSender(socket);
-    //             tcps.sendData(message.getMessage());
-    //         }
-
-    //         System.out.println("finished printing messages: sleeping for 5s");
-    //         Thread.sleep(5000);
-            
-    //     } catch (IOException e) {
-    //         System.err.println("MessagingNode: error in main");
-
-    //     } catch (InterruptedException e) {
-    //         e.printStackTrace();
-
-    //     }
-    // }
 
 
     public static void main(String[] args){

@@ -64,9 +64,6 @@ public class OverlayCreator {
             // node.printVertex();
 
             connectionIndex++;
-
         }
-        
     }
-
 }
