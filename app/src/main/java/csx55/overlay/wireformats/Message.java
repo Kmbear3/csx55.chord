@@ -7,12 +7,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Message implements Event, Protocol {
     final int MESSAGE_TYPE = Protocol.MESSAGE;
     int payload;
     byte[] marshalledBytes;
+    ArrayList<String> routePlan = new ArrayList<>();
 
     public Message(){
         try {

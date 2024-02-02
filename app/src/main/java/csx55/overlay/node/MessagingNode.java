@@ -66,6 +66,8 @@ public class MessagingNode implements Node{
             switch(event.getType()){
                 case Protocol.MESSAGE:
                     System.out.println("MESSAGE");
+                    Message message = new Message(event.getBytes());
+                    receivedMessage(message, socket);
                     break;
                 case Protocol.REGISTER_RESPONSE:
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
@@ -97,10 +99,10 @@ public class MessagingNode implements Node{
 
                     System.out.print("Connection: " );
                     peerList.printVertexList();
-
                     break;
                 case Protocol.TASK_INITIATE:
                     TaskInitiate task = new TaskInitiate(event.getBytes());
+                    sendMessages(task.getNumberOfRounds());
                     break;
                 default:
                     System.out.println("Protocol Unmatched!");
@@ -128,6 +130,13 @@ public class MessagingNode implements Node{
         serverThread.start();
     }
 
+    public void sendMessages(int numberOfRounds){
+
+    }
+
+    public void receivedMessage(Message message, Socket socket){
+
+    }
 
 
     public static void main(String[] args){

@@ -4,12 +4,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Vertex {
-    Socket socket;
-    String IP;
-    int port;
-    String id;
+    private final Socket socket;
+    private final String IP;
+    private final int port;
+    private final String id;
+    private int numberOfConnections = 0;
 
-    int numberOfConnections = 0; 
     ArrayList<Vertex> vertexConnections;
 
     public Vertex(String IP, int port, Socket socket){
@@ -24,7 +24,7 @@ public class Vertex {
         return this.id;
     }
 
-    public Socket getSocket(){
+    synchronized public Socket getSocket(){
         return this.socket;
     }
 
@@ -44,8 +44,20 @@ public class Vertex {
     }
 
     public void addNeighbor(Vertex vertex){
+        if(this.equals(vertex)){
+            System.err.println("Trying to connect to self");
+        }
+
         this.vertexConnections.add(vertex);
         this.numberOfConnections = numberOfConnections + 1;
+    }
+
+    public boolean equals(Vertex vertex){
+        if(this.id.equals(vertex.getID())) {
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public int getNumberOfConnections(){

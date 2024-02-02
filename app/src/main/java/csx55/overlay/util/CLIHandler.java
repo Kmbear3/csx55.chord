@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
+import csx55.overlay.wireformats.TaskInitiate;
 
 public class CLIHandler {
     Scanner scan;
@@ -35,13 +36,21 @@ public class CLIHandler {
                 if(result.length > 1){
                     int numberOfConnections = Integer.parseInt(result[1]);
                     System.out.println("number of connections: " + numberOfConnections);
-                    // node.setUpOverlay();
-                    // Parse input -- to produce number of connections
                     OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                     break;
+                }else{
+                    int numberOfConnections = 4;
+                    System.out.println("number of connections: " + numberOfConnections);
+                    OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                 }
-                else{
-                    System.err.println("Incorrect Instruction! Please try again!");
+                break;
+            case "start":
+                if(result.length > 1) {
+                    int numberOfRounds = Integer.parseInt(result[1]);
+                    TaskInitiate taskInitiate = new TaskInitiate(numberOfRounds);
+                    registry.onEvent(taskInitiate, null);
+                }else {
+                    System.out.println("Incorrect Instruction! please specify number of rounds.");
                 }
                 break;
             default:

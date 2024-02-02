@@ -32,6 +32,8 @@ public class EventFactory {
                     return new MessagingNodesList(marshalledBytes);
                 case Protocol.INITIATE_PEER_CONNECTION:
                     return new InitiatePeerConnection(marshalledBytes);
+                case Protocol.TASK_INITIATE:
+                    return new TaskInitiate(marshalledBytes);
                 default:
                     return null;
             

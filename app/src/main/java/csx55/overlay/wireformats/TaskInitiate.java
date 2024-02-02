@@ -49,4 +49,8 @@ public class TaskInitiate implements Protocol, Event{
 
         return marshalledBytes;
     }
+
+    public int getNumberOfRounds(){
+        return numberOfRounds;
+    }
 }
