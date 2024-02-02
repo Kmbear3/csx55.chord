@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
@@ -18,11 +19,6 @@ import csx55.overlay.wireformats.*;
 
 public class MessagingNode implements Node{
     // Maybe move to StatisticsCollectorAndDisplay (?)
-    int sendTracker = 0;  // number of messages sent
-    int receiveTracker = 0;  // number of messages that were received
-    int relayTracker = 0; // Number of messages that were relayed.
-    long sendSummation = 0; // Sum of value that it has sent 
-    long receiveSummation = 0;  // Sum of the payloads that it has received 
 
     String messagingNodeIP;
     int messagingNodePort; 
@@ -31,6 +27,7 @@ public class MessagingNode implements Node{
     TCPSender registrySender;
 
     VertexList peerList = new VertexList();
+    ConcurrentLinkedQueue<Message> messagesToProcess = new ConcurrentLinkedQueue<>();
 
     public MessagingNode(String registryIP, int registryPort){
         try {
@@ -67,7 +64,7 @@ public class MessagingNode implements Node{
                 case Protocol.MESSAGE:
                     System.out.println("MESSAGE");
                     Message message = new Message(event.getBytes());
-                    receivedMessage(message, socket);
+                    messagesToProcess.add(message);
                     break;
                 case Protocol.REGISTER_RESPONSE:
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
@@ -102,7 +99,6 @@ public class MessagingNode implements Node{
                     break;
                 case Protocol.TASK_INITIATE:
                     TaskInitiate task = new TaskInitiate(event.getBytes());
-                    System.out.print("TASK: " + task.getNumberOfRounds());
                     sendMessages(task.getNumberOfRounds());
                     break;
                 default:
@@ -132,13 +128,8 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-
+        //TODO: Start sending messages thread
     }
-
-    public void receivedMessage(Message message, Socket socket){
-
-    }
-
 
     public static void main(String[] args){
         String registryName = args[0];
