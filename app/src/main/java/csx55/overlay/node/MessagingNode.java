@@ -102,6 +102,7 @@ public class MessagingNode implements Node{
                     break;
                 case Protocol.TASK_INITIATE:
                     TaskInitiate task = new TaskInitiate(event.getBytes());
+                    System.out.print("TASK: " + task.getNumberOfRounds());
                     sendMessages(task.getNumberOfRounds());
                     break;
                 default:
