@@ -86,8 +86,9 @@ public class MessagingNode implements Node{
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
+                    break;
                 default:
-                    System.out.println("Protocol Unmatched!");
+                    System.out.println("Protocol Unmatched! " + event.getType());
                     System.exit(0);
                     break;
             }

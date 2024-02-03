@@ -34,7 +34,10 @@ public class EventFactory {
                     return new InitiatePeerConnection(marshalledBytes);
                 case Protocol.TASK_INITIATE:
                     return new TaskInitiate(marshalledBytes);
+                case Protocol.POKE:
+                    return new Poke(marshalledBytes);
                 default:
+                    System.err.println("Didn't have an event!" + messageType);
                     return null;
             
             }
