@@ -83,6 +83,9 @@ public class MessagingNode implements Node{
                     TaskInitiate task = new TaskInitiate(event.getBytes());
                     sendMessages(task.getNumberOfRounds());
                     break;
+                case Protocol.POKE:
+                    Poke poke = new Poke(event.getBytes());
+                    poke.printPoke();
                 default:
                     System.out.println("Protocol Unmatched!");
                     System.exit(0);
@@ -95,7 +98,6 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        //TODO: start sending thread.
         MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds);
     }
 
@@ -106,28 +108,23 @@ public class MessagingNode implements Node{
     }
 
     synchronized public void createNodeList(Event event) throws IOException{
-//        try {
-            MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
+        MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
 
-            ArrayList<Vertex> peers = nodesList.getPeers();
+        ArrayList<Vertex> peers = nodesList.getPeers();
 
-            if (peers.size() > 0) {
-                for (Vertex peer : peers) {
-                    this.peerList.addToList(peer);
-                    sendInitiateConnectionRequest(peer);
-                }
+        if (peers.size() > 0) {
+            for (Vertex peer : peers) {
+                this.peerList.addToList(peer);
+                sendInitiateConnectionRequest(peer);
             }
+        }
 
-            peerList.printVertexList();
-            System.out.println("All connections are established. Number of connections: " + peers.size());
+        peerList.printVertexList();
+        System.out.println("All connections are established. Number of connections: " + peers.size());
 
-            System.out.print("Connection: ");
+        System.out.print("Connection: ");
 
-//            Thread.sleep(5000);
-            peerList.printVertexList();
-//        }catch (InterruptedException io){
-//            io.printStackTrace();
-//        }
+        peerList.printVertexList();
     }
 
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
@@ -152,6 +149,10 @@ public class MessagingNode implements Node{
 
     public int getMessagingNodePort(){
         return this.messagingNodePort;
+    }
+
+    public VertexList getPeerList(){
+        return this.peerList;
     }
 
     public static void main(String[] args){

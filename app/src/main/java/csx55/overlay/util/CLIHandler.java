@@ -72,6 +72,7 @@ public class CLIHandler {
                 break;
             case "poke-neighbors":
                 MessageSender sendMessages = new MessageSender(node);
+                sendMessages.sendPoke();
                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");

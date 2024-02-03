@@ -31,6 +31,11 @@ public class Poke implements Event, Protocol{
 
     }
 
+    public void printPoke(){
+        System.out.println("Poke IP: " + this.getIP());
+        System.out.println("Poke Port: " + this.getPort());
+    }
+
     public String getIP() {
         return this.IP;
     }

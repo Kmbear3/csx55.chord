@@ -1,6 +1,8 @@
 package csx55.overlay.util;
 
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.Poke;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import csx55.overlay.node.MessagingNode;
 
@@ -20,6 +22,8 @@ public class MessageSender {
     }
 
     synchronized public void sendPoke(){
-        Poke poke = new Poke(node.getIP()),
+        Poke poke = new Poke(node.getMessagingNodeIP(), node.getMessagingNodePort());
+        VertexList peerList = node.getPeerList();
+        peerList.sendAllNodes(poke);
     }
 }
