@@ -13,6 +13,7 @@ import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
+import csx55.overlay.util.MessageSender;
 import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.*;
@@ -20,14 +21,14 @@ import csx55.overlay.wireformats.*;
 public class MessagingNode implements Node{
     // Maybe move to StatisticsCollectorAndDisplay (?)
 
-    String messagingNodeIP;
-    int messagingNodePort; 
+    private String messagingNodeIP;
+    private int messagingNodePort;
 
-    TCPServerThread server;
-    TCPSender registrySender;
+    private TCPServerThread server;
+    private TCPSender registrySender;
 
-    VertexList peerList = new VertexList();
-    ConcurrentLinkedQueue<Message> messagesToProcess = new ConcurrentLinkedQueue<>();
+    private VertexList peerList = new VertexList();
+    private ConcurrentLinkedQueue<Message> messagesToProcess = new ConcurrentLinkedQueue<>();
 
     public MessagingNode(String registryIP, int registryPort){
         try {
@@ -72,30 +73,11 @@ public class MessagingNode implements Node{
                     break;
 
                 case Protocol.INITIATE_PEER_CONNECTION:
-                    InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
-                    Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
-                    this.peerList.addToList(vertex);
+                    initiatePeerConnections(event, socket);
                     break;
 
                 case Protocol.MESSAGING_NODES_LIST:
-                    MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
-                    
-                    ArrayList<Vertex> peers = nodesList.getPeers();
-
-                    if(peers.size() > 0){
-                        for(Vertex peer : peers){
-                            this.peerList.addToList(peer);
-                            sendInitiateConnectionRequest(peer);
-                        }
-                    }
-
-                    peerList.printVertexList();
-                    System.out.println("All connections are established. Number of connections: " + peers.size());
-
-                    Thread.sleep(3000);
-
-                    System.out.print("Connection: " );
-                    peerList.printVertexList();
+                    createNodeList(event);
                     break;
                 case Protocol.TASK_INITIATE:
                     TaskInitiate task = new TaskInitiate(event.getBytes());
@@ -104,17 +86,54 @@ public class MessagingNode implements Node{
                 default:
                     System.out.println("Protocol Unmatched!");
                     System.exit(0);
+                    break;
             }
         } catch (IOException e) {
             System.err.println("Error: MessagingNode.onEvent()");
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
-    public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
+    public void sendMessages(int numberOfRounds){
+        //TODO: start sending thread.
+        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds);
+    }
+
+    synchronized public void initiatePeerConnections(Event event, Socket socket) throws IOException{
+        InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
+        Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
+        this.peerList.addToList(vertex);
+    }
+
+    synchronized public void createNodeList(Event event) throws IOException{
+//        try {
+            MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
+
+            ArrayList<Vertex> peers = nodesList.getPeers();
+
+            if (peers.size() > 0) {
+                for (Vertex peer : peers) {
+                    this.peerList.addToList(peer);
+                    sendInitiateConnectionRequest(peer);
+                }
+            }
+
+            peerList.printVertexList();
+            System.out.println("All connections are established. Number of connections: " + peers.size());
+
+            System.out.print("Connection: ");
+
+//            Thread.sleep(5000);
+            peerList.printVertexList();
+//        }catch (InterruptedException io){
+//            io.printStackTrace();
+//        }
+    }
+
+    public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
+        return this.messagesToProcess;
+    }
+    synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
         Socket peerSocket = vertex.getSocket();
         TCPSender tcpSender = new TCPSender(peerSocket);
@@ -127,8 +146,12 @@ public class MessagingNode implements Node{
         serverThread.start();
     }
 
-    public void sendMessages(int numberOfRounds){
-        //TODO: Start sending messages thread
+    public String getMessagingNodeIP(){
+        return this.messagingNodeIP;
+    }
+
+    public int getMessagingNodePort(){
+        return this.messagingNodePort;
     }
 
     public static void main(String[] args){
@@ -136,7 +159,10 @@ public class MessagingNode implements Node{
         int registryPort = Integer.parseInt(args[1]);
         MessagingNode messagingNode = new MessagingNode(registryName, registryPort);
 
-        // CLIHandler cliHandler = new CLIHandler(messagingNode);
-        // cliHandler.readInstructions();
+         CLIHandler cliHandler = new CLIHandler(messagingNode);
+
+         while(true){
+              cliHandler.readInstructionsMessagingNode();
+         }
     }
 }

@@ -9,20 +9,22 @@ import csx55.overlay.node.Registry;
 import csx55.overlay.wireformats.TaskInitiate;
 
 public class CLIHandler {
-    Scanner scan;
-    Registry registry;
-    // Node node;
+    private Scanner scan;
+    private Registry registry;
+    private MessagingNode node;
+
 
     public CLIHandler(Registry registry){
        this.scan = new Scanner(System.in);
        this.registry = registry;
     }
 
-    // public CLIHandler(MessagingNode messagingNode){
-    //     this.scan = new Scanner(System.in);
-    //  }
-    
-    public void readInstructions(){
+    public CLIHandler(MessagingNode messagingNode){
+        this.scan = new Scanner(System.in);
+        this.node = messagingNode;
+    }
+
+    public void readInstructionsRegistry(){
         String instruction = scan.nextLine(); // need parser
         String[] result = instruction.split("\\s");
 
@@ -57,4 +59,23 @@ public class CLIHandler {
                 System.out.println("Incorrect Instruction. Please try again.");
         }
     }
+
+    public void readInstructionsMessagingNode(){
+        String instruction = scan.nextLine(); // need parser
+        String[] result = instruction.split("\\s");
+
+        System.out.println("Instruction: " + result[0]);
+
+        switch(result[0]){
+            case "exit":
+                System.exit(0);
+                break;
+            case "poke-neighbors":
+                MessageSender sendMessages = new MessageSender(node);
+               break;
+            default:
+                System.out.println("Incorrect Instruction. Please try again.");
+        }
+    }
+
 }

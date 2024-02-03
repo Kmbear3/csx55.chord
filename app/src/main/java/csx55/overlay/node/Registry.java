@@ -35,7 +35,7 @@ public class Registry implements Node {
                 vertexList.registerVertex(event, socket);
                 break;
             case Protocol.TASK_INITIATE:
-                sendAllNodes(event);
+                vertexList.sendAllNodes(event);
                 break;
             default:
                 System.out.println("Protocol Unmatched!");
@@ -54,24 +54,13 @@ public class Registry implements Node {
         return vertexList;
     }
 
-    synchronized public void sendAllNodes(Event event){
-        try {
-            for(Vertex vertex : vertexList.getValues()){
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(event.getBytes());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Registry registry = new Registry(port);
 
         CLIHandler cli = new CLIHandler(registry);
         while(true){
-            cli.readInstructions();
+            cli.readInstructionsRegistry();
         }
     }
 }
