@@ -3,6 +3,7 @@ package csx55.overlay.util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
@@ -18,13 +19,17 @@ public class OverlayCreator {
         this.numberOfConnections = numberOfConnections;
         this.registeredNodes = registry.getRegistry();
         constructOverlay();
-        
     }   
 
     public void constructOverlay(){
         try {
             
             constructRing(registeredNodes);
+
+
+
+
+            // Below Just sends the messages
 
             for(Vertex vertex : registeredNodes.getValues()){
                 vertex.printVertex();
@@ -41,12 +46,6 @@ public class OverlayCreator {
 
     }
 
-    // public ArrayList<Vertex> constructPeerLists(Vertex messagingNode){
-    //     ArrayList<Vertex> peerList = new ArrayList<>();
-
-    //     return peerList;
-    // }
-
     public void constructRing(VertexList registeVertexList){
         ArrayList<String> names = registeVertexList.getVertexNames();
 
@@ -59,11 +58,42 @@ public class OverlayCreator {
             Vertex node = registeVertexList.get(names.get(i)); 
             node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
 
-            // System.out.println("Connection Index: " + connectionIndex);
-            // System.out.println("Index: " + i);
-            // node.printVertex();
-
             connectionIndex++;
         }
     }
+
+    public void assignConnections(VertexList vertexList){
+        ArrayList<String> names = vertexList.getVertexNames();
+        Random rand = new Random();
+
+        int[][] connections = new int[names.size()][names.size()]; 
+
+        int CR = numberOfConnections;
+
+        while(CR > 1){
+            for(int j = 0; j < connections.length; j++){
+            
+                if(!isFullyConnected(connections[j][(j + numberOfConnections) % connections.length])){
+                    int weight =  rand.nextInt(10);
+                    connections[j][(j + numberOfConnections) % connections.length] = weight;
+                    connections[(j + numberOfConnections) % connections.length][j] = weight;
+                }
+            }
+            CR--;
+        }
+    }
+
+    public void printConnections(int[][] matrix){
+        for(int i = 0; i < matrix.length; i++){
+            for(int j = 0; j < matrix.length; j ++){
+                System.out.print(" | " + matrix[i][j] + " | ");
+            }
+        }
+    }
+
+    public boolean isFullyConnected(int node){
+        //TODO: Checks to see if the node has CR connections
+        return false;
+    }
+
 }

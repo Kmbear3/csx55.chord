@@ -32,7 +32,7 @@ public class Vertex {
         return this.IP;
     }
 
-    public void printVertex(){
+    synchronized public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + " ---");
         // System.out.println("--- Vertex Socket: " + getSocket() + " ---");
         System.out.print("--- Neighbors: ");
@@ -44,7 +44,7 @@ public class Vertex {
         System.out.println("--- socket: " + this.socket + " ---");
     }
 
-    public void addNeighbor(Vertex vertex){
+    synchronized public void addNeighbor(Vertex vertex){
         if(this.equals(vertex)){
             System.err.println("Trying to connect to self");
         }
