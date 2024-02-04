@@ -60,6 +60,7 @@ public class VertexList {
     synchronized public void addToList(Vertex vertex){
         registeredVertexs.put(vertex.getID(), vertex);
         vertexIDs.add(vertex.getID());
+
     }
 
 
@@ -125,5 +126,17 @@ public class VertexList {
         }
         System.out.println("---" );
 
+    }
+
+    synchronized public void sendAllNodes(Event event){
+        try {
+            for(Vertex vertex : this.getValues()){
+                vertex.printVertex();
+                TCPSender send = new TCPSender(vertex.getSocket());
+                send.sendData(event.getBytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

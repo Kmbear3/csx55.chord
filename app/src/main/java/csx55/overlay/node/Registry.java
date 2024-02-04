@@ -1,10 +1,13 @@
 package csx55.overlay.node;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
+import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
+import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Protocol;
@@ -31,6 +34,9 @@ public class Registry implements Node {
             case Protocol.REGISTER_REQUEST:
                 vertexList.registerVertex(event, socket);
                 break;
+            case Protocol.TASK_INITIATE:
+                vertexList.sendAllNodes(event);
+                break;
             default:
                 System.out.println("Protocol Unmatched!");
                 System.exit(0);
@@ -54,7 +60,7 @@ public class Registry implements Node {
 
         CLIHandler cli = new CLIHandler(registry);
         while(true){
-            cli.readInstructions();
+            cli.readInstructionsRegistry();
         }
     }
 }
