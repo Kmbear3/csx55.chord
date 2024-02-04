@@ -3,10 +3,13 @@ package csx55.overlay.util;
 import csx55.overlay.wireformats.Message;
 import csx55.overlay.wireformats.Poke;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import csx55.overlay.node.MessagingNode;
+import csx55.overlay.transport.TCPSender;
 
-public class MessageSender {
+public class MessageSender implements Runnable {
     private ConcurrentLinkedQueue<Message> messages;
     private int numberOfRounds;
     private MessagingNode node;
@@ -27,4 +30,47 @@ public class MessageSender {
         peerList.printVertexList();
         peerList.sendAllNodes(poke);
     }
+
+    synchronized public void sendMessage(){
+
+    }
+
+    @Override
+    public void run() {
+        StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
+        try {
+            for(int i = 0; i < this.numberOfRounds; i++){
+                ArrayList<String> routePlan = new ArrayList<>();
+                routePlan.add(node.getID());
+                String sink = node.getRandomPeerID();
+                routePlan.add(sink);
+                Message message = new Message(routePlan);
+
+                VertexList peerList = node.getPeerList();
+                Vertex vertex = peerList.get(sink);
+
+                TCPSender send = new TCPSender(vertex.getSocket());
+                send.sendData(message.getBytes());
+                stats.incrementSendTracker();
+            }
+
+            Thread.sleep(5000);
+
+            for(Message message : messages){
+                System.out.println("Payload: " + message.getPayload());
+                stats.incrementReceivedTracker();
+            }
+
+
+            stats.displayStats();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 }
