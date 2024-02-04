@@ -61,7 +61,6 @@ public class MessageSender implements Runnable {
                 stats.incrementReceivedTracker();
             }
 
-
             stats.displayStats();
 
         } catch (IOException e) {
