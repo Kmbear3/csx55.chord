@@ -71,10 +71,10 @@ public class OverlayCreator {
         int CR = numberOfConnections;
 
         while(CR > 1){
+            // REWIND LOGIC
             for(int j = 0; j < connections.length; j++){
-            
-                if(!isFullyConnected(connections[j][(j + numberOfConnections) % connections.length])){
-                    int weight =  rand.nextInt(10);
+                if(!isFullyConnected(j, connections, numberOfConnections)){
+                    int weight =  rand.nextInt(10) + 1;
                     connections[j][(j + numberOfConnections) % connections.length] = weight;
                     connections[(j + numberOfConnections) % connections.length][j] = weight;
                 }
@@ -91,9 +91,43 @@ public class OverlayCreator {
         }
     }
 
-    public boolean isFullyConnected(int node){
-        //TODO: Checks to see if the node has CR connections
-        return false;
+    public boolean isFullyConnected(int node, int[][] connections, int CR){
+        int[] nodeConnections = connections[node];
+        int nodeNumberOfConnections = 0;
+
+        for(int i = 0; i < nodeConnections.length; i ++){
+            if(nodeConnections[i] != 0){
+                nodeNumberOfConnections++;
+            }
+        }
+
+        return nodeNumberOfConnections == CR;
+    }
+
+    public boolean isBalanced(int[][] matrix){
+
+        int[] nodeConnections = matrix[0];
+        int nodeNumberOfConnections = 0;
+
+        for(int i = 0; i < nodeConnections.length; i ++){
+            if(nodeConnections[i] != 0){
+                nodeNumberOfConnections++;
+            }
+        }
+
+        for(int i = 0; i < matrix.length; i++){
+            int rowCount = 0;
+            for(int j = 0; j < matrix.length; j ++){
+                if(matrix[i][j] != 0){
+                    rowCount++;
+                }
+            }
+            if(rowCount != nodeNumberOfConnections){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
