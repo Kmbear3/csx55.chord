@@ -16,12 +16,8 @@ public class Message implements Event, Protocol {
     byte[] marshalledBytes;
     ArrayList<String> routePlan = new ArrayList<>();
 
-    public Message(){
-        try {
-            marshalledBytes = getBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Message() throws IOException{
+        marshalledBytes = getBytes();
     }
 
     public Message(byte[] marshalledBytes) throws IOException {
@@ -29,12 +25,27 @@ public class Message implements Event, Protocol {
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
        
         int messageType = din.readInt();
-        payload = din.readInt();
+        this.payload = din.readInt();
+
+        int routeSize = din.readInt();
+
+        for(int i = 0; i < routeSize; i ++){
+            int nodeLength = din.readInt();
+            byte[] IDBytes = new byte[nodeLength];
+            din.readFully(IDBytes);
+            String vertexID = new String(IDBytes);
+
+            routePlan.add(vertexID);
+        }
 
         System.out.println("Inside Message() Type: " + messageType + "---- Payload: " + payload);
 
         baInputStream.close();
         din.close();
+    }
+
+    public Message(ArrayList<String> routePlan){
+        this.routePlan = routePlan;
     }
 
     @Override
@@ -52,6 +63,15 @@ public class Message implements Event, Protocol {
         this.payload = createPayload();
         dout.writeInt(this.payload);
 
+        dout.writeInt(routePlan.size());
+
+        for(String node : routePlan){
+            byte[] nodeBytes = node.getBytes();
+            int elementLength = nodeBytes.length;
+            dout.writeInt(elementLength);
+            dout.write(nodeBytes);
+        }
+
         System.out.println("Inside Message.getBytes() Type: " + Protocol.MESSAGE + "---- Payload: " + this.payload);
 
         dout.flush();
@@ -61,6 +81,10 @@ public class Message implements Event, Protocol {
         
         return marshalledBytes;
     } 
+
+    public int getPayload(){
+        return payload;
+    }
 
     public int createPayload(){
         Random rand = new Random();

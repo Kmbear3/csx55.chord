@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.overlay.transport.TCPReceiverThread;
@@ -100,6 +101,8 @@ public class MessagingNode implements Node{
 
     public void sendMessages(int numberOfRounds){
         MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds);
+        Thread senderThread = new Thread(sender);
+        senderThread.start();
     }
 
     synchronized public void initiatePeerConnections(Event event, Socket socket) throws IOException{
@@ -134,7 +137,7 @@ public class MessagingNode implements Node{
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
         Socket peerSocket = vertex.getSocket();
-        
+
         TCPReceiverThread receiver = new TCPReceiverThread(this, peerSocket);
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
@@ -159,6 +162,17 @@ public class MessagingNode implements Node{
 
     public VertexList getPeerList(){
         return this.peerList;
+    }
+
+    synchronized public String getRandomPeerID(){
+        Random rand = new Random();
+        int randomPeer = rand.nextInt(peerList.size());
+        ArrayList<String> peerNames = peerList.getVertexNames();
+        return peerNames.get(randomPeer);
+    }
+
+    public String getID(){
+        return this.messagingNodeIP + ":" + this.messagingNodePort;
     }
 
     public static void main(String[] args){

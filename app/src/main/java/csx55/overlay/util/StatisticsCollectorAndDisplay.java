@@ -3,12 +3,32 @@ package csx55.overlay.util;
 public class StatisticsCollectorAndDisplay {
     // Add all summations
 
-    int sendTracker = 0;  // number of messages sent
-    int receiveTracker = 0;  // number of messages that were received
-    int relayTracker = 0; // Number of messages that were relayed.
-    long sendSummation = 0; // Sum of value that it has sent
-    long receiveSummation = 0;  // Sum of the payloads that it has received
+    private int sendTracker;  // number of messages sent
+    private int receiveTracker;  // number of messages that were received
+    private int relayTracker; // Number of messages that were relayed.
+    private long sendSummation; // Sum of value that it has sent
+    private long receiveSummation;  // Sum of the payloads that it has received
 
 
+    public StatisticsCollectorAndDisplay(){
+        this.sendTracker = 0;
+        this.receiveTracker = 0;
+        this.relayTracker = 0;
+        this.sendSummation = 0;
+        this.receiveSummation = 0;
+    }
+
+    synchronized public void incrementSendTracker(){
+        this.sendTracker = sendTracker + 1;
+    }
+
+    synchronized public void incrementReceivedTracker(){
+        this.receiveTracker = receiveTracker + 1;
+    }
+
+    synchronized public void displayStats(){
+        System.out.println("receiveTracker: " + receiveTracker);
+        System.out.println("sendTracker: " + sendTracker);
+    }
     
 }
