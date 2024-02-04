@@ -131,6 +131,7 @@ public class VertexList {
     synchronized public void sendAllNodes(Event event){
         try {
             for(Vertex vertex : this.getValues()){
+                vertex.printVertex();
                 TCPSender send = new TCPSender(vertex.getSocket());
                 send.sendData(event.getBytes());
             }

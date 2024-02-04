@@ -41,6 +41,7 @@ public class Vertex {
         }
         System.out.println(" ---");
 
+        System.out.println("--- socket: " + this.socket + " ---");
     }
 
     public void addNeighbor(Vertex vertex){

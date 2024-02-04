@@ -134,6 +134,11 @@ public class MessagingNode implements Node{
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
         Socket peerSocket = vertex.getSocket();
+        
+        TCPReceiverThread receiver = new TCPReceiverThread(this, peerSocket);
+        Thread receiverThread = new Thread(receiver);
+        receiverThread.start();
+
         TCPSender tcpSender = new TCPSender(peerSocket);
         tcpSender.sendData(peerConnection.getBytes());
     }

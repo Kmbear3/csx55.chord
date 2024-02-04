@@ -24,6 +24,7 @@ public class MessageSender {
     synchronized public void sendPoke(){
         Poke poke = new Poke(node.getMessagingNodeIP(), node.getMessagingNodePort());
         VertexList peerList = node.getPeerList();
+        peerList.printVertexList();
         peerList.sendAllNodes(poke);
     }
 }
