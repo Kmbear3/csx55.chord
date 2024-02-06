@@ -113,10 +113,8 @@ public class OverlayCreator {
 
     public void rewindConnections(int CR, int[][] connections){
         for(int j = 0; j < connections.length; j++){
-            if(!isFullyConnected(j, connections, CR)){
-                connections[j][(j + CR) % connections.length] = 0;
-                connections[(j + CR) % connections.length][j] = 0;
-            }
+            connections[j][(j + CR) % connections.length] = 0;
+            connections[(j + CR) % connections.length][j] = 0;
         }
     }
 
