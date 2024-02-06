@@ -46,20 +46,37 @@ public class OverlayCreator {
 
     }
 
-    public void constructRing(VertexList registeVertexList){
-        ArrayList<String> names = registeVertexList.getVertexNames();
+    // public void constructRing(VertexList registeVertexList){
+    //     ArrayList<String> names = registeVertexList.getVertexNames();
 
-        int connectionIndex = 1;
-        for(int i = 0; i < names.size(); i ++){
-            if(i == names.size() - 1){
-                connectionIndex = 0;
-            }
+    //     int connectionIndex = 1;
+    //     for(int i = 0; i < names.size(); i ++){
+    //         if(i == names.size() - 1){
+    //             connectionIndex = 0;
+    //         }
             
-            Vertex node = registeVertexList.get(names.get(i)); 
-            node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
+    //         Vertex node = registeVertexList.get(names.get(i)); 
+    //         node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
 
-            connectionIndex++;
+    //         connectionIndex++;
+    //     }
+    // }
+
+    public void constructRing(VertexList registeVertexList){
+        final ArrayList<String> names = registeVertexList.getVertexNames();
+
+        int[][] connections = new int[names.size()][names.size()];
+        Random rand = new Random();
+
+
+        for(int i = 0; i < connections.length; i++){
+            int linkWeight = rand.nextInt(10) + 1;
+
+            connections[i][(i + 1) % connections.length] = linkWeight;
+            connections[(i + 1) % connections.length][i] = linkWeight;  
         }
+
+        printConnections(connections);
     }
 
     public void assignConnections(VertexList vertexList){
