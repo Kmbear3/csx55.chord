@@ -77,8 +77,6 @@ public class OverlayCreator {
             connections[i][(i + 1) % connections.length] = linkWeight;
             connections[(i + 1) % connections.length][i] = linkWeight;  
         }
-
-        printConnections(connections);
     }
 
     public void assignConnections(VertexList vertexList){
