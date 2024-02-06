@@ -55,15 +55,19 @@ public class OverlayCreator {
     }
 
     synchronized public void assignNeighbors(int[][] connections){
+        // This assigns vertexs to other vertexs. This ensure that the connections are only made in 
+        // 1 direction that is above the line of symmetry and has a link value that is non-zero. 
+        // i makes a connection to j
+        // Above the line of symmetry i == i, j is always greater than i. 
 
-        // Use registeredNodes
-
-        Vertex node = registeredNodes.get(name); 
-        node.addNeighbor(registeredNodes.get(name));
-
-
-
-
+        for(int i = 0; i < connections.length; i ++){
+            for(int j = 0; j < connections.length; j++){
+                if(i < j && connections[i][j] != 0){
+                    Vertex node = registeredNodes.get(names.get(i));
+                    node.addNeighbor(registeredNodes.get(names.get(j)));
+                }
+            }
+        }
     }
 
 
@@ -82,9 +86,7 @@ public class OverlayCreator {
 
     public int[][] assignConnections(){
         Random rand = new Random();
-
         int[][] connections = constructRing();
-
         int CR = numberOfConnections;
 
         while(CR > 1){
@@ -92,7 +94,7 @@ public class OverlayCreator {
                 if(!isFullyConnected(j, connections, numberOfConnections)){
                     int weight =  rand.nextInt(10) + 1;
                     if((j + CR) % connections.length == j) {
-                        continue;
+                        continue; // SUS Super sus
                     }
                     else{
                         connections[j][(j + CR) % connections.length] = weight;
@@ -177,22 +179,4 @@ public class OverlayCreator {
 
         return true;
     }
-
-
-     // public void constructRing(VertexList registeVertexList){
-    //     ArrayList<String> names = registeVertexList.getVertexNames();
-
-    //     int connectionIndex = 1;
-    //     for(int i = 0; i < names.size(); i ++){
-    //         if(i == names.size() - 1){
-    //             connectionIndex = 0;
-    //         }
-            
-    //         Vertex node = registeVertexList.get(names.get(i)); 
-    //         node.addNeighbor(registeVertexList.get(names.get(connectionIndex)));
-
-    //         connectionIndex++;
-    //     }
-    // }
-
 }
