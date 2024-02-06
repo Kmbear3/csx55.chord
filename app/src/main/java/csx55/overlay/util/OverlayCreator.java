@@ -15,6 +15,7 @@ public class OverlayCreator {
     int numberOfConnections;
     VertexList registeredNodes;
     final ArrayList<String> names;
+    int[][] linkWeights; 
        
     public OverlayCreator(Registry registry, int numberOfConnections){
         this.numberOfConnections = numberOfConnections;
@@ -26,17 +27,13 @@ public class OverlayCreator {
     public void constructOverlay(){
         try {
             
-            System.out.println("Setting up overlay\n Number of nodes: " + names.size() + " \nConnection Directive: " + numberOfConnections);
-
-
+            System.out.println("Setting up overlay\nNumber of nodes: " + names.size() + " \nConnection Directive: " + numberOfConnections);
             int[][] crConnections = assignConnections();
-
+            this.linkWeights = crConnections;
             printConnections(crConnections);
 
-
             assignNeighbors(crConnections);
-            
-        
+
             // Below Just sends the messages
 
             for(Vertex vertex : registeredNodes.getValues()){
