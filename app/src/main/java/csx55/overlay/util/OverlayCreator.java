@@ -14,10 +14,12 @@ public class OverlayCreator {
     // Needs registered nodes
     int numberOfConnections;
     VertexList registeredNodes;
-
+    final ArrayList<String> names;
+       
     public OverlayCreator(Registry registry, int numberOfConnections){
         this.numberOfConnections = numberOfConnections;
         this.registeredNodes = registry.getRegistry();
+        this.names = registeredNodes.getVertexNames();
         constructOverlay();
     }   
 
@@ -101,10 +103,15 @@ public class OverlayCreator {
     }
 
     public void printConnections(int[][] matrix){
+        for(String name : names){
+            System.out.print(" | " + name + " | ");
+        }
+        System.out.println();
         for(int i = 0; i < matrix.length; i++){
             for(int j = 0; j < matrix.length; j ++){
                 System.out.print(" | " + matrix[i][j] + " | ");
             }
+            System.out.println();
         }
     }
 
