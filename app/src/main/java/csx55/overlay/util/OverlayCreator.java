@@ -34,6 +34,9 @@ public class OverlayCreator {
             printConnections(crConnections);
 
 
+            assignNeighbors(crConnections);
+            
+        
             // Below Just sends the messages
 
             for(Vertex vertex : registeredNodes.getValues()){
@@ -48,6 +51,18 @@ public class OverlayCreator {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+    }
+
+    synchronized public void assignNeighbors(int[][] connections){
+
+        // Use registeredNodes
+
+        Vertex node = registeredNodes.get(name); 
+        node.addNeighbor(registeredNodes.get(name));
+
+
+
 
     }
 
@@ -76,8 +91,13 @@ public class OverlayCreator {
             for(int j = 0; j < connections.length; j++){
                 if(!isFullyConnected(j, connections, numberOfConnections)){
                     int weight =  rand.nextInt(10) + 1;
-                    connections[j][(j + CR) % connections.length] = weight;
-                    connections[(j + CR) % connections.length][j] = weight;
+                    if((j + CR) % connections.length == j) {
+                        continue;
+                    }
+                    else{
+                        connections[j][(j + CR) % connections.length] = weight;
+                        connections[(j + CR) % connections.length][j] = weight;
+                    }
                 }
             }
 
