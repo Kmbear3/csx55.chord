@@ -26,12 +26,14 @@ public class OverlayCreator {
     public void constructOverlay(){
         try {
             
+            System.out.println("Setting up overlay\n Number of nodes: " + names.size() + " \nConnection Directive: " + numberOfConnections);
+
 
             int[][] crConnections = assignConnections();
 
             printConnections(crConnections);
 
-            
+
             // Below Just sends the messages
 
             for(Vertex vertex : registeredNodes.getValues()){
@@ -72,7 +74,7 @@ public class OverlayCreator {
 
         while(CR > 1){
             for(int j = 0; j < connections.length; j++){
-                if(!isFullyConnected(j, connections, CR)){
+                if(!isFullyConnected(j, connections, numberOfConnections)){
                     int weight =  rand.nextInt(10) + 1;
                     connections[j][(j + CR) % connections.length] = weight;
                     connections[(j + CR) % connections.length][j] = weight;
@@ -103,7 +105,15 @@ public class OverlayCreator {
             System.out.print(" | " + name + " | ");
         }
         System.out.println();
+
+        System.out.print(" | - | ");
+        for(int i = 0; i < names.size(); i ++){
+            System.out.print(" | " + i + " | ");
+        }
+        System.out.println();
+
         for(int i = 0; i < matrix.length; i++){
+            System.out.print(" | " + i + " | ");
             for(int j = 0; j < matrix.length; j ++){
                 System.out.print(" | " + matrix[i][j] + " | ");
             }
