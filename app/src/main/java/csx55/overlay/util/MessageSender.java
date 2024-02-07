@@ -32,10 +32,6 @@ public class MessageSender implements Runnable {
         peerList.sendAllNodes(poke);
     }
 
-    synchronized public void sendMessage(){
-
-    }
-
     @Override
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
@@ -55,7 +51,7 @@ public class MessageSender implements Runnable {
                 stats.incrementSendTracker();
             }
 
-            Thread.sleep(5000);
+            // Thread.sleep(5000);
 
             for(Message message : messages){
                 System.out.println("Payload: " + message.getPayload());
@@ -67,9 +63,9 @@ public class MessageSender implements Runnable {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // } catch (InterruptedException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
         }
     }
 

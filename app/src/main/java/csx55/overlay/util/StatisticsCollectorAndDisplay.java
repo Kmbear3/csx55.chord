@@ -26,6 +26,14 @@ public class StatisticsCollectorAndDisplay {
         this.receiveTracker = receiveTracker + 1;
     }
 
+    synchronized public void addSumTracker(long messageVal){
+        this.sendSummation = this.sendSummation + messageVal;
+    }
+
+    synchronized public void addReceiveTracker(long messageVal){
+        this.receiveSummation = this.receiveSummation + messageVal;
+    }
+
     synchronized public void displayStats(){
         System.out.println("receiveTracker: " + receiveTracker);
         System.out.println("sendTracker: " + sendTracker);

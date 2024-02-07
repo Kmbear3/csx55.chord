@@ -64,7 +64,6 @@ public class MessagingNode implements Node{
             // System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
             switch(event.getType()){
                 case Protocol.MESSAGE:
-                    System.out.println("MESSAGE");
                     Message message = new Message(event.getBytes());
                     messagesToProcess.add(message);
                     break;
@@ -72,11 +71,9 @@ public class MessagingNode implements Node{
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     regRes.getInfo();
                     break;
-
                 case Protocol.INITIATE_PEER_CONNECTION:
                     initiatePeerConnections(event, socket);
                     break;
-
                 case Protocol.MESSAGING_NODES_LIST:
                     createNodeList(event);
                     break;
@@ -122,13 +119,6 @@ public class MessagingNode implements Node{
                 sendInitiateConnectionRequest(peer);
             }
         }
-
-        peerList.printVertexList();
-        System.out.println("All connections are established. Number of connections: " + peers.size());
-
-        System.out.print("Connection: ");
-
-        peerList.printVertexList();
     }
 
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
