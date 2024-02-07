@@ -27,6 +27,7 @@ public class MessageSender implements Runnable {
     synchronized public void sendPoke(){
         Poke poke = new Poke(node.getMessagingNodeIP(), node.getMessagingNodePort());
         VertexList peerList = node.getPeerList();
+        System.out.println("Name: " + node.getID());
         peerList.printVertexList();
         peerList.sendAllNodes(poke);
     }

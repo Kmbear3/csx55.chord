@@ -27,7 +27,6 @@ public class OverlayCreator {
     public void constructOverlay(){
         try {
             
-            System.out.println("Setting up overlay\nNumber of nodes: " + names.size() + " \nConnection Directive: " + numberOfConnections);
             int[][] crConnections = assignConnections();
             this.linkWeights = crConnections;
             printConnections(crConnections);
@@ -118,6 +117,7 @@ public class OverlayCreator {
     }
 
     public void printConnections(int[][] matrix){
+
         for(String name : names){
             System.out.print(" | " + name + " | ");
         }
@@ -136,6 +136,7 @@ public class OverlayCreator {
             }
             System.out.println();
         }
+
     }
 
     public boolean isFullyConnected(int node, int[][] connections, int CR){
