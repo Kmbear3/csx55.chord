@@ -13,6 +13,7 @@ public class CLIHandler {
     private Scanner scan;
     private Registry registry;
     private MessagingNode node;
+    private OverlayCreator overlayCreator; 
 
 
     public CLIHandler(Registry registry){
@@ -39,12 +40,12 @@ public class CLIHandler {
                 if(result.length > 1){
                     int numberOfConnections = Integer.parseInt(result[1]);
                     System.out.println("number of connections: " + numberOfConnections);
-                    OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                     break;
                 }else{
                     int numberOfConnections = 4;
                     System.out.println("number of connections: " + numberOfConnections);
-                    OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                 }
                 break;
             case "start":
@@ -57,8 +58,13 @@ public class CLIHandler {
                 }
                 break;
             case "send-overlay-link-weights":
-                LinkWeights linkWeights = new LinkWeights(registry.getConnetions());
-                
+                if(overlayCreator != null){
+                    LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections());
+                    registry.sendAllNodes(linkWeights);                  
+                }
+                else{
+                    System.out.println("Cannot Send Link Weights. Overlay is unconstructed.");
+                }
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }

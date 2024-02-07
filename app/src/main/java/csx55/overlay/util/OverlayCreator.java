@@ -66,7 +66,6 @@ public class OverlayCreator {
         }
     }
 
-
     public int[][] constructRing(){
         int[][] connections = new int[this.names.size()][this.names.size()];
         Random rand = new Random();
@@ -176,5 +175,9 @@ public class OverlayCreator {
         }
 
         return true;
+    }
+
+    public int[][] getConnections(){
+        return linkWeights;
     }
 }
