@@ -59,7 +59,7 @@ public class CLIHandler {
                 break;
             case "send-overlay-link-weights":
                 if(overlayCreator != null){
-                    LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections());
+                    LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections(), this.overlayCreator.createLinkInfo());
                     registry.sendAllNodes(linkWeights);                  
                 }
                 else{

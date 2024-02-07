@@ -88,7 +88,9 @@ public class MessagingNode implements Node{
                     poke.printPoke();
                     break;
                 case Protocol.Link_Weights:
-
+                    LinkWeights linkWeights = new LinkWeights(event.getBytes());
+                    this.linkWeights = linkWeights.getConnections();
+                    break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
                     System.exit(0);

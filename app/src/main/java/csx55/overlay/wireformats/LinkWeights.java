@@ -24,9 +24,9 @@ public class LinkWeights implements Event, Protocol{
     private final int[][] connections;
 
     // hostnameA:portnumA hostnameB:portnumB weight
-    public LinkWeights(int[][] connections){
+    public LinkWeights(int[][] connections, ArrayList<String> linkInfos){
         this.connections = connections;
-        createLinkInfos();
+        this.linkInfos = linkInfos;
     }
 
     public LinkWeights(byte[] marshalledBytes) throws IOException {
@@ -51,15 +51,24 @@ public class LinkWeights implements Event, Protocol{
         din.close();
     }
 
-    public void createLinkInfos(){
-        
-    }
-    public int[][] createConnections(ArrayList<String> linkInfos){
+
+    synchronized public int[][] createConnections(ArrayList<String> linkInfos){
+        // This convert linkInfos to int[][]
         int[][] nodeConnections = new int[linkInfos.size()][linkInfos.size()];
+
+        for(int i = 0;  i < linkInfos.size(); i ++ ){
+            for(int j = 0; j < linkInfos.size(); j ++){
+                // linkInfos.add(names.get(i) + " " + names.get(j) + " " + linkWeights[i][j]);
+
+                nodeConnections[i][j] = Integer.parseInt(linkInfos.get(i).split(" ")[2]);
+            }
+        }
         return nodeConnections;
     }
 
-
+    public int[][] getConnections(){
+        return connections;
+    }
 
     @Override
     public int getType() {
