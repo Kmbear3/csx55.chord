@@ -28,9 +28,6 @@ public class Registry implements Node {
         System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
 
         switch(event.getType()){
-            case Protocol.MESSAGE:
-                System.out.println("MESSAGE");
-                break;
             case Protocol.REGISTER_REQUEST:
                 vertexList.registerVertex(event, socket);
                 break;

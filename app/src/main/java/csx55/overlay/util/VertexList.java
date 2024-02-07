@@ -111,6 +111,7 @@ public class VertexList {
     }
 
     public int size(){
+        // returns an approximation 
         return registeredVertexs.size();
     }
 
