@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
+import csx55.overlay.wireformats.LinkWeights;
 import csx55.overlay.wireformats.TaskInitiate;
 
 public class CLIHandler {
@@ -55,6 +56,9 @@ public class CLIHandler {
                     System.out.println("Incorrect Instruction! please specify number of rounds.");
                 }
                 break;
+            case "send-overlay-link-weights":
+                LinkWeights linkWeights = new LinkWeights(registry.getConnetions());
+                
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }

@@ -31,6 +31,8 @@ public class MessagingNode implements Node{
     private VertexList peerList = new VertexList();
     private ConcurrentLinkedQueue<Message> messagesToProcess = new ConcurrentLinkedQueue<>();
 
+    private int[][] linkWeights;
+
     public MessagingNode(String registryIP, int registryPort){
         try {
             Socket registrySocket = new Socket(registryIP, registryPort);
@@ -85,6 +87,8 @@ public class MessagingNode implements Node{
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
                     break;
+                case Protocol.Link_Weights:
+
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
                     System.exit(0);
