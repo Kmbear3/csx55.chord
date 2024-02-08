@@ -35,6 +35,8 @@ public class MessagingNode implements Node{
 
     private int[][] linkWeights;
 
+    private String[] names;
+
     public MessagingNode(String registryIP, int registryPort){
         try {
             Socket registrySocket = new Socket(registryIP, registryPort);
@@ -92,6 +94,7 @@ public class MessagingNode implements Node{
                 case Protocol.Link_Weights:
                     LinkWeights linkWeights = new LinkWeights(event.getBytes());
                     this.linkWeights = linkWeights.getConnections();
+                    this.names = linkWeights.getNames();
                     printConnections(this.linkWeights);
                     break;
                 default:
@@ -106,7 +109,7 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights);
+        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }

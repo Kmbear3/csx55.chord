@@ -22,6 +22,7 @@ public class LinkWeights implements Event, Protocol{
     private int numberOfLinks;
     ArrayList<String> linkInfos = new ArrayList<>();
     private final int[][] connections;
+    private String[] names;
 
     // hostnameA:portnumA hostnameB:portnumB weight
     public LinkWeights(int[][] connections, ArrayList<String> linkInfos){
@@ -75,6 +76,7 @@ public class LinkWeights implements Event, Protocol{
                 nodeConnections[i][j] = Integer.parseInt(linkInfos.get(index).split(" ")[2]);
                 index++;
             }
+            this.names[i] = linkInfos.get(i).split(" ")[0];
         }
 
         return nodeConnections;
@@ -82,6 +84,10 @@ public class LinkWeights implements Event, Protocol{
 
     public int[][] getConnections(){
         return connections;
+    }
+
+    public String[] getNames(){
+        return this.names;
     }
 
     @Override

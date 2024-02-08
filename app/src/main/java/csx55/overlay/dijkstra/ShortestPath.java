@@ -10,9 +10,11 @@ import java.util.Set;
 
 public class ShortestPath {
     private final int[][] weights;
+    private final String[] names;
 
-    public ShortestPath(int[][] linkWeights){
+    public ShortestPath(int[][] linkWeights, String[] names){
         this.weights = linkWeights;
+        this.names = names;
     }
 
 
@@ -35,19 +37,26 @@ public class ShortestPath {
         ArrayList<String> neighbors = new ArrayList<>();
         // Return all of the CR connections that a node has
 
+        
+
 
         return neighbors;
     }
 
     public int getIndex(String node){
-        int indexOfNode = -1;
-
         // Given names, what index maps the name correctly into linkWeight??? 
 
-        return indexOfNode;
+        int error = -1;
+
+        for(int i = 0; i < this.names.length; i++){
+            if(node.equals(this.names[i])){
+                return i;
+            }
+        }
+        return error;
     }
 
-    public HashMap<String, Integer> calculateShortestPaths(int[][] linkWeights, String nodeSource, ArrayList<String> nodesInGraph){
+    public HashMap<String, Integer> calculateShortestPaths(String nodeSource, ArrayList<String> nodesInGraph){
         
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
         ArrayList<String> unvisited = new ArrayList<>();
@@ -68,7 +77,7 @@ public class ShortestPath {
             unvisited.remove(visiting);
 
             for(String neighbor : getNeighbors(visiting)){
-                int pathDistance = nodeDistances.get(visiting) + linkWeights[getIndex(visiting)][getIndex(neighbor)];
+                int pathDistance = nodeDistances.get(visiting) + weights[getIndex(visiting)][getIndex(neighbor)];
                 
                 if(pathDistance < nodeDistances.get(neighbor)){
                     nodeDistances.put(neighbor, pathDistance);

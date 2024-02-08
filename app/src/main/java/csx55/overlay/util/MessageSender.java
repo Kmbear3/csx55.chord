@@ -16,12 +16,14 @@ public class MessageSender implements Runnable {
     private int numberOfRounds;
     private MessagingNode node;
     private int[][] linkWeights;
+    private String[] names;
 
-    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights){
+    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights, String[] names){
         this.messages = messages;
         this.node = node;
         this.numberOfRounds = numberOfRounds;
         this.linkWeights = linkWeights;
+        this.names = names;
     }
 
     public MessageSender(MessagingNode node){
@@ -39,7 +41,7 @@ public class MessageSender implements Runnable {
     @Override
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
-        ShortestPath paths = new ShortestPath(linkWeights);
+        ShortestPath paths = new ShortestPath(linkWeights, names);
         try {
             for(int i = 0; i < this.numberOfRounds; i++){
                 ArrayList<String> routePlan = new ArrayList<>();
