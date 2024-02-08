@@ -6,6 +6,8 @@ import csx55.overlay.wireformats.Poke;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import csx55.overlay.dijkstra.ShortestPath;
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.transport.TCPSender;
 
@@ -13,11 +15,13 @@ public class MessageSender implements Runnable {
     private ConcurrentLinkedQueue<Message> messages;
     private int numberOfRounds;
     private MessagingNode node;
+    private int[][] linkWeights;
 
-    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds){
+    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights){
         this.messages = messages;
         this.node = node;
         this.numberOfRounds = numberOfRounds;
+        this.linkWeights = linkWeights;
     }
 
     public MessageSender(MessagingNode node){
@@ -35,6 +39,7 @@ public class MessageSender implements Runnable {
     @Override
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
+        ShortestPath paths = new ShortestPath(linkWeights);
         try {
             for(int i = 0; i < this.numberOfRounds; i++){
                 ArrayList<String> routePlan = new ArrayList<>();

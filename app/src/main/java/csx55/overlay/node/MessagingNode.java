@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.overlay.dijkstra.ShortestPath;
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
@@ -105,7 +106,7 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds);
+        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }
