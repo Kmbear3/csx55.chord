@@ -36,9 +36,13 @@ public class ShortestPath {
     public ArrayList<String> getNeighbors(String visiting){
         ArrayList<String> neighbors = new ArrayList<>();
         // Return all of the CR connections that a node has
+        int indexOfnode = getIndex(visiting);
 
-        
-
+        for(int i = 0; i < weights.length; i++){
+           if(weights[indexOfnode][i] != 0){
+                neighbors.add(names[i]);
+           }
+        }
 
         return neighbors;
     }
