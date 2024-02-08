@@ -63,15 +63,20 @@ public class LinkWeights implements Event, Protocol{
 
     synchronized public int[][] createConnections(ArrayList<String> linkInfos){
         // This convert linkInfos to int[][]
-        int[][] nodeConnections = new int[linkInfos.size()][linkInfos.size()];
+        int numberOfNodes = (int) Math.floor(Math.sqrt(linkInfos.size()));
+        int[][] nodeConnections = new int[numberOfNodes][numberOfNodes];
+        
+        int index = 0;
 
-        for(int i = 0;  i < linkInfos.size(); i ++ ){
-            for(int j = 0; j < linkInfos.size(); j ++){
+        for(int i = 0;  i < numberOfNodes; i ++ ){
+            for(int j = 0; j < numberOfNodes; j ++){
                 // linkInfos.add(names.get(i) + " " + names.get(j) + " " + linkWeights[i][j]);
 
-                nodeConnections[i][j] = Integer.parseInt(linkInfos.get(i).split(" ")[2]);
+                nodeConnections[i][j] = Integer.parseInt(linkInfos.get(index).split(" ")[2]);
+                index++;
             }
         }
+
         return nodeConnections;
     }
 

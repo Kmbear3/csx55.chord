@@ -91,7 +91,7 @@ public class MessagingNode implements Node{
                 case Protocol.Link_Weights:
                     LinkWeights linkWeights = new LinkWeights(event.getBytes());
                     this.linkWeights = linkWeights.getConnections();
-                    // printConnections(this.linkWeights);
+                    printConnections(this.linkWeights);
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
@@ -178,7 +178,6 @@ public class MessagingNode implements Node{
     public void printConnections(int[][] matrix){
 
         for(int i = 0; i < matrix.length; i++){
-            System.out.print(" | " + i + " | ");
             for(int j = 0; j < matrix.length; j ++){
                 System.out.print(" | " + matrix[i][j] + " | ");
             }
