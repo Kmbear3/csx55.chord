@@ -65,6 +65,7 @@ public class CLIHandler {
                 else{
                     System.out.println("Cannot Send Link Weights. Overlay is unconstructed.");
                 }
+                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }

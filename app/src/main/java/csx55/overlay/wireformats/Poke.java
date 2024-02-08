@@ -71,7 +71,4 @@ public class Poke implements Event, Protocol{
 
         return marshalledBytes;
     }
-
-
-
 }

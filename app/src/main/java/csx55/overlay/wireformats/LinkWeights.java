@@ -20,21 +20,29 @@ public class LinkWeights implements Event, Protocol{
     // A Linkinfo connecting messaging nodes A and B contains the following fields: hostnameA:portnumA hostnameB:portnumB weight
     
     private int numberOfLinks;
-    ArrayList<String> linkInfos;
+    ArrayList<String> linkInfos = new ArrayList<>();
     private final int[][] connections;
 
     // hostnameA:portnumA hostnameB:portnumB weight
     public LinkWeights(int[][] connections, ArrayList<String> linkInfos){
         this.connections = connections;
         this.linkInfos = linkInfos;
+        this.numberOfLinks = linkInfos.size();
     }
 
     public LinkWeights(byte[] marshalledBytes) throws IOException {
+        System.out.println("COnstructor called");
         ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
        
         int messageType = din.readInt();
+
+        if(Protocol.Link_Weights != messageType){
+            System.err.println("Type mis-match in LinkWeights");
+        }
+
         this.numberOfLinks = din.readInt();
+        System.out.println(this.numberOfLinks);
 
         for(int i = 0; i < this.numberOfLinks; i ++){
             int linkLength = din.readInt();
@@ -42,10 +50,11 @@ public class LinkWeights implements Event, Protocol{
             din.readFully(linkBytes);
             String linkInfo = new String(linkBytes);
 
-            linkInfos.add(linkInfo);
+            System.out.println(linkInfo);
+            this.linkInfos.add(linkInfo);
         }
 
-        connections = createConnections(linkInfos);
+        this.connections = createConnections(linkInfos);
 
         baInputStream.close();
         din.close();
@@ -81,7 +90,7 @@ public class LinkWeights implements Event, Protocol{
         ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 
-        dout.writeInt(Protocol.MESSAGE);
+        dout.writeInt(Protocol.Link_Weights);
         dout.writeInt(this.numberOfLinks);
        
        
