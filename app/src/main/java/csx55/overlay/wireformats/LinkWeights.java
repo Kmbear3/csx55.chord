@@ -32,7 +32,6 @@ public class LinkWeights implements Event, Protocol{
     }
 
     public LinkWeights(byte[] marshalledBytes) throws IOException {
-        System.out.println("COnstructor called");
         ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
        
@@ -43,7 +42,6 @@ public class LinkWeights implements Event, Protocol{
         }
 
         this.numberOfLinks = din.readInt();
-        System.out.println(this.numberOfLinks);
 
         for(int i = 0; i < this.numberOfLinks; i ++){
             int linkLength = din.readInt();
@@ -51,7 +49,6 @@ public class LinkWeights implements Event, Protocol{
             din.readFully(linkBytes);
             String linkInfo = new String(linkBytes);
 
-            System.out.println(linkInfo);
             this.linkInfos.add(linkInfo);
         }
 
