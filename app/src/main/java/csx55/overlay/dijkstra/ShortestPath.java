@@ -115,6 +115,10 @@ public class ShortestPath {
 
         }
 
+        // HIGHLY SUS 
+        paths.remove(source);
+        // AJHHH HIHGLY SUS!!! 
+
         addDestinations(paths);
         printRoutes(paths);
         return paths;

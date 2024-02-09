@@ -95,4 +95,8 @@ public class Message implements Event, Protocol {
         return marshalledBytes;
     }
 
+    public ArrayList<String> getRoutePlan(){
+        return this.routePlan;
+    }
+
 }
