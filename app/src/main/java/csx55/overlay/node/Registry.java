@@ -51,6 +51,10 @@ public class Registry implements Node {
         return vertexList;
     }
 
+    synchronized public void sendAllNodes(Event event){
+        vertexList.sendAllNodes(event);
+    }
+
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Registry registry = new Registry(port);

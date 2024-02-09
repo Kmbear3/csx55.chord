@@ -6,6 +6,8 @@ import csx55.overlay.wireformats.Poke;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import csx55.overlay.dijkstra.ShortestPath;
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.transport.TCPSender;
 
@@ -13,11 +15,15 @@ public class MessageSender implements Runnable {
     private ConcurrentLinkedQueue<Message> messages;
     private int numberOfRounds;
     private MessagingNode node;
+    private int[][] linkWeights;
+    private String[] names;
 
-    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds){
+    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights, String[] names){
         this.messages = messages;
         this.node = node;
         this.numberOfRounds = numberOfRounds;
+        this.linkWeights = linkWeights;
+        this.names = names;
     }
 
     public MessageSender(MessagingNode node){
@@ -32,13 +38,13 @@ public class MessageSender implements Runnable {
         peerList.sendAllNodes(poke);
     }
 
-    synchronized public void sendMessage(){
-
-    }
-
     @Override
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
+        ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
+
+        paths.calculateShortestPaths();
+        
         try {
             for(int i = 0; i < this.numberOfRounds; i++){
                 ArrayList<String> routePlan = new ArrayList<>();
@@ -55,7 +61,7 @@ public class MessageSender implements Runnable {
                 stats.incrementSendTracker();
             }
 
-            Thread.sleep(5000);
+            // Thread.sleep(5000);
 
             for(Message message : messages){
                 System.out.println("Payload: " + message.getPayload());
@@ -67,9 +73,9 @@ public class MessageSender implements Runnable {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // } catch (InterruptedException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
         }
     }
 

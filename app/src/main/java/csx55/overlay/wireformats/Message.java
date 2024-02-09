@@ -38,7 +38,7 @@ public class Message implements Event, Protocol {
             routePlan.add(vertexID);
         }
 
-        System.out.println("Inside Message() Type: " + messageType + "---- Payload: " + payload);
+        // System.out.println("Inside Message() Type: " + messageType + "---- Payload: " + payload);
 
         baInputStream.close();
         din.close();
@@ -72,7 +72,7 @@ public class Message implements Event, Protocol {
             dout.write(nodeBytes);
         }
 
-        System.out.println("Inside Message.getBytes() Type: " + Protocol.MESSAGE + "---- Payload: " + this.payload);
+        // System.out.println("Inside Message.getBytes() Type: " + Protocol.MESSAGE + "---- Payload: " + this.payload);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();

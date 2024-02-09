@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.overlay.dijkstra.ShortestPath;
 import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.MessageSender;
+import csx55.overlay.util.OverlayCreator;
 import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.*;
@@ -30,6 +32,10 @@ public class MessagingNode implements Node{
 
     private VertexList peerList = new VertexList();
     private ConcurrentLinkedQueue<Message> messagesToProcess = new ConcurrentLinkedQueue<>();
+
+    private int[][] linkWeights;
+
+    private String[] names;
 
     public MessagingNode(String registryIP, int registryPort){
         try {
@@ -64,7 +70,6 @@ public class MessagingNode implements Node{
             // System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
             switch(event.getType()){
                 case Protocol.MESSAGE:
-                    System.out.println("MESSAGE");
                     Message message = new Message(event.getBytes());
                     messagesToProcess.add(message);
                     break;
@@ -72,11 +77,9 @@ public class MessagingNode implements Node{
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     regRes.getInfo();
                     break;
-
                 case Protocol.INITIATE_PEER_CONNECTION:
                     initiatePeerConnections(event, socket);
                     break;
-
                 case Protocol.MESSAGING_NODES_LIST:
                     createNodeList(event);
                     break;
@@ -87,6 +90,12 @@ public class MessagingNode implements Node{
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
+                    break;
+                case Protocol.Link_Weights:
+                    LinkWeights linkWeights = new LinkWeights(event.getBytes());
+                    this.linkWeights = linkWeights.getConnections();
+                    this.names = linkWeights.getNames();
+                    printConnections(this.linkWeights);
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
@@ -100,7 +109,7 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds);
+        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }
@@ -122,13 +131,6 @@ public class MessagingNode implements Node{
                 sendInitiateConnectionRequest(peer);
             }
         }
-
-        peerList.printVertexList();
-        System.out.println("All connections are established. Number of connections: " + peers.size());
-
-        System.out.print("Connection: ");
-
-        peerList.printVertexList();
     }
 
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
@@ -173,6 +175,19 @@ public class MessagingNode implements Node{
 
     public String getID(){
         return this.messagingNodeIP + ":" + this.messagingNodePort;
+    }
+
+
+   //TODO: Remove me!!! 
+    public void printConnections(int[][] matrix){
+
+        for(int i = 0; i < matrix.length; i++){
+            for(int j = 0; j < matrix.length; j ++){
+                System.out.print(" | " + matrix[i][j] + " | ");
+            }
+            System.out.println();
+        }
+
     }
 
     public static void main(String[] args){

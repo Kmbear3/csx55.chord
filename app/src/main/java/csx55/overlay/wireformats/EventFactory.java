@@ -36,6 +36,8 @@ public class EventFactory {
                     return new TaskInitiate(marshalledBytes);
                 case Protocol.POKE:
                     return new Poke(marshalledBytes);
+                case Protocol.Link_Weights:
+                    return new LinkWeights(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

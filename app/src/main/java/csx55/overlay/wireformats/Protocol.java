@@ -10,5 +10,6 @@ public interface Protocol {
     public static final int INITIATE_PEER_CONNECTION = 5;
     public static final int TASK_INITIATE = 6;
     public static final int POKE = 7;
+    public static final int Link_Weights = 8;
     
 }

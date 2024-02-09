@@ -66,7 +66,6 @@ public class OverlayCreator {
         }
     }
 
-
     public int[][] constructRing(){
         int[][] connections = new int[this.names.size()][this.names.size()];
         Random rand = new Random();
@@ -177,4 +176,21 @@ public class OverlayCreator {
 
         return true;
     }
+
+    public int[][] getConnections(){
+        return linkWeights;
+    }
+
+    public ArrayList<String> createLinkInfo(){
+        ArrayList<String> linkInfos = new ArrayList<>();
+
+        for(int i = 0;  i < linkWeights.length; i ++ ){
+            for(int j = 0; j < linkWeights.length; j ++){
+                linkInfos.add(names.get(i) + " " + names.get(j) + " " + linkWeights[i][j]);
+            }
+        }
+
+        return linkInfos;
+    }
 }
+

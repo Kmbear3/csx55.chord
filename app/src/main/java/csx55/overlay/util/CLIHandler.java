@@ -6,12 +6,14 @@ import java.util.StringTokenizer;
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
+import csx55.overlay.wireformats.LinkWeights;
 import csx55.overlay.wireformats.TaskInitiate;
 
 public class CLIHandler {
     private Scanner scan;
     private Registry registry;
     private MessagingNode node;
+    private OverlayCreator overlayCreator; 
 
 
     public CLIHandler(Registry registry){
@@ -38,12 +40,12 @@ public class CLIHandler {
                 if(result.length > 1){
                     int numberOfConnections = Integer.parseInt(result[1]);
                     System.out.println("number of connections: " + numberOfConnections);
-                    OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                     break;
                 }else{
                     int numberOfConnections = 4;
                     System.out.println("number of connections: " + numberOfConnections);
-                    OverlayCreator overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
                 }
                 break;
             case "start":
@@ -53,6 +55,15 @@ public class CLIHandler {
                     registry.onEvent(taskInitiate, null);
                 }else {
                     System.out.println("Incorrect Instruction! please specify number of rounds.");
+                }
+                break;
+            case "send-overlay-link-weights":
+                if(overlayCreator != null){
+                    LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections(), this.overlayCreator.createLinkInfo());
+                    registry.sendAllNodes(linkWeights);                  
+                }
+                else{
+                    System.out.println("Cannot Send Link Weights. Overlay is unconstructed.");
                 }
                 break;
             default:
