@@ -65,24 +65,25 @@ public class ShortestPath {
 
     public HashMap<String, ArrayList<String>> calculateShortestPaths(){
         String nodeSource = this.source;
-        // String[] nodesInGraph = this.names;
+        String[] nodesInGraph = this.names;
 
 
         HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
         ArrayList<String> unvisited = new ArrayList<>();
         ArrayList<String> visited = new ArrayList<>();
+
     
         nodeDistances.put(nodeSource, 0);
         unvisited.add(nodeSource);
 
-        // for(int i = 0; i < nodesInGraph.length; i ++){
-        //     if(!nodesInGraph[i].equals(nodeSource)){
-        //         nodeDistances.put(nodesInGraph[i], Integer.MAX_VALUE);
-        //     }
-
-        //     unvisited.add(nodesInGraph[i]);
-        // }
+        for(int i = 0; i < nodesInGraph.length; i ++){
+            if(!nodesInGraph[i].equals(nodeSource)){
+                nodeDistances.put(nodesInGraph[i], Integer.MAX_VALUE);
+            }
+            paths.put(names[i],  new ArrayList<>());
+            // unvisited.add(nodesInGraph[i]);
+        }
         
 
         while(!unvisited.isEmpty()){
@@ -118,7 +119,7 @@ public class ShortestPath {
     public void printRoutes(HashMap<String, ArrayList<String>> paths){
         for(int i = 0; i < names.length; i++){
             ArrayList<String> route = paths.get(names[i]);
-            System.out.println(names[i]);
+            System.out.print("Sink " + names[i]);
 
             for(int j = 0; j < route.size(); j++){
                 System.out.print(route.get(j) + " -> ");

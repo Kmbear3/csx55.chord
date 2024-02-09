@@ -66,17 +66,19 @@ public class LinkWeights implements Event, Protocol{
         // This convert linkInfos to int[][]
         int numberOfNodes = (int) Math.floor(Math.sqrt(linkInfos.size()));
         int[][] nodeConnections = new int[numberOfNodes][numberOfNodes];
+        this.names = new String[numberOfNodes];
         
         int index = 0;
 
         for(int i = 0;  i < numberOfNodes; i ++ ){
+            this.names[i] = linkInfos.get(index).split(" ")[0];
+
             for(int j = 0; j < numberOfNodes; j ++){
                 // linkInfos.add(names.get(i) + " " + names.get(j) + " " + linkWeights[i][j]);
 
                 nodeConnections[i][j] = Integer.parseInt(linkInfos.get(index).split(" ")[2]);
                 index++;
             }
-            this.names[i] = linkInfos.get(i).split(" ")[0];
         }
 
         return nodeConnections;
