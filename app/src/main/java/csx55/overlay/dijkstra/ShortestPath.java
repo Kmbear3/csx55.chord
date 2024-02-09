@@ -8,13 +8,17 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import javax.swing.RowFilter.Entry;
+
 public class ShortestPath {
     private final int[][] weights;
     private final String[] names;
+    private final String source; 
 
     public ShortestPath(String source, int[][] linkWeights, String[] names){
         this.weights = linkWeights;
         this.names = names;
+        this.source = source;
     }
 
     public String nodeWithMinDistance(Map<String, Integer> nodeDistances, ArrayList<String> unvisited ){
@@ -59,8 +63,11 @@ public class ShortestPath {
         return error;
     }
 
-    public HashMap<String, ArrayList<String>> calculateShortestPaths(String nodeSource, String[] nodesInGraph){
-        
+    public HashMap<String, ArrayList<String>> calculateShortestPaths(){
+        String nodeSource = this.source;
+        // String[] nodesInGraph = this.names;
+
+
         HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
         ArrayList<String> unvisited = new ArrayList<>();
@@ -89,7 +96,7 @@ public class ShortestPath {
                 if(!visited.contains(neighbor)){
 
                     if(pathDistance < nodeDistances.get(neighbor)){
-                        
+
                         nodeDistances.put(neighbor, pathDistance);
                         ArrayList<String> shortestPath = paths.get(visiting);
                         shortestPath.add(visiting);
@@ -103,7 +110,22 @@ public class ShortestPath {
             visited.add(visiting);
         }
 
+        printRoutes(paths);
         return paths;
+    }
+
+
+    public void printRoutes(HashMap<String, ArrayList<String>> paths){
+        for(int i = 0; i < names.length; i++){
+            ArrayList<String> route = paths.get(names[i]);
+            System.out.println(names[i]);
+
+            for(int j = 0; j < route.size(); j++){
+                System.out.print(route.get(j) + " -> ");
+            }
+
+            System.out.println();
+        }
     }
 }
 

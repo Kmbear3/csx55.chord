@@ -42,6 +42,8 @@ public class MessageSender implements Runnable {
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
         ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
+
+        paths.calculateShortestPaths();
         
         try {
             for(int i = 0; i < this.numberOfRounds; i++){
