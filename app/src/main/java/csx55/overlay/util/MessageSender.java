@@ -41,7 +41,8 @@ public class MessageSender implements Runnable {
     @Override
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
-        ShortestPath paths = new ShortestPath(linkWeights, names);
+        ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
+        
         try {
             for(int i = 0; i < this.numberOfRounds; i++){
                 ArrayList<String> routePlan = new ArrayList<>();

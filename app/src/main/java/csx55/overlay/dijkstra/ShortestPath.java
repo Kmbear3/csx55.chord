@@ -12,11 +12,10 @@ public class ShortestPath {
     private final int[][] weights;
     private final String[] names;
 
-    public ShortestPath(int[][] linkWeights, String[] names){
+    public ShortestPath(String source, int[][] linkWeights, String[] names){
         this.weights = linkWeights;
         this.names = names;
     }
-
 
     public String nodeWithMinDistance(Map<String, Integer> nodeDistances, ArrayList<String> unvisited ){
         String minDistanceNode = ""; 
@@ -60,20 +59,24 @@ public class ShortestPath {
         return error;
     }
 
-    public HashMap<String, Integer> calculateShortestPaths(String nodeSource, ArrayList<String> nodesInGraph){
+    public HashMap<String, ArrayList<String>> calculateShortestPaths(String nodeSource, String[] nodesInGraph){
         
+        HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
         ArrayList<String> unvisited = new ArrayList<>();
-
+        ArrayList<String> visited = new ArrayList<>();
+    
         nodeDistances.put(nodeSource, 0);
+        unvisited.add(nodeSource);
 
-        for(int i = 0; i < nodesInGraph.size(); i ++){
-            if(!nodesInGraph.get(i).equals(nodeSource)){
-                nodeDistances.put(nodesInGraph.get(i), Integer.MAX_VALUE);
-            }
+        // for(int i = 0; i < nodesInGraph.length; i ++){
+        //     if(!nodesInGraph[i].equals(nodeSource)){
+        //         nodeDistances.put(nodesInGraph[i], Integer.MAX_VALUE);
+        //     }
 
-            unvisited.add(nodesInGraph.get(i));
-        }
+        //     unvisited.add(nodesInGraph[i]);
+        // }
+        
 
         while(!unvisited.isEmpty()){
             // NEeds to be start node (source)
@@ -82,17 +85,57 @@ public class ShortestPath {
 
             for(String neighbor : getNeighbors(visiting)){
                 int pathDistance = nodeDistances.get(visiting) + weights[getIndex(visiting)][getIndex(neighbor)];
-                
-                if(pathDistance < nodeDistances.get(neighbor)){
-                    nodeDistances.put(neighbor, pathDistance);
+            
+                if(!visited.contains(neighbor)){
+
+                    if(pathDistance < nodeDistances.get(neighbor)){
+                        
+                        nodeDistances.put(neighbor, pathDistance);
+                        ArrayList<String> shortestPath = paths.get(visiting);
+                        shortestPath.add(visiting);
+                        paths.put(neighbor, shortestPath);
+                    
+                    }
+
+                    unvisited.add(neighbor);
                 }
             }
+            visited.add(visiting);
         }
 
-        return nodeDistances;
+        return paths;
     }
+}
+
+    // while (unsettledNodes.size() != 0) {
+    //     Node currentNode = getLowestDistanceNode(unsettledNodes);
+
+    //     unsettledNodes.remove(currentNode);
+
+    //     for (Entry < Node, Integer> adjacencyPair: currentNode.getAdjacentNodes().entrySet()) {
+    //         Node adjacentNode = adjacencyPair.getKey();
+    //         Integer edgeWeight = adjacencyPair.getValue();
+
+    //         if (!settledNodes.contains(adjacentNode)) {
+    //             calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
+    //             unsettledNodes.add(adjacentNode);
+    //         }
+    //     }
+    //     settledNodes.add(currentNode);
+    // }
+    // return graph;
+
+    // private static void CalculateMinimumDistance(Node evaluationNode,Integer edgeWeigh, Node sourceNode) {
+    // Integer sourceDistance = sourceNode.getDistance();
 
 
+    // if (sourceDistance + edgeWeigh < evaluationNode.getDistance()) {
+    //     evaluationNode.setDistance(sourceDistance + edgeWeigh);
+    //     LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
+    //     shortestPath.add(sourceNode);
+    //     evaluationNode.setShortestPath(shortestPath);
+    // }
+//  }
 
 //     function Dijkstra(Graph, source):
 //        dist[source]  := 0                     // Distance from source to source is set to 0
@@ -114,4 +157,3 @@ public class ShortestPath {
 //   end function
 
     
-}
