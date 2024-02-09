@@ -48,8 +48,9 @@ public class MessageSender implements Runnable {
         try {
             for(int i = 0; i < this.numberOfRounds; i++){
               
-                final ArrayList<String> route = routingCache.getRoute();
+                final ArrayList<String> route = new ArrayList<String>(routingCache.getRoute());
 
+                System.out.println(route);
                 Message message = new Message(route);
 
                 VertexList peerList = node.getPeerList();
@@ -58,6 +59,7 @@ public class MessageSender implements Runnable {
                 TCPSender send = new TCPSender(vertex.getSocket());
                 send.sendData(message.getBytes());
                 stats.incrementSendTracker();
+                stats.addSendSum(message.getPayload());
             }
 
             for(Message message : messages){
@@ -68,19 +70,21 @@ public class MessageSender implements Runnable {
                     stats.incrementReceivedTracker();
                     stats.addReceiveSum(message.getPayload());
                 }
+                else{
 
-                int nextNode = routePlan.indexOf(node.getID()) + 1;
+                    int nextNode = routePlan.indexOf(node.getID()) + 1;
 
-                VertexList peerList = node.getPeerList();
-                Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
+                    VertexList peerList = node.getPeerList();
+                    Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
 
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(message.getBytes());
-                stats.incrementRelayed();
+                    TCPSender send = new TCPSender(vertex.getSocket());
+                    send.sendData(message.getBytes());
+                    stats.incrementRelayed();
+                }
 
             }
 
-            Thread.sleep(15000);
+            Thread.sleep(10000);
 
             stats.displayStats();
 

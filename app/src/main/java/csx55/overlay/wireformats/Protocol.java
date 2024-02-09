@@ -11,5 +11,6 @@ public interface Protocol {
     public static final int TASK_INITIATE = 6;
     public static final int POKE = 7;
     public static final int Link_Weights = 8;
+    public static final int PULL_TRAFFIC_SUMMARY = 9;
     
 }

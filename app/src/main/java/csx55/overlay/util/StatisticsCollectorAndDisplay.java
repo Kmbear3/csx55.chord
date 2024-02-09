@@ -20,6 +20,14 @@ public class StatisticsCollectorAndDisplay {
         this.receiveSummation = 0;
     }
 
+    synchronized public void displayStats(){
+        System.out.println("receiveTracker: " + receiveTracker);
+        System.out.println("sendTracker: " + sendTracker);
+        System.out.println("receivedSummation: " + receiveSummation);
+        System.out.println("sendSummation: " + sendSummation);
+        System.out.println("relayedMessages: " + relayTracker);
+    }
+
     synchronized public void incrementSendTracker(){
         this.sendTracker = sendTracker + 1;
     }
@@ -49,11 +57,5 @@ public class StatisticsCollectorAndDisplay {
 // Number of messages received
 // Summation of received messages
 // Number of messages relayed
-
-
-    synchronized public void displayStats(){
-        System.out.println("receiveTracker: " + receiveTracker);
-        System.out.println("sendTracker: " + sendTracker);
-    }
     
 }

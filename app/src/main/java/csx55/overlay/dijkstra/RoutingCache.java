@@ -18,7 +18,12 @@ public class RoutingCache {
     }
 
     public ArrayList<String> getRoute(){
-        int randomNode = rand.nextInt(names.length);
-        return routes.get(names[randomNode]);
+        
+        while(true){
+            int randomNode = rand.nextInt(names.length);
+            if(!names[randomNode].equals(nodeID)){
+                return routes.get(names[randomNode]);
+            }
+        }
     }
 }
