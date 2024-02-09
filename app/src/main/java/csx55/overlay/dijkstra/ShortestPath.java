@@ -21,7 +21,7 @@ public class ShortestPath {
         this.source = source;
     }
 
-    public String nodeWithMinDistance(Map<String, Integer> nodeDistances, ArrayList<String> unvisited ){
+    public String nodeWithMinDistance(Map<String, Integer> nodeDistances, Set<String> unvisited){
         String minDistanceNode = ""; 
 
         int minDistance = Integer.MAX_VALUE;
@@ -67,11 +67,13 @@ public class ShortestPath {
         String nodeSource = this.source;
         String[] nodesInGraph = this.names;
 
-
         HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
-        ArrayList<String> unvisited = new ArrayList<>();
-        ArrayList<String> visited = new ArrayList<>();
+        // ArrayList<String> unvisited = new ArrayList<>();
+        // ArrayList<String> visited = new ArrayList<>();
+      
+        Set<String> unvisited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
 
     
         nodeDistances.put(nodeSource, 0);
@@ -85,36 +87,44 @@ public class ShortestPath {
             // unvisited.add(nodesInGraph[i]);
         }
         
+        printDistances(nodeDistances);
 
         while(!unvisited.isEmpty()){
             // NEeds to be start node (source)
             String visiting = nodeWithMinDistance(nodeDistances, unvisited);
+
             unvisited.remove(visiting);
 
+
             for(String neighbor : getNeighbors(visiting)){
+
                 int pathDistance = nodeDistances.get(visiting) + weights[getIndex(visiting)][getIndex(neighbor)];
             
                 if(!visited.contains(neighbor)){
 
-                    if(pathDistance < nodeDistances.get(neighbor)){
-
-                        nodeDistances.put(neighbor, pathDistance);
+                    // calculateMinimunDistance(neighbor, pathDistance, visiting);
+                    int sourceDistance = nodeDistances.get(visiting);
+                    if(sourceDistance + pathDistance < nodeDistances.get(neighbor)){
+                        nodeDistances.put(neighbor, sourceDistance + pathDistance);
                         ArrayList<String> shortestPath = paths.get(visiting);
                         shortestPath.add(visiting);
                         paths.put(neighbor, shortestPath);
-                    
+                        printRoutes(paths);
                     }
 
                     unvisited.add(neighbor);
+                    printSet("unvisited", unvisited);
+                    printDistances(nodeDistances);
                 }
             }
             visited.add(visiting);
+            printSet("visited", visited);
+
         }
 
         printRoutes(paths);
         return paths;
     }
-
 
     public void printRoutes(HashMap<String, ArrayList<String>> paths){
         for(int i = 0; i < names.length; i++){
@@ -128,55 +138,18 @@ public class ShortestPath {
             System.out.println();
         }
     }
+
+    public void printSet(String setName, Set<String> nodeSet){
+        System.out.print("Set: " + setName + " ");
+        for(String node : nodeSet){
+            System.out.print(" " + node);
+        }
+        System.out.println();
+    }
+
+    public void printDistances(HashMap<String, Integer> distances){
+        for(String name : this.names){
+            System.out.println(name + " : " + "Distances: " + distances.get(name));
+        }
+    }
 }
-
-    // while (unsettledNodes.size() != 0) {
-    //     Node currentNode = getLowestDistanceNode(unsettledNodes);
-
-    //     unsettledNodes.remove(currentNode);
-
-    //     for (Entry < Node, Integer> adjacencyPair: currentNode.getAdjacentNodes().entrySet()) {
-    //         Node adjacentNode = adjacencyPair.getKey();
-    //         Integer edgeWeight = adjacencyPair.getValue();
-
-    //         if (!settledNodes.contains(adjacentNode)) {
-    //             calculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
-    //             unsettledNodes.add(adjacentNode);
-    //         }
-    //     }
-    //     settledNodes.add(currentNode);
-    // }
-    // return graph;
-
-    // private static void CalculateMinimumDistance(Node evaluationNode,Integer edgeWeigh, Node sourceNode) {
-    // Integer sourceDistance = sourceNode.getDistance();
-
-
-    // if (sourceDistance + edgeWeigh < evaluationNode.getDistance()) {
-    //     evaluationNode.setDistance(sourceDistance + edgeWeigh);
-    //     LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
-    //     shortestPath.add(sourceNode);
-    //     evaluationNode.setShortestPath(shortestPath);
-    // }
-//  }
-
-//     function Dijkstra(Graph, source):
-//        dist[source]  := 0                     // Distance from source to source is set to 0
-//        for each vertex v in Graph:            // Initializations
-//            if v ≠ source
-//                dist[v]  := infinity           // Unknown distance function from source to each node set to infinity
-//            add v to Q                         // All nodes initially in Q
-
-//       while Q is not empty:                  // The main loop
-//           v := vertex in Q with min dist[v]  // In the first run-through, this vertex is the source node
-//           remove v from Q 
-
-//           for each neighbor u of v:           // where neighbor u has not yet been removed from Q.
-//               alt := dist[v] + length(v, u)
-//               if alt < dist[u]:               // A shorter path to u has been found
-//                   dist[u]  := alt            // Update distance of u 
-
-//       return dist[]
-//   end function
-
-    
