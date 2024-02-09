@@ -84,10 +84,8 @@ public class ShortestPath {
                 nodeDistances.put(nodesInGraph[i], Integer.MAX_VALUE);
             }
             paths.put(names[i],  new ArrayList<>());
-            // unvisited.add(nodesInGraph[i]);
         }
         
-        printDistances(nodeDistances);
 
         while(!unvisited.isEmpty()){
             // NEeds to be start node (source)
@@ -102,28 +100,32 @@ public class ShortestPath {
             
                 if(!visited.contains(neighbor)){
 
-                    // calculateMinimunDistance(neighbor, pathDistance, visiting);
                     int sourceDistance = nodeDistances.get(visiting);
                     if(sourceDistance + pathDistance < nodeDistances.get(neighbor)){
                         nodeDistances.put(neighbor, sourceDistance + pathDistance);
-                        ArrayList<String> shortestPath = paths.get(visiting);
+                        ArrayList<String> shortestPath = new ArrayList<String>(paths.get(visiting));
                         shortestPath.add(visiting);
                         paths.put(neighbor, shortestPath);
-                        printRoutes(paths);
                     }
 
                     unvisited.add(neighbor);
-                    printSet("unvisited", unvisited);
-                    printDistances(nodeDistances);
                 }
             }
             visited.add(visiting);
-            printSet("visited", visited);
 
         }
 
+        addDestinations(paths);
         printRoutes(paths);
         return paths;
+    }
+
+    public void addDestinations(HashMap<String, ArrayList<String>> paths){
+        for(String name: this.names){
+           ArrayList<String> path = new ArrayList<>(paths.get(name));
+           path.add(name);
+           paths.put(name, path);
+        }
     }
 
     public void printRoutes(HashMap<String, ArrayList<String>> paths){
