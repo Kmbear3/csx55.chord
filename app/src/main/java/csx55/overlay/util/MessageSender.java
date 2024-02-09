@@ -46,8 +46,14 @@ public class MessageSender implements Runnable {
         RoutingCache routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID());
         
         try {
+//             At the end of each round,
+// the process is repeated by choosing another node at random. The number of rounds initiated by each
+// node is determined by the specified number-of-rounds. 
+
+
+// Send numberOfrounds messages to a random node, then move on. ^^^ Read about in section 4
             for(int i = 0; i < this.numberOfRounds; i++){
-              
+            
                 final ArrayList<String> route = new ArrayList<String>(routingCache.getRoute());
 
                 System.out.println(route);
