@@ -39,8 +39,9 @@ public class OverlayCreator {
                 vertex.printVertex();
                 
                 MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections());
-                TCPSender MNSender = new TCPSender(vertex.getSocket());
-                MNSender.sendData(nodesList.getBytes());
+                // TCPSender MNSender = new TCPSender(vertex.getSocket());
+                // MNSender.sendData(nodesList.getBytes());
+                vertex.sendMessage(nodesList.getBytes());
             }
 
         } catch (IOException e) {

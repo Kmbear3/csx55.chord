@@ -33,22 +33,22 @@ public class StatisticsCollectorAndDisplay {
         this.registry = vertexList;
     }
 
-    public int getReceiveTracker(){
+    synchronized public int getReceiveTracker(){
         return receiveTracker;
     }
-    public int getRelayTracker(){
+    synchronized public int getRelayTracker(){
         return relayTracker;
     }
 
-    public long getSendSum(){
+    synchronized public long getSendSum(){
         return sendSummation;
     }
 
-    public long getReceivedSum(){
+    synchronized public long getReceivedSum(){
         return receiveSummation;
     }
 
-    public int getSendTracker(){
+    synchronized public int getSendTracker(){
         return sendTracker;
     }
 
@@ -105,7 +105,7 @@ public class StatisticsCollectorAndDisplay {
         return true; 
     }
 
-    public void displayTotalSums() {
+    synchronized public void displayTotalSums() {
 
         long sendMessagesSum = 0;
         long receivedMessagesSum = 0;
@@ -114,20 +114,20 @@ public class StatisticsCollectorAndDisplay {
         long receivedSummationTotal = 0;
 
 
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println("                                                      Registry Traffic Summary                                                 ");
-        System.out.println("                                                                                                                               ");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("                                                          Registry Traffic Summary                                                    ");
+        System.out.println("                                                                                                                                      ");
 
-        System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println(String.format("| %-10s | %20s | %20s | %20s | %20s | %20s |", "Node" ,"Messages Sent", "Messages Received", "Sent Messages Sum", "Received Messages Sum", "Messages Relayed"));
-        System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22s |", "Node" ,"Messages Sent", "Messages Received", "Sent Messages Sum", "Received Messages Sum", "Messages Relayed"));
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
         
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
             i ++;
             String nodeName = "Node " + i;
 
-            System.out.println(String.format("| %-10s | %20s | %20s | %20s | %20s | %20s |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4)));
+            System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22s |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4)));
 
         }
 
@@ -139,12 +139,12 @@ public class StatisticsCollectorAndDisplay {
             relayedSum = relayedSum + Long.parseLong(nodeStats.get(4));
         }
 
-        System.out.println(String.format("| %-10s | %20d | %20d | %20d | %20d | %20d |", " Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum));
+        System.out.println(String.format("| %-10s | %20d | %22d | %22d | %22d | %22d |", "Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum));
 
-        System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
-    public void resetCounters(){
+    synchronized public void resetCounters(){
         this.sendTracker = 0;
         this.receiveTracker = 0;
         this.relayTracker = 0;

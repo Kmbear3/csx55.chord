@@ -48,8 +48,10 @@ public class VertexList {
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }
 
-            TCPSender tcpSender = new TCPSender(vertex.getSocket());
-            tcpSender.sendData(registerationResponse.getBytes());
+            // TCPSender tcpSender = new TCPSender(vertex.getSocket());
+            // tcpSender.sendData(registerationResponse.getBytes());
+
+            vertex.sendMessage(registerationResponse.getBytes());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -142,8 +144,10 @@ public class VertexList {
         try {
             for(Vertex vertex : this.getValues()){
                 vertex.printVertex();
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(event.getBytes());
+
+                vertex.sendMessage(event.getBytes());
+                // TCPSender send = new TCPSender(vertex.getSocket());
+                // send.sendData(event.getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();

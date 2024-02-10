@@ -55,8 +55,7 @@ public class MessageSender implements Runnable {
 
             for(int j = 0; j < 5; j++ ){
 
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(message.getBytes());
+                vertex.sendMessage(message.getBytes());
 
                 stats.incrementSendTracker();
                 stats.addSendSum(message.getPayload());
@@ -83,8 +82,11 @@ public class MessageSender implements Runnable {
                 VertexList peerList = node.getPeerList();
                 Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
 
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(message.getBytes());
+
+                vertex.sendMessage(message.getBytes());
+
+                // TCPSender send = new TCPSender(vertex.getSocket());
+                // send.sendData(message.getBytes());
                 stats.incrementRelayed();
             }
         }

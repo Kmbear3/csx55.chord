@@ -151,8 +151,10 @@ public class MessagingNode implements Node{
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
 
-        TCPSender tcpSender = new TCPSender(peerSocket);
-        tcpSender.sendData(peerConnection.getBytes());
+        vertex.sendMessage(peerConnection.getBytes());
+
+        // TCPSender tcpSender = new TCPSender(peerSocket);
+        // tcpSender.sendData(peerConnection.getBytes());
     }
 
     public void configureServer(Node node){
