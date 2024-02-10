@@ -35,6 +35,25 @@ public class StatisticsCollectorAndDisplay {
         this.registry = vertexList;
     }
 
+    public int getReceiveTracker(){
+        return receiveTracker;
+    }
+    public int getRelayTracker(){
+        return relayTracker;
+    }
+
+    public long getSendSum(){
+        return sendSummation;
+    }
+
+    public long getReceivedSum(){
+        return receiveSummation;
+    }
+
+    public int getSendTracker(){
+        return sendTracker;
+    }
+
     synchronized public void displayStats(){
         System.out.println("receiveTracker: " + receiveTracker);
         System.out.println("sendTracker: " + sendTracker);
@@ -65,9 +84,8 @@ public class StatisticsCollectorAndDisplay {
     
     synchronized public void nodeStats(Event event) {
         try {
-            
-            TaskSummaryResponse nodeResponse;
-            nodeResponse = new TaskSummaryResponse(event.getBytes());
+
+            TaskSummaryResponse nodeResponse = new TaskSummaryResponse(event.getBytes());
             nodes.put(nodeResponse.getName(), nodeResponse.getStats());
 
         } catch (IOException e) {
@@ -88,6 +106,14 @@ public class StatisticsCollectorAndDisplay {
     public void displayTotalSums() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'displayTotalSums'");
+    }
+
+    public void resetCounters(){
+        this.sendTracker = 0;
+        this.receiveTracker = 0;
+        this.relayTracker = 0;
+        this.sendSummation = 0;
+        this.receiveSummation = 0;
     }
 
 

@@ -1,15 +1,17 @@
 package csx55.overlay.wireformats;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import csx55.overlay.util.StatisticsCollectorAndDisplay;
 
 public class TaskSummaryResponse implements Event, Protocol {
-
-    public TaskSummaryResponse(byte[] marshalledBytes) {
-        //TODO Auto-generated constructor stub
-    }   
     // Message Type: TRAFFIC_SUMMARY
     // Node IP address:
     // Node Port number:
@@ -19,33 +21,101 @@ public class TaskSummaryResponse implements Event, Protocol {
     // Summation of received messages
     // Number of messages relayed
 
-    public TaskSummaryResponse(StatisticsCollectorAndDisplay stats) {
-        //TODO Auto-generated constructor stub
+    String ip;
+    int port;
+
+    int messagesSent;
+    long messageSum;
+
+    int messagesReceived;
+    long receivedSum;
+    int relayed;
+
+
+    public TaskSummaryResponse(byte[] marshalledBytes) throws IOException {
+        ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
+        DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+       
+        int messageType = din.readInt();
+
+        if(messageType != Protocol.TRAFFIC_SUMMARY){
+            System.err.println("Mismatch Messagetype! TrafficSummary != " + messageType);
+        }
+
+        int IPlength = din.readInt();
+        byte[] IPBytes = new byte[IPlength];
+        din.readFully(IPBytes);
+        this.ip = new String(IPBytes);
+
+        this.port = din.readInt();
+        this.messagesSent = din.readInt();
+        this.messageSum = din.readLong();
+        this.messagesReceived = din.readInt();
+        this.receivedSum = din.readLong();
+        this.relayed = din.readInt();
+
+        baInputStream.close();
+        din.close();
+    }   
+
+    public TaskSummaryResponse(String ip, int port, StatisticsCollectorAndDisplay stats) {
+        this.ip = ip;
+        this.port = port;
+
+        this.messagesSent = stats.getSendTracker();
+        this.messageSum = stats.getSendSum();
+        this.messagesReceived = stats.getReceiveTracker();
+        this.receivedSum = stats.getReceivedSum();
+        this.relayed = stats.getRelayTracker();
     }
 
     public ArrayList<String> getStats() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getStats'");
+        ArrayList<String> stats = new ArrayList<>();
+
+        stats.add("" + messagesSent);
+        stats.add("" + messageSum);
+        stats.add("" + messagesReceived);
+        stats.add("" + receivedSum);
+        stats.add("" + relayed);
+
+        return stats;
     }
 
     public String getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        return ip + ":" + port;
     }
 
     @Override
     public int getType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getType'");
+        return Protocol.TRAFFIC_SUMMARY;
     }
 
     @Override
     public byte[] getBytes() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBytes'");
+        byte[] marshalledBytes = null;
+        ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+        DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+
+        dout.writeInt(Protocol.TRAFFIC_SUMMARY);
+       
+        byte[] IPBytes = this.ip.getBytes();
+        int elementLength = IPBytes.length;
+        dout.writeInt(elementLength);
+        dout.write(IPBytes);
+
+        dout.writeInt(this.port);
+        dout.writeInt(this.messagesSent);
+        dout.writeLong(this.messageSum);
+        dout.writeInt(this.messagesReceived);
+        dout.writeLong(this.receivedSum);
+        dout.writeInt(this.relayed);
+
+        dout.flush();
+        marshalledBytes = baOutputStream.toByteArray();
+        baOutputStream.close();
+        dout.close();
+        
+        return marshalledBytes;
+
     }
-
-    // REset counters!! After sneding 
-
-    
 }

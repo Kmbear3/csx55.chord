@@ -101,8 +101,9 @@ public class MessagingNode implements Node{
                     printConnections(this.linkWeights);
                     break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
-                    TaskSummaryResponse summaryResponse = new TaskSummaryResponse(this.stats);
+                    TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
                     registrySender.sendData(summaryResponse.getBytes());
+                    stats.resetCounters();
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
