@@ -190,6 +190,10 @@ public class MessagingNode implements Node{
 
     }
 
+    public void sendRegistryMessage(Event event) throws IOException{
+        this.registrySender.sendData(event.getBytes());
+    }
+
     public static void main(String[] args){
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);

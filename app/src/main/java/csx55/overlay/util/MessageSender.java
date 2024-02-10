@@ -2,6 +2,7 @@ package csx55.overlay.util;
 
 import csx55.overlay.wireformats.Message;
 import csx55.overlay.wireformats.Poke;
+import csx55.overlay.wireformats.TaskComplete;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +40,56 @@ public class MessageSender implements Runnable {
         peerList.sendAllNodes(poke);
     }
 
+
+    public void sendMessages(int numberOfRounds, StatisticsCollectorAndDisplay stats, RoutingCache routes) throws IOException{
+
+        for(int i = 0; i < this.numberOfRounds; i++){
+            final ArrayList<String> route = new ArrayList<String>(routes.getRoute());
+
+            System.out.println(route);
+            Message message = new Message(route);
+
+            VertexList peerList = node.getPeerList();
+            Vertex vertex = peerList.get(route.get(1)); // Next step in the route. 
+
+            for(int j = 0; j < 5; j++ ){
+
+                TCPSender send = new TCPSender(vertex.getSocket());
+                send.sendData(message.getBytes());
+
+                stats.incrementSendTracker();
+                stats.addSendSum(message.getPayload());
+            }
+        }
+
+        TaskComplete task = new TaskComplete(node.getMessagingNodeIP(), node.getMessagingNodePort());
+        node.sendRegistryMessage(task);
+    }
+
+    public void relayOrReceiveMessages(ConcurrentLinkedQueue<Message> messages, StatisticsCollectorAndDisplay stats) throws IOException{
+        for(Message message : messages){
+
+            ArrayList<String> routePlan = message.getRoutePlan();
+
+            if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
+                stats.incrementReceivedTracker();
+                stats.addReceiveSum(message.getPayload());
+            }
+            else{
+
+                int nextNode = routePlan.indexOf(node.getID()) + 1;
+
+                VertexList peerList = node.getPeerList();
+                Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
+
+                TCPSender send = new TCPSender(vertex.getSocket());
+                send.sendData(message.getBytes());
+                stats.incrementRelayed();
+            }
+        }
+
+    }
+
     @Override
     public void run() {
         StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
@@ -46,61 +97,19 @@ public class MessageSender implements Runnable {
         RoutingCache routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID());
         
         try {
-//             At the end of each round,
-// the process is repeated by choosing another node at random. The number of rounds initiated by each
-// node is determined by the specified number-of-rounds. 
 
+            sendMessages(numberOfRounds, stats, routingCache);
 
-// Send numberOfrounds messages to a random node, then move on. ^^^ Read about in section 4
-            for(int i = 0; i < this.numberOfRounds; i++){
+            relayOrReceiveMessages(messages, stats);
+
             
-                final ArrayList<String> route = new ArrayList<String>(routingCache.getRoute());
-
-                System.out.println(route);
-                Message message = new Message(route);
-
-                VertexList peerList = node.getPeerList();
-                Vertex vertex = peerList.get(route.get(1)); // Next step in the route. 
-
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(message.getBytes());
-                stats.incrementSendTracker();
-                stats.addSendSum(message.getPayload());
-            }
-
-            for(Message message : messages){
-
-                ArrayList<String> routePlan = message.getRoutePlan();
-
-                if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
-                    stats.incrementReceivedTracker();
-                    stats.addReceiveSum(message.getPayload());
-                }
-                else{
-
-                    int nextNode = routePlan.indexOf(node.getID()) + 1;
-
-                    VertexList peerList = node.getPeerList();
-                    Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
-
-                    TCPSender send = new TCPSender(vertex.getSocket());
-                    send.sendData(message.getBytes());
-                    stats.incrementRelayed();
-                }
-
-            }
-
-            Thread.sleep(10000);
-
-            stats.displayStats();
+            // stats.displayStats();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
+    
     }
 
 }
