@@ -114,33 +114,34 @@ public class StatisticsCollectorAndDisplay {
         long receivedSummationTotal = 0;
 
 
-        System.out.printf("----------------------------------------------------------------------------------%n");
-        System.out.printf("                                Registry Traffic Summary                          %n");
-        System.out.printf("                                                                                  %n");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("                                                      Registry Traffic Summary                                                 ");
+        System.out.println("                                                                                                                               ");
 
-        
-        System.out.printf("-----------------------------------------------------------------------------------%n");
-        System.out.printf("| %15s | %15s | %15s | %15 | %15s | %15", "Node" ,"Number of messages sent", "Number of messages received", "Summation of sent messages", "Summation of received messages", "Number of messages relayed");
-        System.out.printf("-----------------------------------------------------------------------------------%n");
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println(String.format("| %-10s | %20s | %20s | %20s | %20s | %20s |", "Node" ,"Messages Sent", "Messages Received", "Sent Messages Sum", "Received Messages Sum", "Messages Relayed"));
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
         
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
             i ++;
-            System.out.printf("| %10s | %25s | %25s | %25 | %25s | %20", "Node " + i, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4));
+            String nodeName = "Node " + i;
+
+            System.out.println(String.format("| %-10s | %20s | %20s | %20s | %20s | %20s |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4)));
 
         }
 
         for(ArrayList<String> nodeStats : nodes.values()){
-            sendMessagesSum =  sendMessagesSum + Integer.parseInt(nodeStats.get(0));
-            receivedMessagesSum = receivedMessagesSum + Integer.parseInt(nodeStats.get(1));
-            sendSummationTotal = sendSummationTotal + Integer.parseInt(nodeStats.get(2));
-            receivedSummationTotal = receivedSummationTotal + Integer.parseInt(nodeStats.get(3));
-            relayedSum = relayedSum + Integer.parseInt(nodeStats.get(4));
+            sendMessagesSum =  sendMessagesSum + Long.parseLong(nodeStats.get(0));
+            receivedMessagesSum = receivedMessagesSum + Long.parseLong(nodeStats.get(1));
+            sendSummationTotal = sendSummationTotal + Long.parseLong(nodeStats.get(2));
+            receivedSummationTotal = receivedSummationTotal + Long.parseLong(nodeStats.get(3));
+            relayedSum = relayedSum + Long.parseLong(nodeStats.get(4));
         }
 
-        System.out.printf("| %10s | %25s | %25s | %25 | %25s | %20", " Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum);
+        System.out.println(String.format("| %-10s | %20d | %20d | %20d | %20d | %20d |", " Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum));
 
-        System.out.printf("-------------------------------------------------------------------------------------%n");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
     }
 
     public void resetCounters(){
