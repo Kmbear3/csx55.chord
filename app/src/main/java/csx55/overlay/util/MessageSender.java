@@ -48,7 +48,6 @@ public class MessageSender implements Runnable {
         for(int i = 0; i < this.numberOfRounds; i++){
             final ArrayList<String> route = new ArrayList<String>(routes.getRoute());
 
-            System.out.println(route);
             Message message = new Message(route);
 
             VertexList peerList = node.getPeerList();

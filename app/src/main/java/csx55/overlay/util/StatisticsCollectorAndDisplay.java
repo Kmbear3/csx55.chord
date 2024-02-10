@@ -94,6 +94,8 @@ public class StatisticsCollectorAndDisplay {
 
     public boolean receivedAllStats() {
         for(String key : registry.vertexIDs){
+            System.out.println(key);
+            
             if(!nodes.contains(key)){
                 return false;
             }

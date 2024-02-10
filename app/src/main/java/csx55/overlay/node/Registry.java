@@ -46,6 +46,7 @@ public class Registry implements Node {
                 stats.nodeStats(event);
 
                 if(stats.receivedAllStats()){
+                    System.out.println("Made it here");
                     stats.displayTotalSums();
                 }
                 break;
