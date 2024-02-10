@@ -92,11 +92,13 @@ public class StatisticsCollectorAndDisplay {
         }
     }
 
-    public boolean receivedAllStats() {
-        for(String key : registry.vertexIDs){
-            System.out.println(key);
-            
-            if(!nodes.contains(key)){
+    synchronized public boolean receivedAllStats() {
+        registry.printVertexList();
+        
+        for(Vertex registeredVertex : registry.getValues()){
+
+            System.out.println(registeredVertex.getID());
+            if(!nodes.containsKey(registeredVertex.getID())){
                 return false;
             }
         }
@@ -104,21 +106,39 @@ public class StatisticsCollectorAndDisplay {
     }
 
     public void displayTotalSums() {
+
+        long sendMessagesSum = 0;
+        long receivedMessagesSum = 0;
+        long relayedSum = 0;
+        long sendSummationTotal = 0;
+        long receivedSummationTotal = 0;
+
+
         System.out.printf("----------------------------------------------------------------------------------%n");
         System.out.printf("                                Registry Traffic Summary                          %n");
         System.out.printf("                                                                                  %n");
 
         
         System.out.printf("-----------------------------------------------------------------------------------%n");
-        System.out.printf("| %-15s | %-15s | %-15s | %-15 | %-15s | %-15", "Node" ,"Number of messages sent", "Number of messages received", "Summation of sent messages", "Summation of received messages", "Number of messages relayed");
+        System.out.printf("| %15s | %15s | %15s | %15 | %15s | %15", "Node" ,"Number of messages sent", "Number of messages received", "Summation of sent messages", "Summation of received messages", "Number of messages relayed");
         System.out.printf("-----------------------------------------------------------------------------------%n");
         
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
             i ++;
-            System.out.printf("| %-10s | %-25s | %-25s | %-25 | %-25s | %-20", "Node " + i, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4));
+            System.out.printf("| %10s | %25s | %25s | %25 | %25s | %20", "Node " + i, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4));
 
         }
+
+        for(ArrayList<String> nodeStats : nodes.values()){
+            sendMessagesSum =  sendMessagesSum + Integer.parseInt(nodeStats.get(0));
+            receivedMessagesSum = receivedMessagesSum + Integer.parseInt(nodeStats.get(1));
+            sendSummationTotal = sendSummationTotal + Integer.parseInt(nodeStats.get(2));
+            receivedSummationTotal = receivedSummationTotal + Integer.parseInt(nodeStats.get(3));
+            relayedSum = relayedSum + Integer.parseInt(nodeStats.get(4));
+        }
+
+        System.out.printf("| %10s | %25s | %25s | %25 | %25s | %20", " Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum);
 
         System.out.printf("-------------------------------------------------------------------------------------%n");
     }
