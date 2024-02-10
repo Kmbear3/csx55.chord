@@ -73,8 +73,8 @@ public class TaskSummaryResponse implements Event, Protocol {
         ArrayList<String> stats = new ArrayList<>();
 
         stats.add("" + messagesSent);
-        stats.add("" + messageSum);
         stats.add("" + messagesReceived);
+        stats.add("" + messageSum);
         stats.add("" + receivedSum);
         stats.add("" + relayed);
 

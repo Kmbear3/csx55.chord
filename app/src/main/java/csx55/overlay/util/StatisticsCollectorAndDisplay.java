@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import csx55.overlay.wireformats.Event;
-import csx55.overlay.wireformats.Message;
-import csx55.overlay.wireformats.TaskSummaryRequest;
 import csx55.overlay.wireformats.TaskSummaryResponse;
 
 public class StatisticsCollectorAndDisplay {
@@ -18,7 +16,7 @@ public class StatisticsCollectorAndDisplay {
     private long sendSummation; // Sum of value that it has sent
     private long receiveSummation;  // Sum of the payloads that it has received
 
-    ConcurrentHashMap<String, ArrayList<String>> nodes;
+    ConcurrentHashMap<String, ArrayList<String>> nodes = new ConcurrentHashMap<>();
 
     private VertexList registry;
 
@@ -104,8 +102,23 @@ public class StatisticsCollectorAndDisplay {
     }
 
     public void displayTotalSums() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'displayTotalSums'");
+        System.out.printf("----------------------------------------------------------------------------------%n");
+        System.out.printf("                                Registry Traffic Summary                          %n");
+        System.out.printf("                                                                                  %n");
+
+        
+        System.out.printf("-----------------------------------------------------------------------------------%n");
+        System.out.printf("| %-15s | %-15s | %-15s | %-15 | %-15s | %-15", "Node" ,"Number of messages sent", "Number of messages received", "Summation of sent messages", "Summation of received messages", "Number of messages relayed");
+        System.out.printf("-----------------------------------------------------------------------------------%n");
+        
+        int i = 0;
+        for(ArrayList<String> nodeStats : nodes.values()){
+            i ++;
+            System.out.printf("| %-10s | %-25s | %-25s | %-25 | %-25s | %-20", "Node " + i, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4));
+
+        }
+
+        System.out.printf("-------------------------------------------------------------------------------------%n");
     }
 
     public void resetCounters(){

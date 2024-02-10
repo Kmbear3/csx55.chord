@@ -70,7 +70,6 @@ public class MessagingNode implements Node{
     @Override
     public void onEvent(Event event, Socket socket) {
         try {
-            // System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
             switch(event.getType()){
                 case Protocol.MESSAGE:
                     Message message = new Message(event.getBytes());
@@ -107,7 +106,7 @@ public class MessagingNode implements Node{
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
-                    System.exit(0);
+                    System.out.println("Please try again");
                     break;
             }
         } catch (IOException e) {
