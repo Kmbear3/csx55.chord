@@ -17,6 +17,7 @@ import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.MessageSender;
 import csx55.overlay.util.OverlayCreator;
+import csx55.overlay.util.StatisticsCollectorAndDisplay;
 import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.*;
@@ -36,6 +37,8 @@ public class MessagingNode implements Node{
     private int[][] linkWeights;
 
     private String[] names;
+
+    StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
     public MessagingNode(String registryIP, int registryPort){
         try {
@@ -97,6 +100,10 @@ public class MessagingNode implements Node{
                     this.names = linkWeights.getNames();
                     printConnections(this.linkWeights);
                     break;
+                case Protocol.PULL_TRAFFIC_SUMMARY:
+                    TaskSummaryResponse summaryResponse = new TaskSummaryResponse(this.stats);
+                    registrySender.sendData(summaryResponse.getBytes());
+                    break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
                     System.exit(0);
@@ -109,7 +116,7 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names);
+        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }

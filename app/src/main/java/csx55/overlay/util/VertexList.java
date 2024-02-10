@@ -63,6 +63,15 @@ public class VertexList {
 
     }
 
+    public boolean allTasksAreComplete(){
+        for(Vertex vertex : this.getValues()){
+            if(!vertex.isTaskComplete()){
+                return false;
+            }
+        }
+        return true; 
+    }
+
 
     public Collection<Vertex> getValues(){
         return registeredVertexs.values();
@@ -82,7 +91,7 @@ public class VertexList {
         return registeredVertexs.containsKey(vertex.getID());
     }
 
-    public boolean correctIP(Vertex vertex){
+    synchronized public boolean correctIP(Vertex vertex){
         // Checks to see if node ip match socket ip
         Socket socket = vertex.getSocket(); 
         InetAddress inAd = socket.getInetAddress();

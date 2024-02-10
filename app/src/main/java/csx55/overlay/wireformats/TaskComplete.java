@@ -3,8 +3,6 @@ package csx55.overlay.wireformats;
 import java.io.*;
 import java.util.ArrayList;
 
-
-
 // Message Type: TASK_COMPLETE
 // Node IP address:
 // Node Port number:
@@ -47,6 +45,10 @@ public class TaskComplete implements Event, Protocol{
 
     public int getPort() {
         return this.port;
+    }
+
+    public String getID(){
+        return this.IP + ":" + this.port;
     }
 
     @Override

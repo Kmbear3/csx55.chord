@@ -9,6 +9,7 @@ public class Vertex {
     private final int port;
     private final String id;
     private int numberOfConnections = 0;
+    private boolean taskComplete = false;
 
     ArrayList<Vertex> vertexConnections;
 
@@ -67,5 +68,13 @@ public class Vertex {
 
     public ArrayList<Vertex> getVertexConnections(){
         return this.vertexConnections;
+    }
+
+    public void setTaskComplete(){
+        this.taskComplete = true;
+    }
+
+    public boolean isTaskComplete(){
+        return this.taskComplete;
     }
 }

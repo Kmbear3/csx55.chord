@@ -11,6 +11,10 @@ import java.io.IOException;
 public class TaskSummaryRequest implements Event, Protocol{
     // Message Type: PULL_TRAFFIC_SUMMARY
 
+    public TaskSummaryRequest(){
+        
+    }
+
     public TaskSummaryRequest(byte[] marshalledBytes) throws IOException {
         ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
         DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));

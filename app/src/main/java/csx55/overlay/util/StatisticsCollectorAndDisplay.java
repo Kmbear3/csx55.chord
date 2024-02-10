@@ -1,6 +1,13 @@
 package csx55.overlay.util;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Message;
+import csx55.overlay.wireformats.TaskSummaryRequest;
+import csx55.overlay.wireformats.TaskSummaryResponse;
 
 public class StatisticsCollectorAndDisplay {
     // Add all summations
@@ -11,6 +18,10 @@ public class StatisticsCollectorAndDisplay {
     private long sendSummation; // Sum of value that it has sent
     private long receiveSummation;  // Sum of the payloads that it has received
 
+    ConcurrentHashMap<String, ArrayList<String>> nodes;
+
+    private VertexList registry;
+
 
     public StatisticsCollectorAndDisplay(){
         this.sendTracker = 0;
@@ -18,6 +29,10 @@ public class StatisticsCollectorAndDisplay {
         this.relayTracker = 0;
         this.sendSummation = 0;
         this.receiveSummation = 0;
+    }
+
+    public StatisticsCollectorAndDisplay(VertexList vertexList) {
+        this.registry = vertexList;
     }
 
     synchronized public void displayStats(){
@@ -46,6 +61,33 @@ public class StatisticsCollectorAndDisplay {
 
     synchronized public void incrementRelayed(){
         this.relayTracker = relayTracker + 1;
+    }
+    
+    synchronized public void nodeStats(Event event) {
+        try {
+            
+            TaskSummaryResponse nodeResponse;
+            nodeResponse = new TaskSummaryResponse(event.getBytes());
+            nodes.put(nodeResponse.getName(), nodeResponse.getStats());
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public boolean receivedAllStats() {
+        for(String key : registry.vertexIDs){
+            if(!nodes.contains(key)){
+                return false;
+            }
+        }
+        return true; 
+    }
+
+    public void displayTotalSums() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'displayTotalSums'");
     }
 
 
