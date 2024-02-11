@@ -48,9 +48,6 @@ public class VertexList {
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }
 
-            // TCPSender tcpSender = new TCPSender(vertex.getSocket());
-            // tcpSender.sendData(registerationResponse.getBytes());
-
             vertex.sendMessage(registerationResponse.getBytes());
 
         } catch (IOException e) {
@@ -86,10 +83,13 @@ public class VertexList {
     public void deregisterVertex(){
         // Remove from conncurrent hashmap and arraylist of IDS
         // TODO: implement
+
+
+
+
     }
 
     public boolean inList(Vertex vertex){
-        // Lets do correctness verification here.
         return registeredVertexs.containsKey(vertex.getID());
     }
 
@@ -100,8 +100,6 @@ public class VertexList {
         String remoteAdd = inAd.getHostName();
 
         int endIndex = remoteAdd.indexOf(".");
-        System.out.println("Vertex IP: " + vertex.getIP());
-        System.out.println("Socket IP: " + remoteAdd.substring(0, endIndex));
         String requestString = vertex.getIP();
         String socketString = remoteAdd.substring(0, endIndex);
 
@@ -111,18 +109,17 @@ public class VertexList {
     public String registrationInfo(byte statusCode){
         switch(statusCode){
             case StatusCodes.SUCCESS:
-                return "Registration request successful. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
+                return "Registration request successful. The number of messaging nodes currently constituting the overlay is (" + registeredVertexs.size() + ")";
             case StatusCodes.FAILURE:
-                return "Registration request unsuccessful. Node already in overlay. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
+                return "Registration request unsuccessful. Node already in overlay. The number of messaging nodes currently constituting the overlay is (" + registeredVertexs.size() + ")";
             case StatusCodes.FAILURE_IP:
-                return "Registration request unsuccessful. IP in request mismatches the InputStream IP. The number of messaging nodes currently constituting the overlay is " + registeredVertexs.size();
+                return "Registration request unsuccessful. IP in request mismatches the InputStream IP. The number of messaging nodes currently constituting the overlay is (" + registeredVertexs.size() + ")";
             default:
                 return "Issue with registration";
         }
     }
 
     public int size(){
-        // returns an approximation 
         return registeredVertexs.size();
     }
 
@@ -143,11 +140,10 @@ public class VertexList {
     synchronized public void sendAllNodes(Event event){
         try {
             for(Vertex vertex : this.getValues()){
-                vertex.printVertex();
 
+                vertex.printVertex();
                 vertex.sendMessage(event.getBytes());
-                // TCPSender send = new TCPSender(vertex.getSocket());
-                // send.sendData(event.getBytes());
+
             }
         } catch (IOException e) {
             e.printStackTrace();

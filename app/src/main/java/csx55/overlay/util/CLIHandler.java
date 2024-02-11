@@ -1,11 +1,13 @@
 package csx55.overlay.util;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
+import csx55.overlay.wireformats.Deregister;
 import csx55.overlay.wireformats.LinkWeights;
 import csx55.overlay.wireformats.TaskInitiate;
 
@@ -87,8 +89,22 @@ public class CLIHandler {
                 MessageSender sendMessages = new MessageSender(node);
                 sendMessages.sendPoke();
                break;
+            case "exit-overlay":
+                sendDeregistrationRequest();
+                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
+        }
+    }
+
+    private void sendDeregistrationRequest(){
+        try {
+
+            Deregister deregister = new Deregister(node.getMessagingNodeIP(), node.getMessagingNodePort());
+            node.sendRegistryMessage(deregister);
+        
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

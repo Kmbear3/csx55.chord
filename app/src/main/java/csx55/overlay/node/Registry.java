@@ -2,9 +2,7 @@ package csx55.overlay.node;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.concurrent.ConcurrentHashMap;
 
-import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.StatisticsCollectorAndDisplay;
@@ -21,7 +19,7 @@ public class Registry implements Node {
     StatisticsCollectorAndDisplay stats;
 
     public Registry(int port){
-        System.out.println("Creating Registry");
+        System.out.println("Creating Registry, Listening for Connections. Port: " + port);
         this.port = port;
         configureServer(this, port);
         vertexList = new VertexList();
@@ -30,8 +28,6 @@ public class Registry implements Node {
 
     @Override
     public void onEvent(Event event, Socket socket) {
-        System.out.println("Inside Registry.onEvent() --- Type: " + event.getType());
-
         switch(event.getType()){
             case Protocol.REGISTER_REQUEST:
                 vertexList.registerVertex(event, socket);
@@ -46,7 +42,6 @@ public class Registry implements Node {
                 stats.nodeStats(event);
 
                 if(stats.receivedAllStats()){
-                    System.out.println("Made it here");
                     stats.displayTotalSums();
                 }
                 break;

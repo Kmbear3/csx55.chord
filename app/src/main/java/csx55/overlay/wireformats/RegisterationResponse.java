@@ -8,16 +8,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import javax.net.ssl.SSLEngineResult.Status;
-
 public class RegisterationResponse implements Event, Protocol{
 
     // Message Type (int): REGISTER_RESPONSE
     // Status Code (byte): SUCCESS or FAILURE
     // Additional Info (String): 
-
-    // “Registration request
-    // successful. The number of messaging nodes currently constituting the overlay is (5)”.
 
     int MESSAGE_TYPE = Protocol.REGISTER_RESPONSE;
     byte statusCode;
@@ -32,7 +27,6 @@ public class RegisterationResponse implements Event, Protocol{
         this.marshalledBytes = getBytes();
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -55,7 +49,6 @@ public class RegisterationResponse implements Event, Protocol{
             baInputStream.close();
             din.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -74,8 +67,6 @@ public class RegisterationResponse implements Event, Protocol{
         dout.writeInt(Protocol.REGISTER_RESPONSE);
         dout.writeByte(this.statusCode);
 
-        // System.out.println("Inside RegResponse.getBytes() Type: " + Protocol.REGISTER_RESPONSE + "---- status: " + this.statusCode);
-        
         byte[] additionalInfoBytes = this.additionalInfo.getBytes();
         int elementLength = additionalInfoBytes.length;
         dout.writeInt(elementLength);
