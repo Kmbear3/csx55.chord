@@ -53,6 +53,7 @@ public class Registry implements Node {
                 case Protocol.DEREGISTER_REQUEST:
                     Deregister deregister = new Deregister(event.getBytes());
                     deregisterNode(deregister, socket);
+                    break;
                 default:
                     System.out.println("Protocol Unmatched!");
                     System.exit(0);

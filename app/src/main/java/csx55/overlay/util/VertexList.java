@@ -89,6 +89,7 @@ public class VertexList {
         }
         else{
             registeredVertexs.remove(id);
+            vertexIDs.remove(id);
             return deRegistrationInfo(StatusCodes.SUCCESS);
         }
     }
