@@ -20,7 +20,7 @@ public class RoutingCache {
     public ArrayList<String> getRoute(){
         while(true){
             int randomNode = rand.nextInt(names.length);
-            if(!names[randomNode].equals(nodeID) && routes.get(names[randomNode]).size() == 2){
+            if(!names[randomNode].equals(nodeID)){
                 return routes.get(names[randomNode]);
             }
         }

@@ -61,11 +61,11 @@ public class StatisticsCollectorAndDisplay {
     }
 
     synchronized public void incrementSendTracker(){
-        this.sendTracker = sendTracker + 1;
+        this.sendTracker = this.sendTracker + 1;
     }
 
     synchronized public void incrementReceivedTracker(){
-        this.receiveTracker = receiveTracker + 1;
+        this.receiveTracker = this.receiveTracker + 1;
     }
 
     synchronized public void addSendSum(long messageVal){
@@ -77,7 +77,7 @@ public class StatisticsCollectorAndDisplay {
     }
 
     synchronized public void incrementRelayed(){
-        this.relayTracker = relayTracker + 1;
+        this.relayTracker = this.relayTracker + 1;
     }
     
     synchronized public void nodeStats(Event event) {

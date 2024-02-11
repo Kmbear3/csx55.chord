@@ -97,7 +97,6 @@ public class MessagingNode implements Node{
                     LinkWeights linkWeights = new LinkWeights(event.getBytes());
                     this.linkWeights = linkWeights.getConnections();
                     this.names = linkWeights.getNames();
-                    printConnections(this.linkWeights);
                     break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
                     TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
