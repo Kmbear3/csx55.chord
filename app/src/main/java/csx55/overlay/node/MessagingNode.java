@@ -100,7 +100,8 @@ public class MessagingNode implements Node{
                     break;
                 case Protocol.DEREGISTER_RESPONSE:
                     DeregisterResponse deResponse = new DeregisterResponse(event.getBytes());
-                    deResponse.registryResponse();
+
+                    System.out.println(deResponse.getAdditionalInfo());
 
                     if(deResponse.exitOverlay()){
                         System.exit(0);

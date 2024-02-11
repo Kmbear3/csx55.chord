@@ -3,11 +3,15 @@ package csx55.overlay.node;
 import java.io.IOException;
 import java.net.Socket;
 
+import csx55.overlay.transport.TCPSender;
 import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.StatisticsCollectorAndDisplay;
+import csx55.overlay.util.StatusCodes;
 import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
+import csx55.overlay.wireformats.Deregister;
+import csx55.overlay.wireformats.DeregisterResponse;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.Protocol;
 import csx55.overlay.wireformats.TaskComplete;
@@ -28,27 +32,52 @@ public class Registry implements Node {
 
     @Override
     public void onEvent(Event event, Socket socket) {
-        switch(event.getType()){
-            case Protocol.REGISTER_REQUEST:
-                vertexList.registerVertex(event, socket);
-                break;
-            case Protocol.TASK_INITIATE:
-                vertexList.sendAllNodes(event);
-                break;
-            case Protocol.TASK_COMPLETE:
-                checkNodesStatus(event);
-                break;
-            case Protocol.TRAFFIC_SUMMARY:
-                stats.nodeStats(event);
+        try {
+            switch(event.getType()){
+                case Protocol.REGISTER_REQUEST:
+                    vertexList.registerVertex(event, socket);
+                    break;
+                case Protocol.TASK_INITIATE:
+                    vertexList.sendAllNodes(event);
+                    break;
+                case Protocol.TASK_COMPLETE:
+                    checkNodesStatus(event);
+                    break;
+                case Protocol.TRAFFIC_SUMMARY:
+                    stats.nodeStats(event);
 
-                if(stats.receivedAllStats()){
-                    stats.displayTotalSums();
-                }
-                break;
-            default:
-                System.out.println("Protocol Unmatched!");
-                System.exit(0);
+                    if(stats.receivedAllStats()){
+                        stats.displayTotalSums();
+                    }
+                    break;
+                case Protocol.DEREGISTER_REQUEST:
+                    Deregister deregister = new Deregister(event.getBytes());
+                    deregisterNode(deregister, socket);
+                default:
+                    System.out.println("Protocol Unmatched!");
+                    System.exit(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+    }
+    
+    public void deregisterNode(Deregister deregister, Socket socket){
+        try {
+
+            String additionalInfo = vertexList.deregisterVertex(deregister.getID(), deregister.getIP(), socket);
+            DeregisterResponse deregisterResponse = new DeregisterResponse(deregister.getStatus(), additionalInfo);
+
+            TCPSender send = new TCPSender(socket);
+            send.sendData(deregisterResponse.getBytes());
+
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 
     public void checkNodesStatus(Event event){

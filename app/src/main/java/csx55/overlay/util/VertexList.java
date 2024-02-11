@@ -80,13 +80,17 @@ public class VertexList {
         return vertexIDs;
     }
 
-    public void deregisterVertex(){
-        // Remove from conncurrent hashmap and arraylist of IDS
-        // TODO: implement
-
-
-
-
+    public String deregisterVertex(String id, String ip, Socket socket){
+        if(!correctIP(socket, ip)){
+            return deRegistrationInfo(StatusCodes.FAILURE_IP);
+        }
+        else if(!registeredVertexs.containsKey(id)){
+            return deRegistrationInfo(StatusCodes.FAILURE);
+        }
+        else{
+            registeredVertexs.remove(id);
+            return deRegistrationInfo(StatusCodes.SUCCESS);
+        }
     }
 
     public boolean inList(Vertex vertex){
@@ -106,6 +110,18 @@ public class VertexList {
         return requestString.equals(socketString);
     }
 
+    //  Refactor
+    synchronized public boolean correctIP(Socket socket, String ip){
+        // Checks to see if node ip match socket ip
+        InetAddress inAd = socket.getInetAddress();
+        String remoteAdd = inAd.getHostName();
+
+        int endIndex = remoteAdd.indexOf(".");
+        String socketString = remoteAdd.substring(0, endIndex);
+
+        return ip.equals(socketString);
+    }
+
     public String registrationInfo(byte statusCode){
         switch(statusCode){
             case StatusCodes.SUCCESS:
@@ -118,6 +134,21 @@ public class VertexList {
                 return "Issue with registration";
         }
     }
+
+
+    public String deRegistrationInfo(byte statusCode){
+        switch(statusCode){
+            case StatusCodes.SUCCESS:
+                return "Deregistration request successful. The number of messaging nodes currently constituting the overlay is (" + registeredVertexs.size() + ")";
+            case StatusCodes.FAILURE:
+                return "Deregistration request unsuccessful. Node not in overlay. The number of messaging nodes currently constituting the overlay is (" + registeredVertexs.size() + ")";
+            case StatusCodes.FAILURE_IP:
+                return "Deregistration request unsuccessful. IP in request mismatches the InputStream IP. The number of messaging nodes currently constituting the overlay is (" + registeredVertexs.size() + ")";
+            default:
+                return "Issue with Deregistration";
+        }
+    }
+
 
     public int size(){
         return registeredVertexs.size();

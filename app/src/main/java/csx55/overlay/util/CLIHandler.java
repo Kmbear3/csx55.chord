@@ -79,8 +79,6 @@ public class CLIHandler {
         String instruction = scan.nextLine(); // need parser
         String[] result = instruction.split("\\s");
 
-        System.out.println("Instruction: " + result[0]);
-
         switch(result[0]){
             case "exit":
                 System.exit(0);
@@ -90,17 +88,20 @@ public class CLIHandler {
                 sendMessages.sendPoke();
                break;
             case "exit-overlay":
-                sendDeregistrationRequest();
+                sendDeregisterRequest(StatusCodes.EXIT_OVERLAY);
+                break;
+            case "deregister":
+                sendDeregisterRequest(StatusCodes.DEREGISTER);
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }
     }
 
-    private void sendDeregistrationRequest(){
+    private void sendDeregisterRequest(int status){
         try {
 
-            Deregister deregister = new Deregister(node.getMessagingNodeIP(), node.getMessagingNodePort());
+            Deregister deregister = new Deregister(node.getMessagingNodeIP(), node.getMessagingNodePort(), status);
             node.sendRegistryMessage(deregister);
         
         } catch (IOException e) {
