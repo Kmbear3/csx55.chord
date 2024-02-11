@@ -114,13 +114,13 @@ public class StatisticsCollectorAndDisplay {
         long receivedSummationTotal = 0;
 
 
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println("                                                          Registry Traffic Summary                                                    ");
         System.out.println("                                                                                                                                      ");
 
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22s |", "Node" ,"Messages Sent", "Messages Received", "Sent Messages Sum", "Received Messages Sum", "Messages Relayed"));
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
         
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
@@ -141,7 +141,7 @@ public class StatisticsCollectorAndDisplay {
 
         System.out.println(String.format("| %-10s | %20d | %22d | %22d | %22d | %22d |", "Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum));
 
-        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
     }
 
     synchronized public void resetCounters(){
