@@ -2,11 +2,13 @@ package csx55.overlay.util;
 
 import csx55.overlay.wireformats.Message;
 import csx55.overlay.wireformats.Poke;
+import csx55.overlay.wireformats.TaskComplete;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.overlay.dijkstra.RoutingCache;
 import csx55.overlay.dijkstra.ShortestPath;
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.transport.TCPSender;
@@ -17,13 +19,15 @@ public class MessageSender implements Runnable {
     private MessagingNode node;
     private int[][] linkWeights;
     private String[] names;
+    private StatisticsCollectorAndDisplay stats;
 
-    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights, String[] names){
+    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights, String[] names, StatisticsCollectorAndDisplay stats){
         this.messages = messages;
         this.node = node;
         this.numberOfRounds = numberOfRounds;
         this.linkWeights = linkWeights;
         this.names = names;
+        this.stats = stats;
     }
 
     public MessageSender(MessagingNode node){
@@ -38,45 +42,103 @@ public class MessageSender implements Runnable {
         peerList.sendAllNodes(poke);
     }
 
+
+    public void sendMessages(int numberOfRounds, StatisticsCollectorAndDisplay stats, RoutingCache routes) throws IOException{
+
+        for(int i = 0; i < this.numberOfRounds; i++){
+            final ArrayList<String> route = new ArrayList<String>(routes.getRoute());
+
+            Message message = new Message(route);
+
+            VertexList peerList = node.getPeerList();
+            Vertex vertex = peerList.get(route.get(1)); // Next step in the route. 
+
+            for(int j = 0; j < 5; j++ ){
+
+                vertex.sendMessage(message.getBytes());
+
+                stats.incrementSendTracker();
+                stats.addSendSum(message.getPayload());
+            }
+        }
+
+        TaskComplete task = new TaskComplete(node.getMessagingNodeIP(), node.getMessagingNodePort());
+        node.sendRegistryMessage(task);
+    }
+
+    public void relayOrReceiveMessages(ConcurrentLinkedQueue<Message> messages, StatisticsCollectorAndDisplay stats) throws IOException{
+
+        while (true) {
+            Message message = messages.poll();
+            if (message != null) {
+                ArrayList<String> routePlan = message.getRoutePlan();
+
+                if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
+                    stats.incrementReceivedTracker();
+                    stats.addReceiveSum(message.getPayload());
+                }
+                else{
+
+                    int nextNode = routePlan.indexOf(node.getID()) + 1;
+
+                    VertexList peerList = node.getPeerList();
+                    Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
+
+                    vertex.sendMessage(message.getBytes());
+
+                    // TCPSender send = new TCPSender(vertex.getSocket());
+                    // send.sendData(message.getBytes());
+                    stats.incrementRelayed();
+                }
+            }
+        }
+
+        // for(Message message : messages){
+
+        //     ArrayList<String> routePlan = message.getRoutePlan();
+
+        //     if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
+        //         stats.incrementReceivedTracker();
+        //         stats.addReceiveSum(message.getPayload());
+        //     }
+        //     else{
+
+        //         int nextNode = routePlan.indexOf(node.getID()) + 1;
+
+        //         VertexList peerList = node.getPeerList();
+        //         Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
+
+        //         vertex.sendMessage(message.getBytes());
+
+        //         // TCPSender send = new TCPSender(vertex.getSocket());
+        //         // send.sendData(message.getBytes());
+        //         stats.incrementRelayed();
+        //     }
+        // }
+
+    }
+
     @Override
     public void run() {
-        StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
         ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
-
-        paths.calculateShortestPaths();
+        RoutingCache routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID());
         
         try {
-            for(int i = 0; i < this.numberOfRounds; i++){
-                ArrayList<String> routePlan = new ArrayList<>();
-                routePlan.add(node.getID());
-                String sink = node.getRandomPeerID();
-                routePlan.add(sink);
-                Message message = new Message(routePlan);
 
-                VertexList peerList = node.getPeerList();
-                Vertex vertex = peerList.get(sink);
+            sendMessages(numberOfRounds, this.stats, routingCache);
 
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(message.getBytes());
-                stats.incrementSendTracker();
-            }
+            
 
-            // Thread.sleep(5000);
+            relayOrReceiveMessages(messages, this.stats);
 
-            for(Message message : messages){
-                System.out.println("Payload: " + message.getPayload());
-                stats.incrementReceivedTracker();
-            }
-
-            stats.displayStats();
+            
+            // stats.displayStats();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        // } catch (InterruptedException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
         }
+    
     }
 
 }

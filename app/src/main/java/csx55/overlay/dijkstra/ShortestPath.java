@@ -116,7 +116,13 @@ public class ShortestPath {
         }
 
         addDestinations(paths);
-        printRoutes(paths);
+        // printRoutes(paths);
+
+        // HIGHLY SUS 
+        paths.remove(source);
+        // AJHHH HIHGLY SUS!!! 
+
+        
         return paths;
     }
 

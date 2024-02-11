@@ -1,7 +1,10 @@
 package csx55.overlay.util;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+
+import csx55.overlay.transport.TCPSender;
 
 public class Vertex {
     private final Socket socket;
@@ -9,6 +12,7 @@ public class Vertex {
     private final int port;
     private final String id;
     private int numberOfConnections = 0;
+    private boolean taskComplete = false;
 
     ArrayList<Vertex> vertexConnections;
 
@@ -26,6 +30,18 @@ public class Vertex {
 
     synchronized public Socket getSocket(){
         return this.socket;
+    }
+
+    synchronized public void sendMessage(byte[] marshalledBytes){
+        try {
+    
+            TCPSender send = new TCPSender(this.socket);
+            send.sendData(marshalledBytes);
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public String getIP(){
@@ -67,5 +83,13 @@ public class Vertex {
 
     public ArrayList<Vertex> getVertexConnections(){
         return this.vertexConnections;
+    }
+
+    public void setTaskComplete(){
+        this.taskComplete = true;
+    }
+
+    public boolean isTaskComplete(){
+        return this.taskComplete;
     }
 }

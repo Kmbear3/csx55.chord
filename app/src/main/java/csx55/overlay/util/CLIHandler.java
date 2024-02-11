@@ -37,6 +37,7 @@ public class CLIHandler {
                 System.exit(0);
                 break;
             case "setup-overlay":
+            case "so":
                 if(result.length > 1){
                     int numberOfConnections = Integer.parseInt(result[1]);
                     System.out.println("number of connections: " + numberOfConnections);
@@ -57,6 +58,7 @@ public class CLIHandler {
                     System.out.println("Incorrect Instruction! please specify number of rounds.");
                 }
                 break;
+            case "sendw":
             case "send-overlay-link-weights":
                 if(overlayCreator != null){
                     LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections(), this.overlayCreator.createLinkInfo());

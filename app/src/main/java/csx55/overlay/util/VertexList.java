@@ -48,8 +48,10 @@ public class VertexList {
                 registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
             }
 
-            TCPSender tcpSender = new TCPSender(vertex.getSocket());
-            tcpSender.sendData(registerationResponse.getBytes());
+            // TCPSender tcpSender = new TCPSender(vertex.getSocket());
+            // tcpSender.sendData(registerationResponse.getBytes());
+
+            vertex.sendMessage(registerationResponse.getBytes());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -61,6 +63,15 @@ public class VertexList {
         registeredVertexs.put(vertex.getID(), vertex);
         vertexIDs.add(vertex.getID());
 
+    }
+
+    public boolean allTasksAreComplete(){
+        for(Vertex vertex : this.getValues()){
+            if(!vertex.isTaskComplete()){
+                return false;
+            }
+        }
+        return true; 
     }
 
 
@@ -82,7 +93,7 @@ public class VertexList {
         return registeredVertexs.containsKey(vertex.getID());
     }
 
-    public boolean correctIP(Vertex vertex){
+    synchronized public boolean correctIP(Vertex vertex){
         // Checks to see if node ip match socket ip
         Socket socket = vertex.getSocket(); 
         InetAddress inAd = socket.getInetAddress();
@@ -133,8 +144,10 @@ public class VertexList {
         try {
             for(Vertex vertex : this.getValues()){
                 vertex.printVertex();
-                TCPSender send = new TCPSender(vertex.getSocket());
-                send.sendData(event.getBytes());
+
+                vertex.sendMessage(event.getBytes());
+                // TCPSender send = new TCPSender(vertex.getSocket());
+                // send.sendData(event.getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -17,6 +17,7 @@ import csx55.overlay.transport.TCPServerThread;
 import csx55.overlay.util.CLIHandler;
 import csx55.overlay.util.MessageSender;
 import csx55.overlay.util.OverlayCreator;
+import csx55.overlay.util.StatisticsCollectorAndDisplay;
 import csx55.overlay.util.Vertex;
 import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.*;
@@ -36,6 +37,8 @@ public class MessagingNode implements Node{
     private int[][] linkWeights;
 
     private String[] names;
+
+    StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
     public MessagingNode(String registryIP, int registryPort){
         try {
@@ -67,7 +70,6 @@ public class MessagingNode implements Node{
     @Override
     public void onEvent(Event event, Socket socket) {
         try {
-            // System.out.println("Inside MessagingNode.onEvent() --- Type: " + event.getType());
             switch(event.getType()){
                 case Protocol.MESSAGE:
                     Message message = new Message(event.getBytes());
@@ -95,11 +97,15 @@ public class MessagingNode implements Node{
                     LinkWeights linkWeights = new LinkWeights(event.getBytes());
                     this.linkWeights = linkWeights.getConnections();
                     this.names = linkWeights.getNames();
-                    printConnections(this.linkWeights);
+                    break;
+                case Protocol.PULL_TRAFFIC_SUMMARY:
+                    TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
+                    registrySender.sendData(summaryResponse.getBytes());
+                    stats.resetCounters();
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
-                    System.exit(0);
+                    System.out.println("Please try again");
                     break;
             }
         } catch (IOException e) {
@@ -109,7 +115,7 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names);
+        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }
@@ -131,6 +137,7 @@ public class MessagingNode implements Node{
                 sendInitiateConnectionRequest(peer);
             }
         }
+        peerList.printVertexList();
     }
 
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
@@ -144,8 +151,10 @@ public class MessagingNode implements Node{
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
 
-        TCPSender tcpSender = new TCPSender(peerSocket);
-        tcpSender.sendData(peerConnection.getBytes());
+        vertex.sendMessage(peerConnection.getBytes());
+
+        // TCPSender tcpSender = new TCPSender(peerSocket);
+        // tcpSender.sendData(peerConnection.getBytes());
     }
 
     public void configureServer(Node node){
@@ -188,6 +197,10 @@ public class MessagingNode implements Node{
             System.out.println();
         }
 
+    }
+
+    synchronized public void sendRegistryMessage(Event event) throws IOException{
+        this.registrySender.sendData(event.getBytes());
     }
 
     public static void main(String[] args){

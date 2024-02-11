@@ -12,12 +12,13 @@ import java.util.Random;
 
 public class Message implements Event, Protocol {
     final int MESSAGE_TYPE = Protocol.MESSAGE;
-    int payload;
+    final int payload;
     byte[] marshalledBytes;
     ArrayList<String> routePlan = new ArrayList<>();
 
     public Message() throws IOException{
         marshalledBytes = getBytes();
+        this.payload = createPayload();
     }
 
     public Message(byte[] marshalledBytes) throws IOException {
@@ -46,6 +47,7 @@ public class Message implements Event, Protocol {
 
     public Message(ArrayList<String> routePlan){
         this.routePlan = routePlan;
+        this.payload = createPayload();
     }
 
     @Override
@@ -60,7 +62,6 @@ public class Message implements Event, Protocol {
         DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 
         dout.writeInt(Protocol.MESSAGE);
-        this.payload = createPayload();
         dout.writeInt(this.payload);
 
         dout.writeInt(routePlan.size());
@@ -83,7 +84,7 @@ public class Message implements Event, Protocol {
     } 
 
     public int getPayload(){
-        return payload;
+        return this.payload;
     }
 
     public int createPayload(){
@@ -93,6 +94,10 @@ public class Message implements Event, Protocol {
 
     public byte[] getMessage(){
         return marshalledBytes;
+    }
+
+    public ArrayList<String> getRoutePlan(){
+        return this.routePlan;
     }
 
 }
