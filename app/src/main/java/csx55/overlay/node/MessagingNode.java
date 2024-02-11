@@ -138,6 +138,7 @@ public class MessagingNode implements Node{
                 sendInitiateConnectionRequest(peer);
             }
         }
+        peerList.printVertexList();
     }
 
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
@@ -199,7 +200,7 @@ public class MessagingNode implements Node{
 
     }
 
-    public void sendRegistryMessage(Event event) throws IOException{
+    synchronized public void sendRegistryMessage(Event event) throws IOException{
         this.registrySender.sendData(event.getBytes());
     }
 

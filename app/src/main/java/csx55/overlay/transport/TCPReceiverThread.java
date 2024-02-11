@@ -16,11 +16,13 @@ public class TCPReceiverThread implements Runnable {
     private Socket socket;
     private DataInputStream din;
     private Node node;
+    private String socketName;
     
     public TCPReceiverThread(Node node, Socket socket) throws IOException {
         this.socket = socket;
         din = new DataInputStream(socket.getInputStream());
         this.node = node;
+        this.socketName = socket.toString();
     }
 
     public void run() {
@@ -46,6 +48,7 @@ public class TCPReceiverThread implements Runnable {
                 break;
             }
         }
+        System.err.println("Socket Closed " + socketName);
     }
     
 }

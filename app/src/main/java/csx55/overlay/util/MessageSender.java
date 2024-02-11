@@ -67,29 +67,54 @@ public class MessageSender implements Runnable {
     }
 
     public void relayOrReceiveMessages(ConcurrentLinkedQueue<Message> messages, StatisticsCollectorAndDisplay stats) throws IOException{
-        for(Message message : messages){
 
-            ArrayList<String> routePlan = message.getRoutePlan();
+        while (true) {
+            Message message = messages.poll();
+            if (message != null) {
+                ArrayList<String> routePlan = message.getRoutePlan();
 
-            if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
-                stats.incrementReceivedTracker();
-                stats.addReceiveSum(message.getPayload());
-            }
-            else{
+                if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
+                    stats.incrementReceivedTracker();
+                    stats.addReceiveSum(message.getPayload());
+                }
+                else{
 
-                int nextNode = routePlan.indexOf(node.getID()) + 1;
+                    int nextNode = routePlan.indexOf(node.getID()) + 1;
 
-                VertexList peerList = node.getPeerList();
-                Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
+                    VertexList peerList = node.getPeerList();
+                    Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
 
+                    vertex.sendMessage(message.getBytes());
 
-                vertex.sendMessage(message.getBytes());
-
-                // TCPSender send = new TCPSender(vertex.getSocket());
-                // send.sendData(message.getBytes());
-                stats.incrementRelayed();
+                    // TCPSender send = new TCPSender(vertex.getSocket());
+                    // send.sendData(message.getBytes());
+                    stats.incrementRelayed();
+                }
             }
         }
+
+        // for(Message message : messages){
+
+        //     ArrayList<String> routePlan = message.getRoutePlan();
+
+        //     if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
+        //         stats.incrementReceivedTracker();
+        //         stats.addReceiveSum(message.getPayload());
+        //     }
+        //     else{
+
+        //         int nextNode = routePlan.indexOf(node.getID()) + 1;
+
+        //         VertexList peerList = node.getPeerList();
+        //         Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
+
+        //         vertex.sendMessage(message.getBytes());
+
+        //         // TCPSender send = new TCPSender(vertex.getSocket());
+        //         // send.sendData(message.getBytes());
+        //         stats.incrementRelayed();
+        //     }
+        // }
 
     }
 
@@ -101,6 +126,8 @@ public class MessageSender implements Runnable {
         try {
 
             sendMessages(numberOfRounds, this.stats, routingCache);
+
+            
 
             relayOrReceiveMessages(messages, this.stats);
 
