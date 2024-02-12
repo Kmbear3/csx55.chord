@@ -37,6 +37,8 @@ public class MessagingNode implements Node{
 
     private String[] names;
 
+    private MessageSender sender;
+
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
     public MessagingNode(String registryIP, int registryPort){
@@ -119,7 +121,7 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
+        this.sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }
@@ -147,6 +149,7 @@ public class MessagingNode implements Node{
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
         return this.messagesToProcess;
     }
+
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
         Socket peerSocket = vertex.getSocket();
@@ -202,6 +205,10 @@ public class MessagingNode implements Node{
 
     synchronized public void sendRegistryMessage(Event event) throws IOException{
         this.registrySender.sendData(event.getBytes());
+    }
+
+    public void printShortestPaths() {
+        sender.printShortestPaths();
     }
 
     public static void main(String[] args){

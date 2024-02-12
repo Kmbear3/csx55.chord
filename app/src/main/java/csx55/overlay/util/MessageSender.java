@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import csx55.overlay.dijkstra.RoutingCache;
 import csx55.overlay.dijkstra.ShortestPath;
 import csx55.overlay.node.MessagingNode;
-import csx55.overlay.transport.TCPSender;
 
 public class MessageSender implements Runnable {
     private ConcurrentLinkedQueue<Message> messages;
@@ -20,6 +19,7 @@ public class MessageSender implements Runnable {
     private int[][] linkWeights;
     private String[] names;
     private StatisticsCollectorAndDisplay stats;
+    private RoutingCache routingCache;
 
     public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights, String[] names, StatisticsCollectorAndDisplay stats){
         this.messages = messages;
@@ -89,47 +89,17 @@ public class MessageSender implements Runnable {
                 }
             }
         }
-
-        // for(Message message : messages){
-
-        //     ArrayList<String> routePlan = message.getRoutePlan();
-
-        //     if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
-        //         stats.incrementReceivedTracker();
-        //         stats.addReceiveSum(message.getPayload());
-        //     }
-        //     else{
-
-        //         int nextNode = routePlan.indexOf(node.getID()) + 1;
-
-        //         VertexList peerList = node.getPeerList();
-        //         Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
-
-        //         vertex.sendMessage(message.getBytes());
-
-        //         // TCPSender send = new TCPSender(vertex.getSocket());
-        //         // send.sendData(message.getBytes());
-        //         stats.incrementRelayed();
-        //     }
-        // }
-
     }
 
     @Override
     public void run() {
         ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
-        RoutingCache routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID());
+        this.routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID(), linkWeights);
         
         try {
 
             sendMessages(numberOfRounds, this.stats, routingCache);
-
-            
-
-            relayOrReceiveMessages(messages, this.stats);
-
-            
-            // stats.displayStats();
+            relayOrReceiveMessages(messages, this.stats);          
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -138,4 +108,7 @@ public class MessageSender implements Runnable {
     
     }
 
+    public void printShortestPaths() {
+        routingCache.printRoutes();
+    }
 }

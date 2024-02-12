@@ -101,6 +101,9 @@ public class CLIHandler {
             case "deregister":
                 sendDeregisterRequest(StatusCodes.DEREGISTER);
                 break;
+            case "print-shortest-path":
+                node.printShortestPaths();
+                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }
