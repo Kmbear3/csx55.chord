@@ -69,8 +69,6 @@ public class ShortestPath {
 
         HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
-        // ArrayList<String> unvisited = new ArrayList<>();
-        // ArrayList<String> visited = new ArrayList<>();
       
         Set<String> unvisited = new HashSet<>();
         Set<String> visited = new HashSet<>();
@@ -122,7 +120,6 @@ public class ShortestPath {
         paths.remove(source);
         // AJHHH HIHGLY SUS!!! 
 
-        
         return paths;
     }
 
@@ -131,19 +128,6 @@ public class ShortestPath {
            ArrayList<String> path = new ArrayList<>(paths.get(name));
            path.add(name);
            paths.put(name, path);
-        }
-    }
-
-    public void printRoutes(HashMap<String, ArrayList<String>> paths){
-        for(int i = 0; i < names.length; i++){
-            ArrayList<String> route = paths.get(names[i]);
-            System.out.print("Sink " + names[i]);
-
-            for(int j = 0; j < route.size(); j++){
-                System.out.print("   " + route.get(j) + " -> ");
-            }
-
-            System.out.println();
         }
     }
 
@@ -158,6 +142,19 @@ public class ShortestPath {
     public void printDistances(HashMap<String, Integer> distances){
         for(String name : this.names){
             System.out.println(name + " : " + " Distances: " + distances.get(name));
+        }
+    }
+
+    public void printRoutes(HashMap<String, ArrayList<String>> paths){
+        for(int i = 0; i < names.length; i++){
+            ArrayList<String> route = paths.get(names[i]);
+            System.out.print("Sink " + names[i]);
+
+            for(int j = 0; j < route.size(); j++){
+                System.out.print("   " + route.get(j) + " -> ");
+            }
+
+            System.out.println();
         }
     }
 }

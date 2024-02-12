@@ -1,11 +1,13 @@
 package csx55.overlay.util;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import csx55.overlay.node.MessagingNode;
 import csx55.overlay.node.Node;
 import csx55.overlay.node.Registry;
+import csx55.overlay.wireformats.Deregister;
 import csx55.overlay.wireformats.LinkWeights;
 import csx55.overlay.wireformats.TaskInitiate;
 
@@ -35,6 +37,14 @@ public class CLIHandler {
         switch(result[0]){
             case "exit":
                 System.exit(0);
+                break;
+            case "list-weights":
+                if(this.overlayCreator != null){
+                    this.overlayCreator.listWeights();          
+                }
+                else{
+                    System.out.println("Cannot List Link Weights. Overlay is unconstructed.");
+                }
                 break;
             case "setup-overlay":
             case "so":
@@ -77,8 +87,6 @@ public class CLIHandler {
         String instruction = scan.nextLine(); // need parser
         String[] result = instruction.split("\\s");
 
-        System.out.println("Instruction: " + result[0]);
-
         switch(result[0]){
             case "exit":
                 System.exit(0);
@@ -87,8 +95,34 @@ public class CLIHandler {
                 MessageSender sendMessages = new MessageSender(node);
                 sendMessages.sendPoke();
                break;
+            case "exit-overlay":
+                sendDeregisterRequest(StatusCodes.EXIT_OVERLAY);
+                break;
+            case "deregister":
+                sendDeregisterRequest(StatusCodes.DEREGISTER);
+                break;
+            case "print-shortest-path":
+                if(this.node.getSender() == null){
+                    System.out.println("Link weights haven't been sent, paths not calculated.");
+                }
+                else{
+                    MessageSender sender = this.node.getSender();
+                    sender.printShortestPaths();
+                }
+                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
+        }
+    }
+
+    private void sendDeregisterRequest(int status){
+        try {
+
+            Deregister deregister = new Deregister(node.getMessagingNodeIP(), node.getMessagingNodePort(), status);
+            node.sendRegistryMessage(deregister);
+        
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

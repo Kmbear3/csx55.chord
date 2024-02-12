@@ -8,38 +8,29 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class RegisterationResponse implements Event, Protocol{
+import csx55.overlay.util.StatusCodes;
 
-    // Message Type (int): REGISTER_RESPONSE
-    // Status Code (byte): SUCCESS or FAILURE
-    // Additional Info (String): 
-
-    int MESSAGE_TYPE = Protocol.REGISTER_RESPONSE;
-    byte statusCode;
+public class DeregisterResponse implements Event, Protocol{
     String additionalInfo;
-    byte[] marshalledBytes;
-    
-    public RegisterationResponse(byte statusCode, String additionalInfo){
-        try {
-        
+    int statusCode;
+
+    public DeregisterResponse(int statusCode, String additionalInfo) {
         this.statusCode = statusCode;
         this.additionalInfo = additionalInfo;
-        this.marshalledBytes = getBytes();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
-    
 
-    public RegisterationResponse(byte[] marshalledBytes) {
+    public DeregisterResponse(byte[] marshalledBytes) {
         try {
             ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
             DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 
             int type = din.readInt();
 
-            this.statusCode = din.readByte();
+            if(type != Protocol.DEREGISTER_RESPONSE){
+                System.err.println("Type mismatch in DeregisterResponse!");
+            }
+
+            this.statusCode = din.readInt();
         
             int infoLength = din.readInt();
             byte[] infoBytes = new byte[infoLength];
@@ -48,14 +39,23 @@ public class RegisterationResponse implements Event, Protocol{
 
             baInputStream.close();
             din.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public boolean exitOverlay() {
+        return statusCode == StatusCodes.EXIT_OVERLAY;
+    }
+
+    public boolean deregisterStatus() {
+        return statusCode == StatusCodes.DEREGISTER;
+    }
+
     @Override
     public int getType() {
-        return Protocol.REGISTER_RESPONSE;
+        return Protocol.DEREGISTER_RESPONSE;
     }
 
     @Override
@@ -64,8 +64,8 @@ public class RegisterationResponse implements Event, Protocol{
         ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 
-        dout.writeInt(Protocol.REGISTER_RESPONSE);
-        dout.writeByte(this.statusCode);
+        dout.writeInt(Protocol.DEREGISTER_RESPONSE);
+        dout.writeInt(this.statusCode);
 
         byte[] additionalInfoBytes = this.additionalInfo.getBytes();
         int elementLength = additionalInfoBytes.length;
@@ -80,7 +80,7 @@ public class RegisterationResponse implements Event, Protocol{
         return marshalledBytes;
     }
 
-    public void getInfo(){
-        System.out.println(additionalInfo);
+    public String getAdditionalInfo() {
+        return this.additionalInfo;
     }
 }

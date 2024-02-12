@@ -23,7 +23,6 @@ import csx55.overlay.util.VertexList;
 import csx55.overlay.wireformats.*;
 
 public class MessagingNode implements Node{
-    // Maybe move to StatisticsCollectorAndDisplay (?)
 
     private String messagingNodeIP;
     private int messagingNodePort;
@@ -37,6 +36,8 @@ public class MessagingNode implements Node{
     private int[][] linkWeights;
 
     private String[] names;
+
+    private MessageSender sender;
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
@@ -53,16 +54,12 @@ public class MessagingNode implements Node{
             this.messagingNodeIP = this.server.getIP();
             this.messagingNodePort = this.server.getPort();
 
-            System.out.println("Inside MessagingNode(IP, port) --- IP: " + this.messagingNodeIP + " --- Port: " + this.messagingNodePort);
-
             RegistrationRequest regReq = new RegistrationRequest(messagingNodeIP, messagingNodePort);
             registrySender.sendData(regReq.getBytes());
 
         } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -97,11 +94,23 @@ public class MessagingNode implements Node{
                     LinkWeights linkWeights = new LinkWeights(event.getBytes());
                     this.linkWeights = linkWeights.getConnections();
                     this.names = linkWeights.getNames();
+                    
+                    this.sender = new MessageSender(this, this.messagesToProcess, this.linkWeights, this.names, this.stats);
+
                     break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
                     TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
                     registrySender.sendData(summaryResponse.getBytes());
                     stats.resetCounters();
+                    break;
+                case Protocol.DEREGISTER_RESPONSE:
+                    DeregisterResponse deResponse = new DeregisterResponse(event.getBytes());
+
+                    System.out.println(deResponse.getAdditionalInfo());
+
+                    if(deResponse.exitOverlay()){
+                        System.exit(0);
+                    }
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
@@ -115,7 +124,8 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        MessageSender sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
+        // this.sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
+        this.sender.setNumberOfRound(numberOfRounds);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }
@@ -143,6 +153,7 @@ public class MessagingNode implements Node{
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
         return this.messagesToProcess;
     }
+
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
         Socket peerSocket = vertex.getSocket();
@@ -153,8 +164,6 @@ public class MessagingNode implements Node{
 
         vertex.sendMessage(peerConnection.getBytes());
 
-        // TCPSender tcpSender = new TCPSender(peerSocket);
-        // tcpSender.sendData(peerConnection.getBytes());
     }
 
     public void configureServer(Node node){
@@ -187,8 +196,7 @@ public class MessagingNode implements Node{
     }
 
 
-   //TODO: Remove me!!! 
-    public void printConnections(int[][] matrix){
+    synchronized public void printConnections(int[][] matrix){
 
         for(int i = 0; i < matrix.length; i++){
             for(int j = 0; j < matrix.length; j ++){
@@ -201,6 +209,14 @@ public class MessagingNode implements Node{
 
     synchronized public void sendRegistryMessage(Event event) throws IOException{
         this.registrySender.sendData(event.getBytes());
+    }
+
+    public void printShortestPaths() {
+        this.sender.printShortestPaths();
+    }
+
+    public MessageSender getSender(){
+        return this.sender;
     }
 
     public static void main(String[] args){

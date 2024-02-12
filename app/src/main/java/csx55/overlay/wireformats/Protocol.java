@@ -14,4 +14,7 @@ public interface Protocol {
     public static final int PULL_TRAFFIC_SUMMARY = 9;
     public static final int TASK_COMPLETE = 10;
     public static final int TRAFFIC_SUMMARY = 11;
+    public static final int DEREGISTER_REQUEST = 12;
+    public static final int DEREGISTER_RESPONSE = 13;
+
 }
