@@ -69,8 +69,6 @@ public class ShortestPath {
 
         HashMap<String, ArrayList<String>> paths = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> nodeDistances = new HashMap<String, Integer>();
-        // ArrayList<String> unvisited = new ArrayList<>();
-        // ArrayList<String> visited = new ArrayList<>();
       
         Set<String> unvisited = new HashSet<>();
         Set<String> visited = new HashSet<>();

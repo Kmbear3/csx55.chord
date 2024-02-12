@@ -24,7 +24,7 @@ public class OverlayCreator {
         constructOverlay();
     }   
 
-    public void constructOverlay(){
+    synchronized public void constructOverlay(){
         try {
             
             int[][] crConnections = assignConnections();
@@ -39,8 +39,6 @@ public class OverlayCreator {
                 vertex.printVertex();
                 
                 MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections());
-                // TCPSender MNSender = new TCPSender(vertex.getSocket());
-                // MNSender.sendData(nodesList.getBytes());
                 vertex.sendMessage(nodesList.getBytes());
             }
 
@@ -67,7 +65,7 @@ public class OverlayCreator {
         }
     }
 
-    public int[][] constructRing(){
+    synchronized public int[][] constructRing(){
         int[][] connections = new int[this.names.size()][this.names.size()];
         Random rand = new Random();
 
@@ -109,14 +107,14 @@ public class OverlayCreator {
         return connections;
     }
 
-    public void rewindConnections(int CR, int[][] connections){
+    synchronized public void rewindConnections(int CR, int[][] connections){
         for(int j = 0; j < connections.length; j++){
             connections[j][(j + CR) % connections.length] = 0;
             connections[(j + CR) % connections.length][j] = 0;
         }
     }
 
-    public void printConnections(int[][] matrix){
+    synchronized public void printConnections(int[][] matrix){
 
         for(String name : names){
             System.out.print(" | " + name + " | ");
@@ -139,7 +137,7 @@ public class OverlayCreator {
 
     }
 
-    public boolean isFullyConnected(int node, int[][] connections, int CR){
+    synchronized public boolean isFullyConnected(int node, int[][] connections, int CR){
         int[] nodeConnections = connections[node];
         int nodeNumberOfConnections = 0;
 
@@ -152,7 +150,7 @@ public class OverlayCreator {
         return nodeNumberOfConnections == CR;
     }
 
-    public boolean isBalanced(int[][] matrix){
+    synchronized public boolean isBalanced(int[][] matrix){
 
         int[] nodeConnections = matrix[0];
         int nodeNumberOfConnections = 0;
@@ -182,7 +180,7 @@ public class OverlayCreator {
         return linkWeights;
     }
 
-    public ArrayList<String> createLinkInfo(){
+    synchronized public ArrayList<String> createLinkInfo(){
         ArrayList<String> linkInfos = new ArrayList<>();
 
         for(int i = 0;  i < linkWeights.length; i ++ ){
@@ -192,6 +190,12 @@ public class OverlayCreator {
         }
 
         return linkInfos;
+    }
+
+    synchronized public void listWeights() {
+        for(String connection : createLinkInfo()){
+            System.out.println(connection);
+        }
     }
 }
 

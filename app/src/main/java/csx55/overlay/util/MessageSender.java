@@ -85,9 +85,6 @@ public class MessageSender implements Runnable {
                     Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
 
                     vertex.sendMessage(message.getBytes());
-
-                    // TCPSender send = new TCPSender(vertex.getSocket());
-                    // send.sendData(message.getBytes());
                     stats.incrementRelayed();
                 }
             }

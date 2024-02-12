@@ -38,6 +38,14 @@ public class CLIHandler {
             case "exit":
                 System.exit(0);
                 break;
+            case "list-weights":
+                if(this.overlayCreator != null){
+                    this.overlayCreator.listWeights();          
+                }
+                else{
+                    System.out.println("Cannot List Link Weights. Overlay is unconstructed.");
+                }
+                break;
             case "setup-overlay":
             case "so":
                 if(result.length > 1){
