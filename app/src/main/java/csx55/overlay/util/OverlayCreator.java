@@ -194,7 +194,9 @@ public class OverlayCreator {
 
     synchronized public void listWeights() {
         for(String connection : createLinkInfo()){
-            System.out.println(connection);
+            if(Integer.parseInt(connection.split(" ")[2]) != 0){
+                System.out.println(connection);
+            }
         }
     }
 }
