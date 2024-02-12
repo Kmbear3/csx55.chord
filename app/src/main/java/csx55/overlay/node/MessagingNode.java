@@ -94,6 +94,9 @@ public class MessagingNode implements Node{
                     LinkWeights linkWeights = new LinkWeights(event.getBytes());
                     this.linkWeights = linkWeights.getConnections();
                     this.names = linkWeights.getNames();
+                    
+                    this.sender = new MessageSender(this, this.messagesToProcess, this.linkWeights, this.names, this.stats);
+
                     break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
                     TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
@@ -121,7 +124,8 @@ public class MessagingNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        this.sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
+        // this.sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
+        sender.setNumberOfRound(numberOfRounds);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }

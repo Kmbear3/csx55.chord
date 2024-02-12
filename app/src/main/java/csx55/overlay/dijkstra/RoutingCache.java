@@ -28,29 +28,7 @@ public class RoutingCache {
         }
     }
 
-    public int getIndex(String node){
-        // Given names, what index maps the name correctly into linkWeight??? 
-
-        int error = -1;
-
-        for(int i = 0; i < this.names.length; i++){
-            if(node.equals(this.names[i])){
-                return i;
-            }
-        }
-        return error;
-    }
-
-    synchronized public void printRoutes(){
-        for(int i = 0; i < names.length; i++){
-            ArrayList<String> route = routes.get(names[i]);
-
-            String shortestPath = "";
-            for(int j = 0; j < route.size() - 1; j++){
-                int source = getIndex(route.get(j));
-                int nextStop = getIndex(route.get(j + 1));
-                shortestPath += route.get(j) + "--" + linkWeights[source][nextStop] + "--" + route.get(j + 1);
-            }
-        }
+    synchronized public ArrayList<String> get(String name){
+        return routes.get(name);
     }
 }

@@ -20,18 +20,27 @@ public class MessageSender implements Runnable {
     private String[] names;
     private StatisticsCollectorAndDisplay stats;
     private RoutingCache routingCache;
+    private ShortestPath paths;
+    
+    
 
-    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int numberOfRounds, int[][] linkWeights, String[] names, StatisticsCollectorAndDisplay stats){
+    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int[][] linkWeights, String[] names, StatisticsCollectorAndDisplay stats){
         this.messages = messages;
         this.node = node;
-        this.numberOfRounds = numberOfRounds;
         this.linkWeights = linkWeights;
         this.names = names;
         this.stats = stats;
+        this.paths =  new ShortestPath(node.getID(), linkWeights, names);
+        this.routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID(), linkWeights);
     }
 
     public MessageSender(MessagingNode node){
         this.node = node;
+    }
+
+       
+    synchronized public void setNumberOfRound(int numberOfRounds){
+        this.numberOfRounds = numberOfRounds;
     }
 
     synchronized public void sendPoke(){
@@ -93,8 +102,8 @@ public class MessageSender implements Runnable {
 
     @Override
     public void run() {
-        ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
-        this.routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID(), linkWeights);
+        // ShortestPath paths = new ShortestPath(node.getID(), linkWeights, names);
+        // this.routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID(), linkWeights);
         
         try {
 
@@ -108,7 +117,32 @@ public class MessageSender implements Runnable {
     
     }
 
-    public void printShortestPaths() {
-        routingCache.printRoutes();
+    synchronized public void printShortestPaths(){
+        for(int i = 0; i < names.length; i++){
+
+            ArrayList<String> route = new ArrayList<String>(this.routingCache.get(names[i]));
+            System.out.println(route);
+
+            String shortestPath = "";
+            for(int j = 0; j < route.size() - 1; j++){
+                int source = getIndex(route.get(j));
+                int nextStop = getIndex(route.get(j + 1));
+                shortestPath += route.get(j) + "--" + linkWeights[source][nextStop] + "--" + route.get(j + 1);
+            }
+            System.out.println(shortestPath);
+        }
+    }
+
+    public int getIndex(String node){
+        // Given names, what index maps the name correctly into linkWeight??? 
+
+        int error = -1;
+
+        for(int i = 0; i < this.names.length; i++){
+            if(node.equals(this.names[i])){
+                return i;
+            }
+        }
+        return error;
     }
 }
