@@ -120,6 +120,7 @@ public class MessageSender implements Runnable {
     synchronized public void printShortestPaths(){
         for(int i = 0; i < names.length; i++){
 
+            // This is null
             ArrayList<String> route = new ArrayList<String>(this.routingCache.get(names[i]));
             System.out.println(route);
 
