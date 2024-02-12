@@ -125,7 +125,7 @@ public class MessagingNode implements Node{
 
     public void sendMessages(int numberOfRounds){
         // this.sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
-        sender.setNumberOfRound(numberOfRounds);
+        this.sender.setNumberOfRound(numberOfRounds);
         Thread senderThread = new Thread(sender);
         senderThread.start();
     }
@@ -212,7 +212,11 @@ public class MessagingNode implements Node{
     }
 
     public void printShortestPaths() {
-        sender.printShortestPaths();
+        this.sender.printShortestPaths();
+    }
+
+    public MessageSender getSender(){
+        return this.sender;
     }
 
     public static void main(String[] args){

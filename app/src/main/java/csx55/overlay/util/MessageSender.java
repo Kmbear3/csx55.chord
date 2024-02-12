@@ -119,16 +119,22 @@ public class MessageSender implements Runnable {
 
     synchronized public void printShortestPaths(){
         for(int i = 0; i < names.length; i++){
+            ArrayList<String> route = this.routingCache.get(names[i]);
 
-            // This is null
-            ArrayList<String> route = new ArrayList<String>(this.routingCache.get(names[i]));
-            System.out.println(route);
+            if(route == null){
+                continue;
+            }
 
             String shortestPath = "";
             for(int j = 0; j < route.size() - 1; j++){
                 int source = getIndex(route.get(j));
                 int nextStop = getIndex(route.get(j + 1));
-                shortestPath += route.get(j) + "--" + linkWeights[source][nextStop] + "--" + route.get(j + 1);
+                if(j == 0){
+                    shortestPath += route.get(j) + "--" + linkWeights[source][nextStop] + "--" + route.get(j + 1);
+                }
+                else{
+                    shortestPath += "--" + linkWeights[source][nextStop] + "--" + route.get(j + 1);
+                }  
             }
             System.out.println(shortestPath);
         }

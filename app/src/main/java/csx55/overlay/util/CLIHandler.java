@@ -102,7 +102,13 @@ public class CLIHandler {
                 sendDeregisterRequest(StatusCodes.DEREGISTER);
                 break;
             case "print-shortest-path":
-                node.printShortestPaths();
+                if(this.node.getSender() == null){
+                    System.out.println("Link weights haven't been sent, paths not calculated.");
+                }
+                else{
+                    MessageSender sender = this.node.getSender();
+                    sender.printShortestPaths();
+                }
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
