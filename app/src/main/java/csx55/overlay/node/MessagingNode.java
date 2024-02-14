@@ -77,7 +77,6 @@ public class MessagingNode implements Node{
                     regRes.getInfo();
                     break;
                 case Protocol.INITIATE_PEER_CONNECTION:
-                    System.out.println("Peer Connection: " + socket.toString());
                     initiatePeerConnections(event, socket);
                     break;
                 case Protocol.MESSAGING_NODES_LIST:
@@ -135,7 +134,6 @@ public class MessagingNode implements Node{
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
         Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
 
-        vertex.printVertex();
         this.peerList.addToList(vertex);
     }
 
@@ -145,7 +143,6 @@ public class MessagingNode implements Node{
         ArrayList<Vertex> peers = nodesList.getPeers();
         
         for (Vertex peer : peers) {
-            peer.printVertex();                
             this.peerList.addToList(peer);
             sendInitiateConnectionRequest(peer);
         }
@@ -163,8 +160,6 @@ public class MessagingNode implements Node{
         TCPReceiverThread receiver = new TCPReceiverThread(this,  vertex.getSocket());
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
-
-        System.out.println("Sending: " +  vertex.getSocket().toString());
 
         vertex.sendMessage(peerConnection.getBytes());
     }
