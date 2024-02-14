@@ -29,7 +29,7 @@ public class OverlayCreator {
             
             int[][] crConnections = assignConnections();
             this.linkWeights = crConnections;
-            // printConnections(crConnections);
+            printConnections(crConnections);
 
             assignNeighbors(crConnections);
 
@@ -81,23 +81,27 @@ public class OverlayCreator {
     public int[][] assignConnections(){
         Random rand = new Random();
         int[][] connections = constructRing();
-        int CR = numberOfConnections;
+        // int CR = numberOfConnections;
+        int CR = connections.length -2;
+
 
         while(CR > 1){
             for(int j = 0; j < connections.length; j++){
                 if(!isFullyConnected(j, connections, numberOfConnections)){
                     int weight =  rand.nextInt(10) + 1;
-                    if((j + CR) % connections.length == j) {
-                        continue; // SUS Super sus
-                    }
-                    else{
+                    // if((j + CR) % connections.length == j) {
+                    //     continue; // SUS Super sus
+                    // }
+                    // else{
                         connections[j][(j + CR) % connections.length] = weight;
                         connections[(j + CR) % connections.length][j] = weight;
-                    }
+                    // }
                 }
+                printConnections(connections);
             }
 
             if(!isBalanced(connections)){
+                System.out.println("Inside imbalance");
                 rewindConnections(CR, connections);
             }
 
@@ -146,6 +150,8 @@ public class OverlayCreator {
                 nodeNumberOfConnections++;
             }
         }
+
+        System.out.println(nodeNumberOfConnections);
 
         return nodeNumberOfConnections == CR;
     }
