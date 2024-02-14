@@ -140,7 +140,7 @@ public class MessagingNode implements Node{
     }
 
     synchronized public void createNodeList(Event event) throws IOException{
-        MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
+        MessagingNodesList nodesList = (MessagingNodesList)event;
 
         ArrayList<Vertex> peers = nodesList.getPeers();
         

@@ -50,7 +50,7 @@ public class MessagingNodesList implements Event, Protocol {
 
             Socket peerSocket = new Socket(IP, port);
             
-            Vertex peer = new Vertex(IP, port, null);
+            Vertex peer = new Vertex(IP, port, peerSocket);
             vertexPeers.add(peer);
         }
 
