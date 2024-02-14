@@ -1,5 +1,7 @@
 #! /bin/bash
 
+source ~/.bashrc && module purge && module load courses/cs455
+
 gradle build
 
 clear
