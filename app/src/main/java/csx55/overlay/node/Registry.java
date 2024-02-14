@@ -119,6 +119,10 @@ public class Registry implements Node {
         vertexList.sendAllNodes(event);
     }
 
+    public void closedConnection(String socketId){
+        vertexList.removeFromList(socketId);
+    }   
+
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Registry registry = new Registry(port);

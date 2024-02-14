@@ -2,6 +2,7 @@ package csx55.overlay.util;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import csx55.overlay.transport.TCPSender;
@@ -33,15 +34,17 @@ public class Vertex {
     }
 
     synchronized public void sendMessage(byte[] marshalledBytes){
+        // Todo - Maybe add check to see if the socket is null first.
         try {
     
             TCPSender send = new TCPSender(this.socket);
             send.sendData(marshalledBytes);
-            
+        
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    
     }
 
     public String getIP(){
