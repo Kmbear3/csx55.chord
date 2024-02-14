@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import csx55.overlay.transport.TCPReceiverThread;
 import csx55.overlay.transport.TCPSender;
 import csx55.overlay.util.Vertex;
 
@@ -49,7 +50,7 @@ public class MessagingNodesList implements Event, Protocol {
 
             Socket peerSocket = new Socket(IP, port);
             
-            Vertex peer = new Vertex(IP, port, peerSocket);
+            Vertex peer = new Vertex(IP, port, null);
             vertexPeers.add(peer);
         }
 

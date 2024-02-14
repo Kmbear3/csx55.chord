@@ -29,7 +29,6 @@ public class OverlayCreator {
             
             int[][] crConnections = assignConnections();
             this.linkWeights = crConnections;
-            printConnections(crConnections);
 
             assignNeighbors(crConnections);
 
@@ -97,11 +96,9 @@ public class OverlayCreator {
                         connections[(j + CR) % connections.length][j] = weight;
                     // }
                 }
-                printConnections(connections);
             }
 
             if(!isBalanced(connections)){
-                System.out.println("Inside imbalance");
                 rewindConnections(CR, connections);
             }
 
@@ -151,7 +148,6 @@ public class OverlayCreator {
             }
         }
 
-        System.out.println(nodeNumberOfConnections);
 
         return nodeNumberOfConnections == CR;
     }

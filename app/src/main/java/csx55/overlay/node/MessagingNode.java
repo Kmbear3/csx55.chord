@@ -77,6 +77,7 @@ public class MessagingNode implements Node{
                     regRes.getInfo();
                     break;
                 case Protocol.INITIATE_PEER_CONNECTION:
+                    System.out.println("Peer Connection: " + socket.toString());
                     initiatePeerConnections(event, socket);
                     break;
                 case Protocol.MESSAGING_NODES_LIST:
@@ -133,6 +134,8 @@ public class MessagingNode implements Node{
     synchronized public void initiatePeerConnections(Event event, Socket socket) throws IOException{
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
         Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
+
+        vertex.printVertex();
         this.peerList.addToList(vertex);
     }
 
@@ -140,13 +143,13 @@ public class MessagingNode implements Node{
         MessagingNodesList nodesList = new MessagingNodesList(event.getBytes());
 
         ArrayList<Vertex> peers = nodesList.getPeers();
-
-        if (peers.size() > 0) {
-            for (Vertex peer : peers) {
-                this.peerList.addToList(peer);
-                sendInitiateConnectionRequest(peer);
-            }
+        
+        for (Vertex peer : peers) {
+            peer.printVertex();                
+            this.peerList.addToList(peer);
+            sendInitiateConnectionRequest(peer);
         }
+        
         System.out.println("All connections are established. Number of connections: " + peers.size());
     }
 
@@ -156,11 +159,12 @@ public class MessagingNode implements Node{
 
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
-        Socket peerSocket = vertex.getSocket();
 
-        TCPReceiverThread receiver = new TCPReceiverThread(this, peerSocket);
+        TCPReceiverThread receiver = new TCPReceiverThread(this,  vertex.getSocket());
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
+
+        System.out.println("Sending: " +  vertex.getSocket().toString());
 
         vertex.sendMessage(peerConnection.getBytes());
     }
