@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import csx55.overlay.node.Node;
+import csx55.overlay.node.Registry;
 import csx55.overlay.wireformats.Event;
 import csx55.overlay.wireformats.EventFactory;
 import csx55.overlay.wireformats.Message;
@@ -49,6 +50,11 @@ public class TCPReceiverThread implements Runnable {
             }
         }
         System.err.println("Socket Closed " + socketName);
+
+        if(this.node instanceof Registry){
+            ((Registry)this.node).closedConnection(socketName);
+        }
+        
     }
     
 }

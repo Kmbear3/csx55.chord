@@ -170,6 +170,7 @@ public class VertexList {
     }
 
     synchronized public void sendAllNodes(Event event){
+        // Add logic to remove node from the registry if it is uncontactable. 
         try {
             for(Vertex vertex : this.getValues()){
 
@@ -179,6 +180,38 @@ public class VertexList {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public String getIPfromSocket(String socketID){
+        String str = socketID.split("/")[1];
+        String ip = str.split(",port=")[0];
+
+        return ip;
+    }
+    
+    public int getPortFromSocket(String socketId){
+        String str = socketId.split(",port=")[1];
+        String port = str.split(",localport=")[0];
+
+        return Integer.parseInt(port);
+    }
+
+    public void removeFromList(String socketId) {
+        for(Vertex vertex : this.getValues()){
+    
+            String vertexIP = getIPfromSocket(vertex.getSocket().toString());
+            String socketIP = getIPfromSocket(socketId);
+
+            int portVertex = getPortFromSocket(vertex.getSocket().toString());
+            int portSocket = getPortFromSocket(socketId);
+
+            if(portSocket == portVertex && vertexIP.equals(socketIP)){
+                System.out.println(vertex.getID());
+                registeredVertexs.remove(vertex.getID());
+                vertexIDs.remove(vertex.getID());
+                System.out.println("Unexpected Connection loss, removing from overlay. " + registeredVertexs.size());
+            }
         }
     }
 }
