@@ -160,13 +160,9 @@ public class VertexList {
     }
 
     synchronized public void printVertexList(){
-        System.out.print("--- VertexList: " );
-
         for(String name : this.vertexIDs){
-            System.out.print(name + ", ");
+            System.out.println(name);
         }
-        System.out.println("---" );
-
     }
 
     synchronized public void sendAllNodes(Event event){

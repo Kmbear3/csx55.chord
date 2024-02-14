@@ -123,6 +123,10 @@ public class Registry implements Node {
         vertexList.removeFromList(socketId);
     }   
 
+    public void printRegistry(){
+        vertexList.printVertexList();
+    }
+
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Registry registry = new Registry(port);

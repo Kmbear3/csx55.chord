@@ -46,6 +46,9 @@ public class CLIHandler {
                     System.out.println("Cannot List Link Weights. Overlay is unconstructed.");
                 }
                 break;
+            case "list-messaging-nodes":
+                registry.printRegistry();
+                break;
             case "setup-overlay":
             case "so":
                 if(result.length > 1){
