@@ -6,4 +6,4 @@ gradle build
 
 clear
 
-java -cp ./app/build/libs/app.jar csx55.overlay.node.Registry $1 
+java -cp ./build/classes/java/main/ csx55.overlay.node.Registry $1 

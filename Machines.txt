@@ -1,8 +1,0 @@
-ssh lotus
-cd ~/CS555/csx55.overlay
-
-ssh swordfish 
-cd ~/CS555/csx55.overlay
-
-ssh tuna 
-cd ~/CS555/csx55.overlay

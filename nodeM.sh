@@ -7,4 +7,4 @@ source ~/.bashrc && module purge && module load courses/cs455
 
 clear 
 
-java -cp ./app/build/libs/app.jar csx55.overlay.node.MessagingNode $1 $2
+java -cp ./build/classes/java/main/ csx55.overlay.node.MessagingNode $1 $2
