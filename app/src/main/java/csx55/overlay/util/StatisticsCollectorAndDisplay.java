@@ -93,11 +93,11 @@ public class StatisticsCollectorAndDisplay {
     }
 
     synchronized public boolean receivedAllStats() {
-        registry.printVertexList();
+        // registry.printVertexList();
         
         for(Vertex registeredVertex : registry.getValues()){
 
-            System.out.println(registeredVertex.getID());
+            // System.out.println(registeredVertex.getID());
             if(!nodes.containsKey(registeredVertex.getID())){
                 return false;
             }

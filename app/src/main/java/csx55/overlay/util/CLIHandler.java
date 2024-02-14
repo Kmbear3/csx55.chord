@@ -32,7 +32,7 @@ public class CLIHandler {
         String instruction = scan.nextLine(); // need parser
         String[] result = instruction.split("\\s");
 
-        System.out.println("Instruction: " + result[0]);
+        // System.out.println("Instruction: " + result[0]);
 
         switch(result[0]){
             case "exit":

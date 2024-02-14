@@ -96,7 +96,7 @@ public class MessagingNode implements Node{
                     this.names = linkWeights.getNames();
                     
                     this.sender = new MessageSender(this, this.messagesToProcess, this.linkWeights, this.names, this.stats);
-
+                    System.out.println("Link weights received and processed. Ready to send messages.");
                     break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
                     TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
@@ -147,7 +147,7 @@ public class MessagingNode implements Node{
                 sendInitiateConnectionRequest(peer);
             }
         }
-        peerList.printVertexList();
+        System.out.println("All connections are established. Number of connections: " + peers.size());
     }
 
     public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
@@ -163,7 +163,6 @@ public class MessagingNode implements Node{
         receiverThread.start();
 
         vertex.sendMessage(peerConnection.getBytes());
-
     }
 
     public void configureServer(Node node){

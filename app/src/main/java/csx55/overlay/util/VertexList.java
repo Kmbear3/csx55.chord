@@ -59,7 +59,6 @@ public class VertexList {
     synchronized public void addToList(Vertex vertex){
         registeredVertexs.put(vertex.getID(), vertex);
         vertexIDs.add(vertex.getID());
-
     }
 
     public boolean allTasksAreComplete(){
@@ -170,7 +169,7 @@ public class VertexList {
         try {
             for(Vertex vertex : this.getValues()){
 
-                vertex.printVertex();
+                // vertex.printVertex();
                 vertex.sendMessage(event.getBytes());
 
             }

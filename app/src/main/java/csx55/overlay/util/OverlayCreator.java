@@ -29,14 +29,14 @@ public class OverlayCreator {
             
             int[][] crConnections = assignConnections();
             this.linkWeights = crConnections;
-            printConnections(crConnections);
+            // printConnections(crConnections);
 
             assignNeighbors(crConnections);
 
             // Below Just sends the messages
 
             for(Vertex vertex : registeredNodes.getValues()){
-                vertex.printVertex();
+                // vertex.printVertex();
                 
                 MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections());
                 vertex.sendMessage(nodesList.getBytes());
