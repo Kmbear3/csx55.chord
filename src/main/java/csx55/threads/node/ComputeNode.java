@@ -16,6 +16,7 @@ import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.util.Vertex;
 import csx55.threads.util.VertexList;
 import csx55.threads.wireformats.*;
+import csx55.threads.computing.TaskManager;
 import csx55.threads.computing.TaskPool;
 import csx55.threads.hashing.*;
 
@@ -73,7 +74,7 @@ public class ComputeNode implements Node{
                     break;
                 case Protocol.TASK_INITIATE:
                     TaskInitiate task = new TaskInitiate(event.getBytes());
-                    sendMessages(task.getNumberOfRounds());
+                    createTasks(task.getNumberOfRounds());
                     break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
@@ -104,10 +105,10 @@ public class ComputeNode implements Node{
         }
     }
 
-    public void sendMessages(int numberOfRounds){
-        this.sender.setNumberOfRound(numberOfRounds);
-        Thread senderThread = new Thread(sender);
-        senderThread.start();
+    private void createTasks(int numberOfRounds) {
+        TaskManager taskManager = new TaskManager(numberOfRounds, this, this.tasks);
+        Thread taskManagerThread = new Thread(taskManager);
+        taskManagerThread.start();
     }
 
     synchronized public void initiatePeerConnections(Event event, Socket socket) throws IOException{
