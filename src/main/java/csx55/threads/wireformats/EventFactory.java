@@ -37,8 +37,6 @@ public class EventFactory {
                     return new TaskInitiate(marshalledBytes);
                 case Protocol.POKE:
                     return new Poke(marshalledBytes);
-                case Protocol.Link_Weights:
-                    return new LinkWeights(marshalledBytes);
                 case Protocol.PULL_TRAFFIC_SUMMARY:
                     return new TaskSummaryRequest(marshalledBytes);
                 case Protocol.TRAFFIC_SUMMARY:

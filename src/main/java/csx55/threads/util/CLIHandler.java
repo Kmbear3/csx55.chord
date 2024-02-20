@@ -8,7 +8,6 @@ import csx55.threads.node.MessagingNode;
 import csx55.threads.node.Node;
 import csx55.threads.node.Registry;
 import csx55.threads.wireformats.Deregister;
-import csx55.threads.wireformats.LinkWeights;
 import csx55.threads.wireformats.TaskInitiate;
 
 public class CLIHandler {
@@ -38,28 +37,20 @@ public class CLIHandler {
             case "exit":
                 System.exit(0);
                 break;
-            case "list-weights":
-                if(this.overlayCreator != null){
-                    this.overlayCreator.listWeights();          
-                }
-                else{
-                    System.out.println("Cannot List Link Weights. Overlay is unconstructed.");
-                }
-                break;
             case "list-messaging-nodes":
                 registry.printRegistry();
                 break;
             case "setup-overlay":
             case "so":
                 if(result.length > 1){
-                    int numberOfConnections = Integer.parseInt(result[1]);
-                    System.out.println("number of connections: " + numberOfConnections);
-                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    int numberOfThreads = Integer.parseInt(result[1]);
+                    System.out.println("number of threads in thread pool: " + numberOfThreads);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfThreads);
                     break;
                 }else{
-                    int numberOfConnections = 4;
-                    System.out.println("number of connections: " + numberOfConnections);
-                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    int numberOfThreads = 4;
+                    System.out.println("number of threads in thread pool: " + numberOfThreads);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfThreads);
                 }
                 break;
             case "start":
@@ -69,16 +60,6 @@ public class CLIHandler {
                     registry.onEvent(taskInitiate, null);
                 }else {
                     System.out.println("Incorrect Instruction! please specify number of rounds.");
-                }
-                break;
-            case "sendw":
-            case "send-overlay-link-weights":
-                if(overlayCreator != null){
-                    LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections(), this.overlayCreator.createLinkInfo());
-                    registry.sendAllNodes(linkWeights);                  
-                }
-                else{
-                    System.out.println("Cannot Send Link Weights. Overlay is unconstructed.");
                 }
                 break;
             default:
@@ -103,15 +84,6 @@ public class CLIHandler {
                 break;
             case "deregister":
                 sendDeregisterRequest(StatusCodes.DEREGISTER);
-                break;
-            case "print-shortest-path":
-                if(this.node.getSender() == null){
-                    System.out.println("Link weights haven't been sent, paths not calculated.");
-                }
-                else{
-                    MessageSender sender = this.node.getSender();
-                    sender.printShortestPaths();
-                }
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");

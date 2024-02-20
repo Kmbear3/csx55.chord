@@ -90,14 +90,6 @@ public class MessagingNode implements Node{
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
                     break;
-                case Protocol.Link_Weights:
-                    LinkWeights linkWeights = new LinkWeights(event.getBytes());
-                    this.linkWeights = linkWeights.getConnections();
-                    this.names = linkWeights.getNames();
-                    
-                    this.sender = new MessageSender(this, this.messagesToProcess, this.linkWeights, this.names, this.stats);
-                    System.out.println("Link weights received and processed. Ready to send messages.");
-                    break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
                     TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
                     registrySender.sendData(summaryResponse.getBytes());
@@ -209,9 +201,6 @@ public class MessagingNode implements Node{
         this.registrySender.sendData(event.getBytes());
     }
 
-    public void printShortestPaths() {
-        this.sender.printShortestPaths();
-    }
 
     public MessageSender getSender(){
         return this.sender;
