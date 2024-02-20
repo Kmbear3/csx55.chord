@@ -52,14 +52,14 @@ public class CLIHandler {
             case "setup-overlay":
             case "so":
                 if(result.length > 1){
-                    int numberOfConnections = Integer.parseInt(result[1]);
-                    System.out.println("number of connections: " + numberOfConnections);
-                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    int numberOfThreads = Integer.parseInt(result[1]);
+                    System.out.println("number of threads in thread pool: " + numberOfThreads);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfThreads);
                     break;
                 }else{
-                    int numberOfConnections = 4;
-                    System.out.println("number of connections: " + numberOfConnections);
-                    this.overlayCreator = new OverlayCreator(this.registry, numberOfConnections);
+                    int numberOfThreads = 4;
+                    System.out.println("number of threads in thread pool: " + numberOfThreads);
+                    this.overlayCreator = new OverlayCreator(this.registry, numberOfThreads);
                 }
                 break;
             case "start":
