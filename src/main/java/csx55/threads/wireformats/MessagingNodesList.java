@@ -30,6 +30,7 @@ public class MessagingNodesList implements Event, Protocol {
     byte[] marshalledBytes;
     int numberOfPeers;
     ArrayList<Vertex> vertexPeers = new ArrayList<>();
+    int numberOfThreads;
 
 
     public MessagingNodesList(byte[] marshalledBytes) throws IOException {
@@ -38,6 +39,8 @@ public class MessagingNodesList implements Event, Protocol {
 
         int type = din.readInt();
         this.numberOfPeers = din.readInt();
+
+        this.numberOfThreads = din.readInt();
 
         for(int i = 0; i < this.numberOfPeers; i++){
             int IDLength = din.readInt();
@@ -60,9 +63,10 @@ public class MessagingNodesList implements Event, Protocol {
     }
 
     
-    public MessagingNodesList(ArrayList<Vertex> vertexPeers){
+    public MessagingNodesList(ArrayList<Vertex> vertexPeers, int numberOfThreads){
         this.vertexPeers = vertexPeers;
         this.numberOfPeers = vertexPeers.size();
+        this.numberOfThreads = numberOfThreads;
     }
 
     @Override
@@ -79,6 +83,8 @@ public class MessagingNodesList implements Event, Protocol {
         dout.writeInt(this.MESSAGE_TYPE);   
 
         dout.writeInt(this.numberOfPeers);   
+
+        dout.writeInt(this.numberOfThreads);
 
         for(int i = 0; i < this.numberOfPeers; i++) {
             Vertex vertex = this.vertexPeers.get(i);
@@ -102,5 +108,9 @@ public class MessagingNodesList implements Event, Protocol {
 
     public ArrayList<Vertex> getPeers() {
         return vertexPeers;
+    }
+
+    public int getNumberOfThreads(){
+        return this.numberOfThreads;
     }
 }

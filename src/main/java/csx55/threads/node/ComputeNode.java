@@ -41,7 +41,7 @@ public class ComputeNode implements Node{
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
-    public MessagingNode(String registryIP, int registryPort){
+    public ComputeNode(String registryIP, int registryPort){
         try {
             Socket registrySocket = new Socket(registryIP, registryPort);
             this.registrySender = new TCPSender(registrySocket);
@@ -209,7 +209,7 @@ public class ComputeNode implements Node{
     public static void main(String[] args){
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);
-        MessagingNode messagingNode = new MessagingNode(registryName, registryPort);
+        ComputeNode messagingNode = new ComputeNode(registryName, registryPort);
 
          CLIHandler cliHandler = new CLIHandler(messagingNode);
 
