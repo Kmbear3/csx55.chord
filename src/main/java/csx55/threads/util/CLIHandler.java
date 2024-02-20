@@ -8,7 +8,6 @@ import csx55.threads.node.MessagingNode;
 import csx55.threads.node.Node;
 import csx55.threads.node.Registry;
 import csx55.threads.wireformats.Deregister;
-import csx55.threads.wireformats.LinkWeights;
 import csx55.threads.wireformats.TaskInitiate;
 
 public class CLIHandler {
@@ -85,15 +84,6 @@ public class CLIHandler {
                 break;
             case "deregister":
                 sendDeregisterRequest(StatusCodes.DEREGISTER);
-                break;
-            case "print-shortest-path":
-                if(this.node.getSender() == null){
-                    System.out.println("Link weights haven't been sent, paths not calculated.");
-                }
-                else{
-                    MessageSender sender = this.node.getSender();
-                    sender.printShortestPaths();
-                }
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
