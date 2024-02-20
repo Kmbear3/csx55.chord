@@ -32,6 +32,7 @@ public class ComputeNode implements Node{
     private ConcurrentLinkedQueue<Task> tasks = new ConcurrentLinkedQueue<>();
 
     private MessageSender sender;
+    private TaskPool threadPool;
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
@@ -130,7 +131,7 @@ public class ComputeNode implements Node{
         
         System.out.println("All connections are established. Number of connections: " + peers.size());
 
-        TaskPool threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
+        this.threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
         threadPool.createThreads();
     }
 

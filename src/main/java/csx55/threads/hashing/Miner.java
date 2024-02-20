@@ -5,15 +5,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class Miner {
-    private static final Miner instance = new Miner();
     private static final int LEADING_ZEROS = 17;
     private final MessageDigest sha256;
 
-    public static Miner getInstance() {
-        return instance;
-    }
 
-    private Miner() {
+    public Miner() {
         try {
             sha256 = MessageDigest.getInstance("SHA3-256");
         } catch (NoSuchAlgorithmException e) {
@@ -50,16 +46,5 @@ public class Miner {
                 break;
             }
         }
-    }
-
-    public static void main(String[] args) {
-        // Mining
-        Miner miner = Miner.getInstance();
-        Task task = new Task("192.168.0.1", 1234, 1, new Random().nextInt());
-        miner.mine(task);
-
-        // Verification
-        int leadingZeros = miner.leadingZeros(miner.sha256.digest(task.toBytes()));
-        System.out.println("Task: " + task + " Leading zeros: " + leadingZeros);
     }
 }

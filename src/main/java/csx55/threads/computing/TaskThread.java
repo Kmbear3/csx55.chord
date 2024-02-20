@@ -2,6 +2,7 @@ package csx55.threads.computing;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.threads.hashing.Miner;
 import csx55.threads.hashing.Task;
 
 public class TaskThread implements Runnable {
@@ -13,8 +14,13 @@ public class TaskThread implements Runnable {
 
     @Override
     public void run() {
+        Miner miner = new Miner();
+
         while(true){
-            
+            Task task = tasks.poll();
+            if(task != null){
+                miner.mine(task);
+            }
         }
     }
     

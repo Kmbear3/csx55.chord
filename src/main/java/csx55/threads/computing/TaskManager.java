@@ -31,9 +31,11 @@ public class TaskManager implements Runnable{
     @Override
     public void run() {
         System.out.println("TaskManager: Number of rounds: " + this.numberOfRounds);
-        
+
         for(int i = 0; i < numberOfRounds; i++){
             createTasks(i);
         }
+
+        System.out.println("Finished generating tasks");
     }
 }
