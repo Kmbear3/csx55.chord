@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import csx55.threads.node.MessagingNode;
+import csx55.threads.node.ComputeNode;
 import csx55.threads.node.Node;
 import csx55.threads.node.Registry;
 import csx55.threads.wireformats.Deregister;
@@ -13,7 +13,7 @@ import csx55.threads.wireformats.TaskInitiate;
 public class CLIHandler {
     private Scanner scan;
     private Registry registry;
-    private MessagingNode node;
+    private ComputeNode node;
     private OverlayCreator overlayCreator; 
 
 
@@ -22,7 +22,7 @@ public class CLIHandler {
        this.registry = registry;
     }
 
-    public CLIHandler(MessagingNode messagingNode){
+    public CLIHandler(ComputeNode messagingNode){
         this.scan = new Scanner(System.in);
         this.node = messagingNode;
     }
