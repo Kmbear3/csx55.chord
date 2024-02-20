@@ -1,26 +1,23 @@
 package csx55.threads.node;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import csx55.threads.dijkstra.ShortestPath;
 import csx55.threads.transport.TCPReceiverThread;
 import csx55.threads.transport.TCPSender;
 import csx55.threads.transport.TCPServerThread;
 import csx55.threads.util.CLIHandler;
 import csx55.threads.util.MessageSender;
-import csx55.threads.util.OverlayCreator;
 import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.util.Vertex;
 import csx55.threads.util.VertexList;
 import csx55.threads.wireformats.*;
+import csx55.threads.computing.TaskPool;
+import csx55.threads.hashing.*;
 
 public class ComputeNode implements Node{
 
@@ -31,11 +28,7 @@ public class ComputeNode implements Node{
     private TCPSender registrySender;
 
     private VertexList peerList = new VertexList();
-    private ConcurrentLinkedQueue<Message> messagesToProcess = new ConcurrentLinkedQueue<>();
-
-    private int[][] linkWeights;
-
-    private String[] names;
+    private ConcurrentLinkedQueue<Task> tasks = new ConcurrentLinkedQueue<>();
 
     private MessageSender sender;
 
@@ -68,10 +61,6 @@ public class ComputeNode implements Node{
     public void onEvent(Event event, Socket socket) {
         try {
             switch(event.getType()){
-                case Protocol.MESSAGE:
-                    Message message = new Message(event.getBytes());
-                    messagesToProcess.add(message);
-                    break;
                 case Protocol.REGISTER_RESPONSE:
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     regRes.getInfo();
@@ -80,7 +69,7 @@ public class ComputeNode implements Node{
                     initiatePeerConnections(event, socket);
                     break;
                 case Protocol.MESSAGING_NODES_LIST:
-                    createNodeList(event);
+                    createConnectionsAndThreadPool(event);
                     break;
                 case Protocol.TASK_INITIATE:
                     TaskInitiate task = new TaskInitiate(event.getBytes());
@@ -116,7 +105,6 @@ public class ComputeNode implements Node{
     }
 
     public void sendMessages(int numberOfRounds){
-        // this.sender = new MessageSender(this, this.messagesToProcess, numberOfRounds, this.linkWeights, this.names, this.stats);
         this.sender.setNumberOfRound(numberOfRounds);
         Thread senderThread = new Thread(sender);
         senderThread.start();
@@ -129,7 +117,7 @@ public class ComputeNode implements Node{
         this.peerList.addToList(vertex);
     }
 
-    synchronized public void createNodeList(Event event) throws IOException{
+    synchronized public void createConnectionsAndThreadPool(Event event) throws IOException{
         MessagingNodesList nodesList = (MessagingNodesList)event;
 
         ArrayList<Vertex> peers = nodesList.getPeers();
@@ -140,10 +128,8 @@ public class ComputeNode implements Node{
         }
         
         System.out.println("All connections are established. Number of connections: " + peers.size());
-    }
 
-    public ConcurrentLinkedQueue<Message> getMessagesToProcess(){
-        return this.messagesToProcess;
+        TaskPool threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
     }
 
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
