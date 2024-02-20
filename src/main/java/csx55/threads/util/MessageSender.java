@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.dijkstra.RoutingCache;
 import csx55.threads.dijkstra.ShortestPath;
-import csx55.threads.node.MessagingNode;
+import csx55.threads.node.ComputeNode;
 import csx55.threads.wireformats.Message;
 import csx55.threads.wireformats.Poke;
 import csx55.threads.wireformats.TaskComplete;
@@ -14,7 +14,7 @@ import csx55.threads.wireformats.TaskComplete;
 public class MessageSender implements Runnable {
     private ConcurrentLinkedQueue<Message> messages;
     private int numberOfRounds;
-    private MessagingNode node;
+    private ComputeNode node;
     private int[][] linkWeights;
     private String[] names;
     private StatisticsCollectorAndDisplay stats;
@@ -23,7 +23,7 @@ public class MessageSender implements Runnable {
     
     
 
-    public MessageSender(MessagingNode node, ConcurrentLinkedQueue<Message> messages, int[][] linkWeights, String[] names, StatisticsCollectorAndDisplay stats){
+    public MessageSender(ComputeNode node, ConcurrentLinkedQueue<Message> messages, int[][] linkWeights, String[] names, StatisticsCollectorAndDisplay stats){
         this.messages = messages;
         this.node = node;
         this.linkWeights = linkWeights;
@@ -33,7 +33,7 @@ public class MessageSender implements Runnable {
         this.routingCache = new RoutingCache(paths.calculateShortestPaths(), names, node.getID(), linkWeights);
     }
 
-    public MessageSender(MessagingNode node){
+    public MessageSender(ComputeNode node){
         this.node = node;
     }
 

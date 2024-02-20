@@ -22,7 +22,7 @@ import csx55.threads.util.Vertex;
 import csx55.threads.util.VertexList;
 import csx55.threads.wireformats.*;
 
-public class MessagingNode implements Node{
+public class ComputeNode implements Node{
 
     private String messagingNodeIP;
     private int messagingNodePort;
