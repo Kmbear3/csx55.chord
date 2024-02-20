@@ -38,14 +38,6 @@ public class CLIHandler {
             case "exit":
                 System.exit(0);
                 break;
-            case "list-weights":
-                if(this.overlayCreator != null){
-                    this.overlayCreator.listWeights();          
-                }
-                else{
-                    System.out.println("Cannot List Link Weights. Overlay is unconstructed.");
-                }
-                break;
             case "list-messaging-nodes":
                 registry.printRegistry();
                 break;
@@ -69,16 +61,6 @@ public class CLIHandler {
                     registry.onEvent(taskInitiate, null);
                 }else {
                     System.out.println("Incorrect Instruction! please specify number of rounds.");
-                }
-                break;
-            case "sendw":
-            case "send-overlay-link-weights":
-                if(overlayCreator != null){
-                    LinkWeights linkWeights = new LinkWeights(this.overlayCreator.getConnections(), this.overlayCreator.createLinkInfo());
-                    registry.sendAllNodes(linkWeights);                  
-                }
-                else{
-                    System.out.println("Cannot Send Link Weights. Overlay is unconstructed.");
                 }
                 break;
             default:
