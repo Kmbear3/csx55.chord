@@ -5,4 +5,4 @@
 
 clear 
 
-java -cp ./build/classes/java/main/ csx55.threads.node.MessagingNode $1 $2
+java -cp ./build/classes/java/main/ csx55.threads.node.ComputeNode $1 $2

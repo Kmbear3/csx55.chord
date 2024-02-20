@@ -8,7 +8,6 @@ import csx55.threads.node.ComputeNode;
 
 public class TaskManager implements Runnable{
 
-
     private final int numberOfRounds;
     Random rand = new Random();
     ComputeNode node;
@@ -31,6 +30,8 @@ public class TaskManager implements Runnable{
 
     @Override
     public void run() {
+        System.out.println("TaskManager: Number of rounds: " + this.numberOfRounds);
+        
         for(int i = 0; i < numberOfRounds; i++){
             createTasks(i);
         }
