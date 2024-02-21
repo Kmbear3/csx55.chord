@@ -22,5 +22,10 @@ public class Tasks implements Protocol, Event{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getBytes'");
     }
+
+    public ArrayList<Task> getTaskList() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTaskList'");
+    }
     
 }

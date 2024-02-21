@@ -57,6 +57,7 @@ public class BalanceLoad {
         }
 
         Tasks taskMessage = new Tasks(taskList);
+
         try {
             computeNode.sendClockwise(taskMessage.getBytes());
         } catch (IOException e) {
@@ -66,21 +67,17 @@ public class BalanceLoad {
         
     }
 
-    synchronized public void receiveTasks(Tasks tasks){
+    synchronized public void receiveTasks(Tasks receivedTasks){
+        ArrayList<Task> taskList = receivedTasks.getTaskList();
+
         if(numberOfTasks < average){
-            takeTasks();
+            int difference = numberOfTasks - average;
+
+            for(int i = 0; i < difference; i++){
+                tasks.add(taskList.get(i));
+            }
         }
-        takeBackTasks();
+        
     }
 
-    private void takeBackTasks() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'takeBackTasks'");
-    }
-
-    private void takeTasks() {
-        // Take as many tasks as needed. 
-        // If my tasks have made it back to me, take them.
-        takeBackTasks();
-    }
 }
