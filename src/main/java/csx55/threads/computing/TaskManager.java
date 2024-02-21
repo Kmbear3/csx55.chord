@@ -1,10 +1,12 @@
 package csx55.threads.computing;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.hashing.Task;
 import csx55.threads.node.ComputeNode;
+import csx55.threads.wireformats.NodeTasks;
 
 public class TaskManager implements Runnable{
 
@@ -19,8 +21,7 @@ public class TaskManager implements Runnable{
         this.tasks = tasks;
     }
 
-    public void createTasks(int roundNumber){
-        int numberOfTasks = rand.nextInt(1000) + 1;
+    public void createTasks(int roundNumber, int numberOfTasks){
 
         for(int i = 0; i < numberOfTasks; i ++){
             int payload = rand.nextInt();
@@ -30,12 +31,25 @@ public class TaskManager implements Runnable{
 
     @Override
     public void run() {
+        try {
+
         System.out.println("TaskManager: Number of rounds: " + this.numberOfRounds);
 
         for(int i = 0; i < numberOfRounds; i++){
-            createTasks(i);
+            int numberOfTasks = rand.nextInt(1000) + 1;
+
+            createTasks(i, numberOfTasks);
+            NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, i);
+                node.sendClockwise(nodeTask.getBytes());
+
+
         }
 
         System.out.println("Finished generating tasks");
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

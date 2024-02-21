@@ -33,6 +33,7 @@ public class ComputeNode implements Node{
 
     private MessageSender sender;
     private TaskPool threadPool;
+    private Vertex clockwiseNeighbor;
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
@@ -120,6 +121,12 @@ public class ComputeNode implements Node{
     }
 
     synchronized public void createConnectionsAndThreadPool(Event event) throws IOException{
+        // Sketchy below:
+        // The code to initiate clockwise neighbor is not very good. Refactor and re-do. 
+        // There isn't necesarily a garantee that there is only 1 value in peers object. 
+        // change logic!!! 
+        // TODO: Be better, noob
+
         MessagingNodesList nodesList = (MessagingNodesList)event;
 
         ArrayList<Vertex> peers = nodesList.getPeers();
@@ -130,9 +137,16 @@ public class ComputeNode implements Node{
         }
         
         System.out.println("All connections are established. Number of connections: " + peers.size());
+        System.out.println("Clockwise neighbor: " + peers.get(0).getID());
+        this.clockwiseNeighbor = peers.get(0); 
 
         this.threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
         threadPool.createThreads();
+    }
+
+
+    synchronized public void sendClockwise(byte[] marshalledBytes){
+        clockwiseNeighbor.sendMessage(marshalledBytes);
     }
 
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
