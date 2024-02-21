@@ -1,31 +1,97 @@
 package csx55.threads.wireformats;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import csx55.threads.hashing.Task;
+import csx55.threads.util.Vertex;
 
 public class Tasks implements Protocol, Event{
+    ArrayList<Task> taskList;
 
     public Tasks(ArrayList<Task> taskList) {
-        //TODO Auto-generated constructor stub
+        this.taskList = taskList;
+    }
+
+    public Tasks(byte[] marshalledBytes) throws IOException{
+        ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
+        DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+
+        int type = din.readInt();
+        if(type != Protocol.TASKS){
+            System.err.println("type mismatch in Tasks.java");
+        }
+
+        int numberOfTasks = din.readInt();
+
+        for(int i = 0; i < numberOfTasks; i++){
+            int IPLength = din.readInt();
+            byte[] IPBytes = new byte[IPLength];
+            din.readFully(IPBytes);
+            String taskIP = new String(IPBytes);
+
+            int port = din.readInt();
+            int roundNumber = din.readInt();
+            int payload = din.readInt();
+
+            Task task = new Task(taskIP, port, roundNumber, payload);
+            taskList.add(task);
+        }
+
+        baInputStream.close();
+        din.close();
+
     }
 
     @Override
     public int getType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getType'");
+        return Protocol.TASKS;
     }
 
     @Override
     public byte[] getBytes() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBytes'");
+        byte[] marshalledBytes = null;
+        ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+        DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+
+        dout.writeInt(Protocol.TASKS);   
+
+        dout.writeInt(this.taskList.size());   
+
+
+        for(int i = 0; i < this.taskList.size(); i++) {
+            Task task = this.taskList.get(i);
+            String ip = task.getIp();
+
+            byte[] IDBytes = ip.getBytes();
+            int elementLength = IDBytes.length;
+            dout.writeInt(elementLength);
+            dout.write(IDBytes);
+
+            dout.writeInt(task.getPort());
+            dout.writeInt(task.getRoundNumber());
+            dout.writeInt(task.getPayload());
+    
+        }
+
+
+        dout.flush();
+        marshalledBytes = baOutputStream.toByteArray();
+        baOutputStream.close();
+        dout.close();
+        
+        return marshalledBytes;
     }
 
     public ArrayList<Task> getTaskList() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTaskList'");
+       return this.taskList;
     }
     
 }
