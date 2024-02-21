@@ -1,5 +1,7 @@
 package csx55.threads.balancing;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.hashing.Task;
@@ -42,13 +44,26 @@ public class BalanceLoad {
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
 
         if(numberOfTasks > average){
-            sendTasksClockwise();
+            int difference = numberOfTasks - average;
+            sendTasksClockwise(difference);
         }
     }
 
-    synchronized private void sendTasksClockwise() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendTasksClockwise'");
+    synchronized private void sendTasksClockwise(int difference) {
+        ArrayList<Task> taskList = new ArrayList<>();
+        
+        for(int i = 0; i < difference; i++){
+            taskList.add(tasks.poll());
+        }
+
+        Tasks taskMessage = new Tasks(taskList);
+        try {
+            computeNode.sendClockwise(taskMessage.getBytes());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 
     synchronized public void receiveTasks(Tasks tasks){

@@ -17,5 +17,6 @@ public interface Protocol {
     public static final int DEREGISTER_REQUEST = 12;
     public static final int DEREGISTER_RESPONSE = 13;
     public static final int NODE_TASKS = 14;
+    public static final int TASKS = 15;
 
 }
