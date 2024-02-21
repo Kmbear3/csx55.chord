@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.threads.balancing.BalanceLoad;
 import csx55.threads.hashing.Task;
 import csx55.threads.node.ComputeNode;
 import csx55.threads.wireformats.NodeTasks;
@@ -14,6 +15,7 @@ public class TaskManager implements Runnable{
     Random rand = new Random();
     ComputeNode node;
     ConcurrentLinkedQueue<Task> tasks;
+    
 
     public TaskManager(int numberOfRounds, ComputeNode node, ConcurrentLinkedQueue<Task> tasks){
         this.numberOfRounds = numberOfRounds;
@@ -40,8 +42,7 @@ public class TaskManager implements Runnable{
 
             createTasks(i, numberOfTasks);
             NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, i);
-                node.sendClockwise(nodeTask.getBytes());
-
+            node.sendClockwise(nodeTask.getBytes());
 
         }
 

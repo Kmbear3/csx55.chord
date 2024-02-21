@@ -36,7 +36,7 @@ public class OverlayCreator {
 
             for(Vertex vertex : registeredNodes.getValues()){
                 
-                MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections(), this.numberOfThreads);
+                MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections(), this.numberOfThreads, registeredNodes.size());
                 vertex.sendMessage(nodesList.getBytes());
             }
 
