@@ -116,7 +116,7 @@ public class ComputeNode implements Node{
     }
 
     private void createTasks(int numberOfRounds) {
-        TaskManager taskManager = new TaskManager(numberOfRounds, this, this.tasks);
+        TaskManager taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer);
         Thread taskManagerThread = new Thread(taskManager);
         taskManagerThread.start();
     }

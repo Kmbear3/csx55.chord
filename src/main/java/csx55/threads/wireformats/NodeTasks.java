@@ -43,6 +43,10 @@ public class NodeTasks implements Protocol, Event{
         this.roundNumber = roundNumber;
     }
 
+    public int getNumberOfTasks(){
+        return this.numberOfTasks;
+    }
+
     @Override
     public int getType() {
        return Protocol.NODE_TASKS;

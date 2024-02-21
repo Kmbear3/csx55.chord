@@ -15,12 +15,14 @@ public class TaskManager implements Runnable{
     Random rand = new Random();
     ComputeNode node;
     ConcurrentLinkedQueue<Task> tasks;
+    BalanceLoad balancer;
     
 
-    public TaskManager(int numberOfRounds, ComputeNode node, ConcurrentLinkedQueue<Task> tasks){
+    public TaskManager(int numberOfRounds, ComputeNode node, ConcurrentLinkedQueue<Task> tasks, BalanceLoad balancer){
         this.numberOfRounds = numberOfRounds;
         this.node = node;
         this.tasks = tasks;
+        this.balancer = balancer;
     }
 
     public void createTasks(int roundNumber, int numberOfTasks){
@@ -43,7 +45,6 @@ public class TaskManager implements Runnable{
             createTasks(i, numberOfTasks);
             NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, i);
             node.sendClockwise(nodeTask.getBytes());
-
         }
 
         System.out.println("Finished generating tasks");
