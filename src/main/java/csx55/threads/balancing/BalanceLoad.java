@@ -77,7 +77,8 @@ public class BalanceLoad {
                 tasks.add(taskList.get(i));
             }
         }
-        
+        // Suppress my own messages
+        // Prevent osilation here
     }
 
 }
