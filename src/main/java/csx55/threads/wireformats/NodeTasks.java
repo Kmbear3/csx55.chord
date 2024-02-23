@@ -47,6 +47,10 @@ public class NodeTasks implements Protocol, Event{
         return this.numberOfTasks;
     }
 
+    public String getId(){
+        return this.id;
+    }
+    
     @Override
     public int getType() {
        return Protocol.NODE_TASKS;

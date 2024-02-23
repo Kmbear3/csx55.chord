@@ -49,6 +49,8 @@ public class EventFactory {
                     return new DeregisterResponse(marshalledBytes);
                 case Protocol.NODE_TASKS:
                     return new NodeTasks(marshalledBytes);
+                case Protocol.TASKS:
+                    return new Tasks(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

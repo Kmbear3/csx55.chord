@@ -26,11 +26,21 @@ public class BalanceLoad {
     }
     
     synchronized public void addToSum(NodeTasks nodeTasks){
-        totalTasksInOverlay += nodeTasks.getNumberOfTasks();
-        receivedNodeMessage ++;
+        try {
 
-        if(receivedNodeMessage == numberOfNodesInOverlay){
-            calculateAverage();
+            totalTasksInOverlay += nodeTasks.getNumberOfTasks();
+            receivedNodeMessage ++;
+
+            if(!nodeTasks.getId().equals(computeNode.getID())){
+                computeNode.sendClockwise(nodeTasks.getBytes());
+            }
+    
+            if(receivedNodeMessage == numberOfNodesInOverlay){
+                calculateAverage();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -42,6 +52,12 @@ public class BalanceLoad {
 
     synchronized public void calculateAverage(){
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
+        System.out.println("Average messages: " + this.average);
+        System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
+        System.out.println("number of nodes in overlay: " + this.numberOfNodesInOverlay);
+        System.out.println("Round number: " + roundNumber);
+
+
 
         if(numberOfTasks > average){
             int difference = numberOfTasks - average;
