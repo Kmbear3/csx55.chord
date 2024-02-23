@@ -18,6 +18,7 @@ public class BalanceLoad {
     int receivedNodeMessage;
     int numberOfTasks;
     int average;
+    String nodes = "";
 
     public BalanceLoad(int numberOfNodesInOverlay, ComputeNode computeNode, ConcurrentLinkedQueue<Task> tasks){
         this.numberOfNodesInOverlay = numberOfNodesInOverlay;
@@ -29,6 +30,7 @@ public class BalanceLoad {
         try {
 
             totalTasksInOverlay += nodeTasks.getNumberOfTasks();
+            nodes += nodeTasks.getId();
             receivedNodeMessage ++;
 
             if(!nodeTasks.getId().equals(computeNode.getID())){
@@ -37,6 +39,7 @@ public class BalanceLoad {
     
             if(receivedNodeMessage == numberOfNodesInOverlay){
                 calculateAverage();
+                System.out.println(nodes);
             }
 
         } catch (IOException e) {
@@ -54,9 +57,7 @@ public class BalanceLoad {
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
         System.out.println("Average messages: " + this.average);
         System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
-        System.out.println("number of nodes in overlay: " + this.numberOfNodesInOverlay);
         System.out.println("Round number: " + roundNumber);
-
 
 
         if(numberOfTasks > average){
