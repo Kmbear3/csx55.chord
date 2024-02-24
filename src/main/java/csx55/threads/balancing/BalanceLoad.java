@@ -28,18 +28,18 @@ public class BalanceLoad {
     
     synchronized public void addToSum(NodeTasks nodeTasks){
         try {
-
+            receivedNodeMessage = receivedNodeMessage + 1;
             totalTasksInOverlay += nodeTasks.getNumberOfTasks();
             nodes += nodeTasks.getId();
-            receivedNodeMessage ++;
 
             if(!nodeTasks.getId().equals(computeNode.getID())){
                 computeNode.sendClockwise(nodeTasks.getBytes());
             }
     
             if(receivedNodeMessage == numberOfNodesInOverlay){
+                // New round needs to be calculated, thus rreceivedNodeMessage needs to be reset
+                receivedNodeMessage = 0;
                 calculateAverage();
-                System.out.println(nodes);
             }
 
         } catch (IOException e) {
@@ -49,7 +49,6 @@ public class BalanceLoad {
 
     synchronized public void setNewRound(int roundNumber, int numberOfTasks) {
         this.roundNumber = roundNumber;
-        this.receivedNodeMessage = 0;
         this.numberOfTasks = numberOfTasks;
     }
 
@@ -57,6 +56,8 @@ public class BalanceLoad {
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
         System.out.println("Average messages: " + this.average);
         System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
+
+        //Using numberOftasks here might cause issues.... This is the number of tasks that the node created, not the number that it currently has. 
 
         System.out.println("number of messages: " + this.numberOfTasks);
         if(numberOfTasks > average){
