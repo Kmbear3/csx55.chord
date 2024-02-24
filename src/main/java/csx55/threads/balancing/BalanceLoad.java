@@ -2,6 +2,7 @@ package csx55.threads.balancing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.hashing.Task;
@@ -85,33 +86,56 @@ public class BalanceLoad {
         
     }
 
-    synchronized public void receiveTasks(Tasks receivedTasks) throws IOException{
-        ArrayList<Task> taskList = receivedTasks.getTaskList();
-
-        if(numberOfTasks < average){
-            int difference = numberOfTasks - average;
-
-            for(int i = 0; i < difference; i++){
-                tasks.add(taskList.get(i));
-                taskList.remove(i);
-            }
-        }
-        
+    public synchronized void receiveTasks(ArrayList<Task> taskList) throws IOException{
+        // ArrayList<Task> taskList = receivedTasks.getTaskList();
         ArrayList<Task> relayTasks = new ArrayList<>();
-
-        for(Task task : taskList){
-
-            if(this.computeNode.originated(task)){
+        for(Task task : taskList){  
+            if(this.tasks.size() < average){
+                this.tasks.add(task);  // TAsk list may have fewer tasks than necessary. 
+                taskList.remove(task);
+            }
+            else if(this.computeNode.originated(task)){
                 tasks.add(task);
             }else{
                 relayTasks.add(task);
             }
         }
-
         if(relayTasks.size() != 0){
             Tasks relayTasksMessage = new Tasks(relayTasks);
             computeNode.sendClockwise(relayTasksMessage.getBytes());
         }
-    } 
-
+    }
 }
+
+// if(this.tasks.size() < average){
+//     System.out.println("Taking tasks- size: " + tasks.size());
+//     int difference = average - this.tasks.size();
+
+//     for(int i = 0; i < difference; i++){
+
+//         this.tasks.add(taskList.get(i));  // TAsk list may have fewer tasks than necessary. 
+//         taskList.remove(i);
+//     }
+
+//     System.out.println("After tasks- size: " + tasks.size());
+
+// }
+
+// ArrayList<Task> relayTasks = new ArrayList<>();
+
+// for(Task task : taskList){
+
+//     if(this.computeNode.originated(task)){
+//         tasks.add(task);
+//     }else{
+//         relayTasks.add(task);
+//     }
+// }
+
+// if(relayTasks.size() != 0){
+//     Tasks relayTasksMessage = new Tasks(relayTasks);
+//     computeNode.sendClockwise(relayTasksMessage.getBytes());
+// }
+// System.out.println("Compute Node tasks: " + this.tasks.size());
+// } 
+

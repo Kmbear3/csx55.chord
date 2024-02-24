@@ -88,7 +88,7 @@ public class Tasks implements Protocol, Event{
         return marshalledBytes;
     }
 
-    public ArrayList<Task> getTaskList() {
+    synchronized public ArrayList<Task> getTaskList() {
        return this.taskList;
     }
     

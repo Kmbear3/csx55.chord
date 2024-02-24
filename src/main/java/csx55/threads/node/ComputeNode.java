@@ -101,10 +101,10 @@ public class ComputeNode implements Node{
                     }
                     break;
                 case Protocol.NODE_TASKS:
-                    balancer.addToSum((NodeTasks)event);
+                    balancer.addToSum(new NodeTasks(event.getBytes()));
                     break;
                 case Protocol.TASKS:
-                    balancer.receiveTasks((Tasks)event);
+                    balancer.receiveTasks(new Tasks(event.getBytes()).getTaskList());
                     break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
