@@ -57,9 +57,8 @@ public class BalanceLoad {
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
         System.out.println("Average messages: " + this.average);
         System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
-        System.out.println("Round number: " + roundNumber);
 
-
+        System.out.println("number of messages: " + this.numberOfTasks);
         if(numberOfTasks > average){
             int difference = numberOfTasks - average;
             sendTasksClockwise(difference);
@@ -72,6 +71,7 @@ public class BalanceLoad {
         for(int i = 0; i < difference; i++){
             taskList.add(tasks.poll());
         }
+        System.out.println("Number of tasks sending clockwise: " + taskList.size());
 
         Tasks taskMessage = new Tasks(taskList);
 
@@ -84,7 +84,7 @@ public class BalanceLoad {
         
     }
 
-    synchronized public void receiveTasks(Tasks receivedTasks){
+    synchronized public void receiveTasks(Tasks receivedTasks) throws IOException{
         ArrayList<Task> taskList = receivedTasks.getTaskList();
 
         if(numberOfTasks < average){
@@ -92,10 +92,25 @@ public class BalanceLoad {
 
             for(int i = 0; i < difference; i++){
                 tasks.add(taskList.get(i));
+                taskList.remove(i);
             }
         }
-        // Suppress my own messages
-        // Prevent osilation here
-    }
+        
+        ArrayList<Task> relayTasks = new ArrayList<>();
+
+        for(Task task : taskList){
+
+            if(this.computeNode.originated(task)){
+                tasks.add(task);
+            }else{
+                relayTasks.add(task);
+            }
+        }
+
+        if(relayTasks.size() != 0){
+            Tasks relayTasksMessage = new Tasks(relayTasks);
+            computeNode.sendClockwise(relayTasksMessage.getBytes());
+        }
+    } 
 
 }

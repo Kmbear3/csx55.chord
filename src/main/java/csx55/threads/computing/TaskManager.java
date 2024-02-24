@@ -47,6 +47,10 @@ public class TaskManager implements Runnable{
             NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, i);
             node.sendClockwise(nodeTask.getBytes());
 
+            balancer.setNewRound(i, numberOfTasks);
+
+            // Actually mine tasks 
+
         }
 
         System.out.println("Finished generating tasks");

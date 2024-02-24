@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import csx55.threads.hashing.Task;
 
 public class Tasks implements Protocol, Event{
-    ArrayList<Task> taskList;
+    ArrayList<Task> taskList = new ArrayList<>();
 
     public Tasks(ArrayList<Task> taskList) {
         this.taskList = taskList;

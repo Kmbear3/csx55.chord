@@ -221,6 +221,15 @@ public class ComputeNode implements Node{
         return this.sender;
     }
 
+    synchronized public boolean originated(Task task){
+        if(task.getIp().equals(messagingNodeIP) && task.getPort() == messagingNodePort){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public static void main(String[] args){
         String registryName = args[0];
         int registryPort = Integer.parseInt(args[1]);
