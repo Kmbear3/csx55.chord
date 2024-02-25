@@ -30,7 +30,7 @@ public class TaskManager implements Runnable{
         this.numberOfNodesInOverlay = numberOfNodesInOverlay;
     }
 
-    public void createTasks(int roundNumber, int numberOfTasks){
+    synchronized public void createTasks(int roundNumber, int numberOfTasks){
 
         for(int i = 0; i < numberOfTasks; i ++){
             int payload = rand.nextInt();
