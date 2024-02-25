@@ -47,12 +47,6 @@ public class BalanceLoad {
         }
     }
 
-    synchronized public void setNewRound(int roundNumber, int numberOfTasks) {
-        this.roundNumber = roundNumber;
-        this.numberOfTasks = numberOfTasks;
-        this.average = 0;
-    }
-
     synchronized public void calculateAverage(){
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
         System.out.println("Average messages: " + this.average);
@@ -62,7 +56,7 @@ public class BalanceLoad {
 
         System.out.println("number of messages: " + this.tasks.size());
         if(this.tasks.size() > average){
-            int difference = numberOfTasks - average;
+            int difference = this.tasks.size() - average;
             sendTasksClockwise(difference);
         }
     }
@@ -121,36 +115,3 @@ public class BalanceLoad {
 
     }
 }
-
-// if(this.tasks.size() < average){
-//     System.out.println("Taking tasks- size: " + tasks.size());
-//     int difference = average - this.tasks.size();
-
-//     for(int i = 0; i < difference; i++){
-
-//         this.tasks.add(taskList.get(i));  // TAsk list may have fewer tasks than necessary. 
-//         taskList.remove(i);
-//     }
-
-//     System.out.println("After tasks- size: " + tasks.size());
-
-// }
-
-// ArrayList<Task> relayTasks = new ArrayList<>();
-
-// for(Task task : taskList){
-
-//     if(this.computeNode.originated(task)){
-//         tasks.add(task);
-//     }else{
-//         relayTasks.add(task);
-//     }
-// }
-
-// if(relayTasks.size() != 0){
-//     Tasks relayTasksMessage = new Tasks(relayTasks);
-//     computeNode.sendClockwise(relayTasksMessage.getBytes());
-// }
-// System.out.println("Compute Node tasks: " + this.tasks.size());
-// } 
-

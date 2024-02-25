@@ -22,7 +22,6 @@ public class TaskManager implements Runnable{
         this.numberOfRounds = numberOfRounds;
         this.node = node;
         this.tasks = tasks;
-        this.balancer = balancer;
     }
 
     public void createTasks(int roundNumber, int numberOfTasks){
@@ -47,7 +46,7 @@ public class TaskManager implements Runnable{
                     NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, roundNumber);
                     node.sendClockwise(nodeTask.getBytes());
 
-                    balancer.setNewRound(roundNumber, numberOfTasks);
+                    // balancer.setNewRound(roundNumber, numberOfTasks);
                     roundNumber++;
                 }
             }
