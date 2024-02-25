@@ -36,7 +36,7 @@ public class OverlayCreator {
 
             for(Vertex vertex : registeredNodes.getValues()){
                 
-                MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections(), this.numberOfThreads);
+                MessagingNodesList nodesList = new MessagingNodesList(vertex.getVertexConnections(), this.numberOfThreads, registeredNodes.size());
                 vertex.sendMessage(nodesList.getBytes());
             }
 
@@ -48,17 +48,13 @@ public class OverlayCreator {
     }
 
     synchronized public void assignNeighbors(int[][] connections){
-        // This assigns vertexs to other vertexs. This ensure that the connections are only made in 
-        // 1 direction that is above the line of symmetry and has a link value that is non-zero. 
-        // i makes a connection to j
-        // Above the line of symmetry i == i, j is always greater than i. 
 
         for(int i = 0; i < connections.length; i ++){
-            for(int j = 0; j < connections.length; j++){
-                if(i < j && connections[i][j] != 0){
-                    Vertex node = registeredNodes.get(names.get(i));
-                    node.addNeighbor(registeredNodes.get(names.get(j)));
-                }
+            int clockwiseNeighbor = (i+1) % connections.length;
+           
+            if(connections[i][clockwiseNeighbor] != 0){
+                Vertex node = registeredNodes.get(names.get(i));
+                node.addNeighbor(registeredNodes.get(names.get(clockwiseNeighbor)));
             }
         }
     }

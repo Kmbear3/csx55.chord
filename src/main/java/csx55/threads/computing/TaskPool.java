@@ -18,9 +18,7 @@ public class TaskPool {
     }
 
     public void createThreads(){
-        // Prolly going to need to save a reference to the threads 
 
-        System.out.println("TaskPool: Number of threads: " + this.numberOfThreads);
         for(int i = 0; i < numberOfThreads; i ++){
             TaskThread task = new TaskThread(tasks);
             Thread taskThread = new Thread(task);

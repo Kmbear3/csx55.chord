@@ -16,6 +16,7 @@ import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.util.Vertex;
 import csx55.threads.util.VertexList;
 import csx55.threads.wireformats.*;
+import csx55.threads.balancing.BalanceLoad;
 import csx55.threads.computing.TaskManager;
 import csx55.threads.computing.TaskPool;
 import csx55.threads.hashing.*;
@@ -33,6 +34,10 @@ public class ComputeNode implements Node{
 
     private MessageSender sender;
     private TaskPool threadPool;
+    private Vertex clockwiseNeighbor;
+
+    private BalanceLoad balancer;
+
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
@@ -95,6 +100,12 @@ public class ComputeNode implements Node{
                         System.exit(0);
                     }
                     break;
+                case Protocol.NODE_TASKS:
+                    balancer.addToSum(new NodeTasks(event.getBytes()));
+                    break;
+                case Protocol.TASKS:
+                    balancer.receiveTasks(new Tasks(event.getBytes()).getTaskList());
+                    break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
                     System.out.println("Please try again");
@@ -107,7 +118,7 @@ public class ComputeNode implements Node{
     }
 
     private void createTasks(int numberOfRounds) {
-        TaskManager taskManager = new TaskManager(numberOfRounds, this, this.tasks);
+        TaskManager taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer);
         Thread taskManagerThread = new Thread(taskManager);
         taskManagerThread.start();
     }
@@ -120,6 +131,12 @@ public class ComputeNode implements Node{
     }
 
     synchronized public void createConnectionsAndThreadPool(Event event) throws IOException{
+        // Sketchy below:
+        // The code to initiate clockwise neighbor is not very good. Refactor and re-do. 
+        // There isn't necesarily a garantee that there is only 1 value in peers object. 
+        // change logic!!! 
+        // TODO: Be better, noob
+
         MessagingNodesList nodesList = (MessagingNodesList)event;
 
         ArrayList<Vertex> peers = nodesList.getPeers();
@@ -130,9 +147,20 @@ public class ComputeNode implements Node{
         }
         
         System.out.println("All connections are established. Number of connections: " + peers.size());
+        System.out.println("Clockwise neighbor: " + peers.get(0).getID());
+        System.out.println("Compute Node: " + this.getID());
+
+        this.clockwiseNeighbor = peers.get(0); 
+
+        this.balancer = new BalanceLoad(nodesList.getNumberOfNodes(), this, this.tasks);
 
         this.threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
         threadPool.createThreads();
+    }
+
+
+    synchronized public void sendClockwise(byte[] marshalledBytes){
+        clockwiseNeighbor.sendMessage(marshalledBytes);
     }
 
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
@@ -193,6 +221,19 @@ public class ComputeNode implements Node{
 
     public MessageSender getSender(){
         return this.sender;
+    }
+
+    synchronized public boolean originated(Task task){
+       
+        if(task.getIp().equals(messagingNodeIP) && task.getPort() == messagingNodePort){
+            System.out.println("Inside originated: " + task.getIp() + ":" + task.getPort());
+            System.out.println("My IP and port: " + messagingNodeIP + ":" + messagingNodePort);
+    
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public static void main(String[] args){
