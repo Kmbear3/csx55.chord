@@ -60,8 +60,8 @@ public class BalanceLoad {
 
         //Using numberOftasks here might cause issues.... This is the number of tasks that the node created, not the number that it currently has. 
 
-        System.out.println("number of messages: " + this.numberOfTasks);
-        if(numberOfTasks > average){
+        System.out.println("number of messages: " + this.tasks.size());
+        if(this.tasks.size() > average){
             int difference = numberOfTasks - average;
             sendTasksClockwise(difference);
         }
@@ -74,6 +74,9 @@ public class BalanceLoad {
             taskList.add(tasks.poll());
         }
         System.out.println("Number of tasks sending clockwise: " + taskList.size());
+        System.out.println("Tasks size: " + tasks.size());
+        System.out.println("Percentage: " + (this.tasks.size() / (double)this.totalTasksInOverlay)  * 100);
+
 
         Tasks taskMessage = new Tasks(taskList);
 
@@ -89,21 +92,33 @@ public class BalanceLoad {
     public synchronized void receiveTasks(ArrayList<Task> taskList) throws IOException{
         // ArrayList<Task> taskList = receivedTasks.getTaskList();
         ArrayList<Task> relayTasks = new ArrayList<>();
-        for(Task task : taskList){  
+
+        System.out.println("Received: " + taskList.size());
+
+        
+        for(int i = 0; i < taskList.size(); i++){
+            Task task = taskList.get(i);
+
             if(this.tasks.size() < average){
                 this.tasks.add(task);  // TAsk list may have fewer tasks than necessary. 
-                taskList.remove(task);
             }
             else if(this.computeNode.originated(task)){
+                System.out.println("Suppressing messages");
                 tasks.add(task);
             }else{
                 relayTasks.add(task);
             }
         }
+
         if(relayTasks.size() != 0){
+            System.out.println("Relaying: " + relayTasks.size());
             Tasks relayTasksMessage = new Tasks(relayTasks);
             computeNode.sendClockwise(relayTasksMessage.getBytes());
         }
+
+        System.out.println("Total tasks after shifting: " + this.tasks.size());
+        System.out.println("Percentage: " + (this.tasks.size() / (double)this.totalTasksInOverlay)  * 100);
+
     }
 }
 

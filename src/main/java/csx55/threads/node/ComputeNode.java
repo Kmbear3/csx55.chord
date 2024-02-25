@@ -224,7 +224,11 @@ public class ComputeNode implements Node{
     }
 
     synchronized public boolean originated(Task task){
+       
         if(task.getIp().equals(messagingNodeIP) && task.getPort() == messagingNodePort){
+            System.out.println("Inside originated: " + task.getIp() + ":" + task.getPort());
+            System.out.println("My IP and port: " + messagingNodeIP + ":" + messagingNodePort);
+    
             return true;
         }
         else{
