@@ -18,5 +18,7 @@ public interface Protocol {
     public static final int DEREGISTER_RESPONSE = 13;
     public static final int NODE_TASKS = 14;
     public static final int TASKS = 15;
+    public static final int ROUND_INCREMENT = 16;
+
 
 }

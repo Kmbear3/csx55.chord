@@ -47,8 +47,7 @@ public class BalanceLoad {
         }
     }
 
-    synchronized public void setNewRound(int roundNumber, int tasksCreated){
-        this.roundNumber = roundNumber;
+    synchronized public void setNewRound(int tasksCreated){
         this.tasksCreatedForRound = tasksCreated;
     }
 

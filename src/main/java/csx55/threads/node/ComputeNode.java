@@ -37,6 +37,8 @@ public class ComputeNode implements Node{
     private Vertex clockwiseNeighbor;
 
     private BalanceLoad balancer;
+    private int numberOfNodesInOverlay;
+    private TaskManager taskManager;
 
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
@@ -106,6 +108,9 @@ public class ComputeNode implements Node{
                 case Protocol.TASKS:
                     balancer.receiveTasks(new Tasks(event.getBytes()).getTaskList());
                     break;
+                case Protocol.ROUND_INCREMENT:
+                    taskManager.receiveRoundCompleteMessage(new RoundIncrement(event.getBytes()));
+                    break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
                     System.out.println("Please try again");
@@ -118,7 +123,7 @@ public class ComputeNode implements Node{
     }
 
     private void createTasks(int numberOfRounds) {
-        TaskManager taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer);
+        this.taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer, this.numberOfNodesInOverlay);
         Thread taskManagerThread = new Thread(taskManager);
         taskManagerThread.start();
     }
@@ -131,12 +136,6 @@ public class ComputeNode implements Node{
     }
 
     synchronized public void createConnectionsAndThreadPool(Event event) throws IOException{
-        // Sketchy below:
-        // The code to initiate clockwise neighbor is not very good. Refactor and re-do. 
-        // There isn't necesarily a garantee that there is only 1 value in peers object. 
-        // change logic!!! 
-        // TODO: Be better, noob
-
         MessagingNodesList nodesList = (MessagingNodesList)event;
 
         ArrayList<Vertex> peers = nodesList.getPeers();
@@ -153,6 +152,7 @@ public class ComputeNode implements Node{
         this.clockwiseNeighbor = peers.get(0); 
 
         this.balancer = new BalanceLoad(nodesList.getNumberOfNodes(), this, this.tasks);
+        this.numberOfNodesInOverlay = nodesList.getNumberOfNodes();
 
         this.threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
         threadPool.createThreads();
@@ -171,6 +171,10 @@ public class ComputeNode implements Node{
         receiverThread.start();
 
         vertex.sendMessage(peerConnection.getBytes());
+    }
+
+    public int getNumberOfNodes(){
+        return this.numberOfNodesInOverlay;
     }
 
     public void configureServer(Node node){
