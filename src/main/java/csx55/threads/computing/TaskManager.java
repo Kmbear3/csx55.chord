@@ -37,20 +37,20 @@ public class TaskManager implements Runnable{
     public void run() {
         try {
 
-        for(int i = 0; i < numberOfRounds; i++){
-            int numberOfTasks = rand.nextInt(1000) + 1;
+            int roundNumber = 0;
+            while(roundNumber < numberOfRounds){
+                if(tasks.size() == 0){
+                    int numberOfTasks = rand.nextInt(1000) + 1;
 
-            createTasks(i, numberOfTasks);
+                    createTasks(roundNumber, numberOfTasks);
 
-            NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, i);
-            node.sendClockwise(nodeTask.getBytes());
+                    NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, roundNumber);
+                    node.sendClockwise(nodeTask.getBytes());
 
-            // mining (wait )
-
-            balancer.setNewRound(i, numberOfTasks);
-
-            // Actually mine tasks 
-        }
+                    balancer.setNewRound(roundNumber, numberOfTasks);
+                    roundNumber++;
+                }
+            }
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

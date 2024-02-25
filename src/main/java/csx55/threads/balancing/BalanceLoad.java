@@ -19,7 +19,6 @@ public class BalanceLoad {
     int receivedNodeMessage;
     int numberOfTasks;
     int average;
-    String nodes = "";
 
     public BalanceLoad(int numberOfNodesInOverlay, ComputeNode computeNode, ConcurrentLinkedQueue<Task> tasks){
         this.numberOfNodesInOverlay = numberOfNodesInOverlay;
@@ -28,10 +27,10 @@ public class BalanceLoad {
     }
     
     synchronized public void addToSum(NodeTasks nodeTasks){
+        System.out.println("NodeTask received: " + receivedNodeMessage + "Round: " + this.roundNumber);
         try {
             receivedNodeMessage = receivedNodeMessage + 1;
             totalTasksInOverlay += nodeTasks.getNumberOfTasks();
-            nodes += nodeTasks.getId();
 
             if(!nodeTasks.getId().equals(computeNode.getID())){
                 computeNode.sendClockwise(nodeTasks.getBytes());
@@ -51,6 +50,7 @@ public class BalanceLoad {
     synchronized public void setNewRound(int roundNumber, int numberOfTasks) {
         this.roundNumber = roundNumber;
         this.numberOfTasks = numberOfTasks;
+        this.average = 0;
     }
 
     synchronized public void calculateAverage(){
