@@ -123,7 +123,7 @@ public class ComputeNode implements Node{
     }
 
     private void createTasks(int numberOfRounds) {
-        this.taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer, this.numberOfNodesInOverlay);
+        this.taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer, this.numberOfNodesInOverlay, this.stats);
         Thread taskManagerThread = new Thread(taskManager);
         taskManagerThread.start();
     }
@@ -151,7 +151,7 @@ public class ComputeNode implements Node{
 
         this.clockwiseNeighbor = peers.get(0); 
 
-        this.balancer = new BalanceLoad(nodesList.getNumberOfNodes(), this, this.tasks);
+        this.balancer = new BalanceLoad(nodesList.getNumberOfNodes(), this, this.tasks, this.stats);
         this.numberOfNodesInOverlay = nodesList.getNumberOfNodes();
 
         this.threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());

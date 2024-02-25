@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.hashing.Task;
 import csx55.threads.node.ComputeNode;
+import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.wireformats.NodeTasks;
 import csx55.threads.wireformats.Tasks;
 
@@ -13,6 +14,7 @@ public class BalanceLoad {
     int numberOfNodesInOverlay;
     ComputeNode computeNode;
     ConcurrentLinkedQueue<Task> tasks;
+    StatisticsCollectorAndDisplay stats;
     int totalTasksInOverlay = 0;
     int roundNumber; 
     int receivedNodeMessage;
@@ -20,10 +22,12 @@ public class BalanceLoad {
     int average;
     int accumulatedTasksForRound = 0;
 
-    public BalanceLoad(int numberOfNodesInOverlay, ComputeNode computeNode, ConcurrentLinkedQueue<Task> tasks){
+
+    public BalanceLoad(int numberOfNodesInOverlay, ComputeNode computeNode, ConcurrentLinkedQueue<Task> tasks, StatisticsCollectorAndDisplay stats){
         this.numberOfNodesInOverlay = numberOfNodesInOverlay;
         this.computeNode = computeNode;
         this.tasks = tasks;
+        this.stats = stats;
     }
     
     synchronized public void addToSum(NodeTasks nodeTasks){
@@ -78,6 +82,7 @@ public class BalanceLoad {
             Task task = tasks.poll();
 
             if(task != null){
+                stats.incrementPushedTasks();
                 taskList.add(task);
             }
         }
@@ -101,7 +106,6 @@ public class BalanceLoad {
         ArrayList<Task> relayTasks = new ArrayList<>();
 
         // System.out.println("Received: " + taskList.size());
-
         
         for(int i = 0; i < taskList.size(); i++){
             Task task = taskList.get(i);
@@ -109,11 +113,13 @@ public class BalanceLoad {
             if((this.tasksCreatedForRound + this.accumulatedTasksForRound) < average){
                 this.accumulatedTasksForRound ++;
                 this.tasks.add(task);  // TAsk list may have fewer tasks than necessary. 
+                stats.incrementPulledTasks();
             }
             else if(this.computeNode.originated(task)){
                 this.accumulatedTasksForRound ++;
                 System.out.println("Suppressing messages");
                 tasks.add(task);
+                stats.incrementPulledTasks();
             }else{
                 relayTasks.add(task);
             }

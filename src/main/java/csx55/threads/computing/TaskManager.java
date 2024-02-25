@@ -7,8 +7,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import csx55.threads.balancing.BalanceLoad;
 import csx55.threads.hashing.Task;
 import csx55.threads.node.ComputeNode;
+import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.wireformats.NodeTasks;
 import csx55.threads.wireformats.RoundIncrement;
+import csx55.threads.wireformats.TaskComplete;
 
 public class TaskManager implements Runnable{
 
@@ -21,13 +23,15 @@ public class TaskManager implements Runnable{
     int numberOfNodesInOverlay;
     int receivedRoundInrementMessage = 0;
     boolean receivedPermission = true;
+    StatisticsCollectorAndDisplay stats;
 
-    public TaskManager(int numberOfRounds, ComputeNode node, ConcurrentLinkedQueue<Task> tasks, BalanceLoad balancer, int numberOfNodesInOverlay){
+    public TaskManager(int numberOfRounds, ComputeNode node, ConcurrentLinkedQueue<Task> tasks, BalanceLoad balancer, int numberOfNodesInOverlay, StatisticsCollectorAndDisplay stats){
         this.numberOfRounds = numberOfRounds;
         this.node = node;
         this.tasks = tasks;
         this.balancer = balancer;
         this.numberOfNodesInOverlay = numberOfNodesInOverlay;
+        this.stats = stats;
     }
 
     synchronized public void createTasks(int roundNumber, int numberOfTasks){
@@ -44,6 +48,8 @@ public class TaskManager implements Runnable{
 
             int numberOfTasks = rand.nextInt(1000) + 1;
             createTasks(roundNumber, numberOfTasks);
+
+            stats.incrementGeneratedTasks(numberOfTasks);
 
             NodeTasks nodeTask = new NodeTasks(node.getID(), numberOfTasks, roundNumber);
             node.sendClockwise(nodeTask.getBytes());
@@ -92,6 +98,9 @@ public class TaskManager implements Runnable{
                     receivedPermission = false;
                 }
             }
+
+            TaskComplete complete = new TaskComplete(node.getMessagingNodeIP(), node.getMessagingNodePort());
+            node.sendRegistryMessage(complete);
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

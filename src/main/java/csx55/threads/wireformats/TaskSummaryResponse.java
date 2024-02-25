@@ -12,24 +12,13 @@ import java.util.ArrayList;
 import csx55.threads.util.StatisticsCollectorAndDisplay;
 
 public class TaskSummaryResponse implements Event, Protocol {
-    // Message Type: TRAFFIC_SUMMARY
-    // Node IP address:
-    // Node Port number:
-    // Number of messages sent
-    // Summation of sent messages
-    // Number of messages received
-    // Summation of received messages
-    // Number of messages relayed
-
     String ip;
     int port;
 
-    int messagesSent;
-    long messageSum;
-
-    int messagesReceived;
-    long receivedSum;
-    int relayed;
+    int numberOfGeneratedTasks;
+    int numberOfPulledTasks;
+    int numberOfPushedTasks;
+    int numberOfCompletedTasks;
 
 
     public TaskSummaryResponse(byte[] marshalledBytes) throws IOException {
@@ -48,11 +37,11 @@ public class TaskSummaryResponse implements Event, Protocol {
         this.ip = new String(IPBytes);
 
         this.port = din.readInt();
-        this.messagesSent = din.readInt();
-        this.messageSum = din.readLong();
-        this.messagesReceived = din.readInt();
-        this.receivedSum = din.readLong();
-        this.relayed = din.readInt();
+
+        this.numberOfGeneratedTasks = din.readInt();
+        this.numberOfPulledTasks = din.readInt();
+        this.numberOfPushedTasks = din.readInt();
+        this.numberOfCompletedTasks = din.readInt();
 
         baInputStream.close();
         din.close();
@@ -62,21 +51,19 @@ public class TaskSummaryResponse implements Event, Protocol {
         this.ip = ip;
         this.port = port;
 
-        this.messagesSent = stats.getSendTracker();
-        this.messageSum = stats.getSendSum();
-        this.messagesReceived = stats.getReceiveTracker();
-        this.receivedSum = stats.getReceivedSum();
-        this.relayed = stats.getRelayTracker();
+        this.numberOfGeneratedTasks = stats.getNumberOfGeneratedTasks();
+        this.numberOfPulledTasks = stats.getNumberOfPulledTasks();
+        this.numberOfPushedTasks = stats.getNumberOfPushedTasks();
+        this.numberOfCompletedTasks = stats.getNumberOfCompletedTasks();
     }
 
     public ArrayList<String> getStats() {
         ArrayList<String> stats = new ArrayList<>();
 
-        stats.add("" + messagesSent);
-        stats.add("" + messagesReceived);
-        stats.add("" + messageSum);
-        stats.add("" + receivedSum);
-        stats.add("" + relayed);
+        stats.add("" + numberOfGeneratedTasks);
+        stats.add("" + numberOfPulledTasks);
+        stats.add("" + numberOfPushedTasks);
+        stats.add("" + numberOfCompletedTasks);
 
         return stats;
     }
@@ -104,11 +91,11 @@ public class TaskSummaryResponse implements Event, Protocol {
         dout.write(IPBytes);
 
         dout.writeInt(this.port);
-        dout.writeInt(this.messagesSent);
-        dout.writeLong(this.messageSum);
-        dout.writeInt(this.messagesReceived);
-        dout.writeLong(this.receivedSum);
-        dout.writeInt(this.relayed);
+
+        dout.writeInt(this.numberOfGeneratedTasks);
+        dout.writeLong(this.numberOfPulledTasks);
+        dout.writeInt(this.numberOfPushedTasks);
+        dout.writeLong(this.numberOfCompletedTasks);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();
