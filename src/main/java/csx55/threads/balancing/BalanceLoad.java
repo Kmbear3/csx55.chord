@@ -49,6 +49,7 @@ public class BalanceLoad {
 
     synchronized public void setNewRound(int tasksCreated){
         this.tasksCreatedForRound = tasksCreated;
+        this.accumulatedTasksForRound = 0;
     }
 
     synchronized public void calculateAverage(){
@@ -57,10 +58,11 @@ public class BalanceLoad {
         System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
         this.totalTasksInOverlay = 0;
 
+
         //Using numberOftasks here might cause issues.... This is the number of tasks that the node created, not the number that it currently has. 
 
-        System.out.println("number of messages: " + this.tasks.size());
-        System.out.println("number of created tasks: " + this.tasksCreatedForRound);
+        // System.out.println("number of messages: " + this.tasks.size());
+        // System.out.println("number of created tasks: " + this.tasksCreatedForRound);
 
         if((this.tasksCreatedForRound + accumulatedTasksForRound) > average){
             int difference = (this.tasksCreatedForRound + accumulatedTasksForRound) - average;
@@ -80,8 +82,8 @@ public class BalanceLoad {
             }
         }
 
-        System.out.println("Number of tasks sending clockwise: " + taskList.size());
-        System.out.println("Tasks For this round:" + (this.tasksCreatedForRound + this.accumulatedTasksForRound));
+        // System.out.println("Number of tasks sending clockwise: " + taskList.size());
+        // System.out.println("Tasks For this round:" + (this.tasksCreatedForRound + this.accumulatedTasksForRound));
 
         Tasks taskMessage = new Tasks(taskList);
 
@@ -98,7 +100,7 @@ public class BalanceLoad {
         // ArrayList<Task> taskList = receivedTasks.getTaskList();
         ArrayList<Task> relayTasks = new ArrayList<>();
 
-        System.out.println("Received: " + taskList.size());
+        // System.out.println("Received: " + taskList.size());
 
         
         for(int i = 0; i < taskList.size(); i++){

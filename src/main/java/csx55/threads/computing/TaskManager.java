@@ -20,6 +20,7 @@ public class TaskManager implements Runnable{
     boolean createNewRound = true; // Set to true initially because the nodes need create messages first.
     int numberOfNodesInOverlay;
     int receivedRoundInrementMessage = 0;
+    boolean receivedPermission = true;
 
     public TaskManager(int numberOfRounds, ComputeNode node, ConcurrentLinkedQueue<Task> tasks, BalanceLoad balancer, int numberOfNodesInOverlay){
         this.numberOfRounds = numberOfRounds;
@@ -56,15 +57,19 @@ public class TaskManager implements Runnable{
     }
 
     synchronized public void receiveRoundCompleteMessage(RoundIncrement roundIncrement) throws IOException{
-        receivedRoundInrementMessage ++;
+        this.receivedRoundInrementMessage  = receivedRoundInrementMessage + 1;
+        System.out.println("Recievd Round increment: " + roundIncrement.getID());
+        System.out.println("ME: " + node.getID());
+
         
         if(!roundIncrement.getID().equals(node.getID())){
+            System.out.println("Sending: " + roundIncrement.getID());
             node.sendClockwise(roundIncrement.getBytes());
         }
 
         if(receivedRoundInrementMessage == numberOfNodesInOverlay){
             createNewRound = true;
-            receivedRoundInrementMessage = 0;
+            this.receivedRoundInrementMessage = 0;
         }
     }
 
@@ -77,12 +82,14 @@ public class TaskManager implements Runnable{
                 if(createNewRound){
                     beginNewRound(roundNumber);
                     createNewRound = false;
+                    receivedPermission = true;
                     roundNumber++;
                 }
-                if(tasks.size() == 0 && createNewRound == false){
+                else if(tasks.size() == 0 && createNewRound == false && receivedPermission){
                     System.out.println("Tasks are completed... Sending Round Increment Directive");
                     RoundIncrement roundIncrement = new RoundIncrement(node.getMessagingNodeIP(), node.getMessagingNodePort(), roundNumber);
                     node.sendClockwise(roundIncrement.getBytes());
+                    receivedPermission = false;
                 }
             }
 
