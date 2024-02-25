@@ -2,7 +2,6 @@ package csx55.threads.balancing;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.hashing.Task;
@@ -17,7 +16,7 @@ public class BalanceLoad {
     int totalTasksInOverlay = 0;
     int roundNumber; 
     int receivedNodeMessage;
-    int numberOfTasks;
+    int tasksCreated;
     int average;
 
     public BalanceLoad(int numberOfNodesInOverlay, ComputeNode computeNode, ConcurrentLinkedQueue<Task> tasks){
@@ -27,7 +26,7 @@ public class BalanceLoad {
     }
     
     synchronized public void addToSum(NodeTasks nodeTasks){
-        System.out.println("NodeTask received: " + receivedNodeMessage + "Round: " + this.roundNumber);
+        // System.out.println("NodeTask received: " + receivedNodeMessage + "Round: " + nodeTasks.getRoundNumber());
         try {
             receivedNodeMessage = receivedNodeMessage + 1;
             totalTasksInOverlay += nodeTasks.getNumberOfTasks();
@@ -37,7 +36,7 @@ public class BalanceLoad {
             }
     
             if(receivedNodeMessage == numberOfNodesInOverlay){
-                // New round needs to be calculated, thus rreceivedNodeMessage needs to be reset
+                // New round needs to be calculated, thus receivedNodeMessage needs to be reset
                 receivedNodeMessage = 0;
                 calculateAverage();
             }
@@ -47,14 +46,23 @@ public class BalanceLoad {
         }
     }
 
+    synchronized public void setNewRound(int roundNumber, int tasksCreated){
+        this.roundNumber = roundNumber;
+        this.tasksCreated = tasksCreated;
+
+    }
+
     synchronized public void calculateAverage(){
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
         System.out.println("Average messages: " + this.average);
         System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
+        this.totalTasksInOverlay = 0;
 
         //Using numberOftasks here might cause issues.... This is the number of tasks that the node created, not the number that it currently has. 
 
         System.out.println("number of messages: " + this.tasks.size());
+        System.out.println("number of created tasks: " + this.tasksCreated);
+
         if(this.tasks.size() > average){
             int difference = this.tasks.size() - average;
             sendTasksClockwise(difference);
@@ -65,12 +73,15 @@ public class BalanceLoad {
         ArrayList<Task> taskList = new ArrayList<>();
         
         for(int i = 0; i < difference; i++){
-            taskList.add(tasks.poll());
+            Task task = tasks.poll();
+
+            if(task != null){
+                taskList.add(task);
+            }
         }
+
         System.out.println("Number of tasks sending clockwise: " + taskList.size());
         System.out.println("Tasks size: " + tasks.size());
-        System.out.println("Percentage: " + (this.tasks.size() / (double)this.totalTasksInOverlay)  * 100);
-
 
         Tasks taskMessage = new Tasks(taskList);
 
@@ -83,7 +94,7 @@ public class BalanceLoad {
         
     }
 
-    public synchronized void receiveTasks(ArrayList<Task> taskList) throws IOException{
+    synchronized public void receiveTasks(ArrayList<Task> taskList) throws IOException{
         // ArrayList<Task> taskList = receivedTasks.getTaskList();
         ArrayList<Task> relayTasks = new ArrayList<>();
 
@@ -111,7 +122,7 @@ public class BalanceLoad {
         }
 
         System.out.println("Total tasks after shifting: " + this.tasks.size());
-        System.out.println("Percentage: " + (this.tasks.size() / (double)this.totalTasksInOverlay)  * 100);
+        // System.out.println("Percentage: " + (this.tasks.size() / (double)this.totalTasksInOverlay)  * 100);
 
     }
 }
