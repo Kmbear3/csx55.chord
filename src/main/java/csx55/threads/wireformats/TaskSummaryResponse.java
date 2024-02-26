@@ -93,9 +93,9 @@ public class TaskSummaryResponse implements Event, Protocol {
         dout.writeInt(this.port);
 
         dout.writeInt(this.numberOfGeneratedTasks);
-        dout.writeLong(this.numberOfPulledTasks);
+        dout.writeInt(this.numberOfPulledTasks);
         dout.writeInt(this.numberOfPushedTasks);
-        dout.writeLong(this.numberOfCompletedTasks);
+        dout.writeInt(this.numberOfCompletedTasks);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();

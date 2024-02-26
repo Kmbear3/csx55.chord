@@ -206,6 +206,10 @@ public class ComputeNode implements Node{
         return this.messagingNodeIP + ":" + this.messagingNodePort;
     }
 
+    synchronized public StatisticsCollectorAndDisplay getStats(){
+        return this.stats;
+    }
+
 
     synchronized public void printConnections(int[][] matrix){
 

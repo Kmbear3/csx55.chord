@@ -101,24 +101,7 @@ public class StatisticsCollectorAndDisplay {
         int totalNumberOfPulledTasks = 0;
         int totalNumberOfPushedTasks = 0;
         int totalNumberOfCompletedTasks = 0;
-
-
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println("                                                          Registry Traffic Summary                                                    ");
-        System.out.println("                                                                                                                                      ");
-
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s |", "Node" ,"Generated Tasks", "Pushed Tasks", "Completed Tasks",  "Percentage Task Completion"));
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-        
-        int i = 0;
-        for(ArrayList<String> nodeStats : nodes.values()){
-            i ++;
-            String nodeName = "Node " + i;
-
-            System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3)));
-
-        }
+        double totalPercentageOfCompletedTasks = 0;
 
         for(ArrayList<String> nodeStats : nodes.values()){
             totalNumberOfGeneratedTasks =  totalNumberOfGeneratedTasks + Integer.parseInt(nodeStats.get(0));
@@ -127,7 +110,27 @@ public class StatisticsCollectorAndDisplay {
             totalNumberOfCompletedTasks = totalNumberOfCompletedTasks + Integer.parseInt(nodeStats.get(3));
         }
 
-        System.out.println(String.format("| %-10s | %20d | %22d | %22d | %22d |", "Totals: ", totalNumberOfGeneratedTasks, totalNumberOfPulledTasks, totalNumberOfPushedTasks, totalNumberOfCompletedTasks));
+
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("                                                          Registry Traffic Summary                                                    ");
+        System.out.println("                                                                                                                                      ");
+
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22s |", "Node" ,"Generated Tasks","Pulled Tasks", "Pushed Tasks", "Completed Tasks",  "Task Completion %"));
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        
+        int i = 0;
+        for(ArrayList<String> nodeStats : nodes.values()){
+            i ++;
+            String nodeName = "Node " + i;
+            double percentageOfCompleteTask = Double.parseDouble(nodeStats.get(3)) / totalNumberOfCompletedTasks * 100;
+            totalPercentageOfCompletedTasks = totalPercentageOfCompletedTasks + percentageOfCompleteTask;
+
+            System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22f |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), percentageOfCompleteTask));
+
+        }
+
+        System.out.println(String.format("| %-10s | %20d | %22d | %22d | %22d | %22f |", "Totals: ", totalNumberOfGeneratedTasks, totalNumberOfPulledTasks, totalNumberOfPushedTasks, totalNumberOfCompletedTasks, totalPercentageOfCompletedTasks));
 
         System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
     }

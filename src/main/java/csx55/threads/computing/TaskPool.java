@@ -20,7 +20,7 @@ public class TaskPool {
     public void createThreads(){
 
         for(int i = 0; i < numberOfThreads; i ++){
-            TaskThread task = new TaskThread(tasks);
+            TaskThread task = new TaskThread(tasks, node.getStats());
             Thread taskThread = new Thread(task);
             taskThread.start();
         }
