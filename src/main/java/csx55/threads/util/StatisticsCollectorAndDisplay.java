@@ -111,13 +111,13 @@ public class StatisticsCollectorAndDisplay {
         }
 
 
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println("                                                          Registry Traffic Summary                                                    ");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("                                                                    Registry Traffic Summary                                                       ");
         System.out.println("                                                                                                                                      ");
 
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println(String.format("| %-20s | %20s | %22s | %22s | %22s | %22s |", "Node" ,"Generated Tasks","Pulled Tasks", "Pushed Tasks", "Completed Tasks",  "Task Completion %"));
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
         
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
@@ -132,7 +132,7 @@ public class StatisticsCollectorAndDisplay {
 
         System.out.println(String.format("| %-20s | %20d | %22d | %22d | %22d | %22f |", "Totals: ", totalNumberOfGeneratedTasks, totalNumberOfPulledTasks, totalNumberOfPushedTasks, totalNumberOfCompletedTasks, totalPercentageOfCompletedTasks));
 
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
     synchronized public void resetCounters(){
