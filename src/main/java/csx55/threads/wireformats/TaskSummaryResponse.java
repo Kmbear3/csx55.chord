@@ -64,6 +64,7 @@ public class TaskSummaryResponse implements Event, Protocol {
         stats.add("" + numberOfPulledTasks);
         stats.add("" + numberOfPushedTasks);
         stats.add("" + numberOfCompletedTasks);
+        stats.add("" + getName());
 
         return stats;
     }

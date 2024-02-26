@@ -98,9 +98,13 @@ public class TaskManager implements Runnable{
                     receivedPermission = false;
                 }
             }
-
+            while(tasks.size() != 0){
+                
+            }
+            
             TaskComplete complete = new TaskComplete(node.getMessagingNodeIP(), node.getMessagingNodePort());
             node.sendRegistryMessage(complete);
+            System.out.println("Tasks are complete! - " + node.getID());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
