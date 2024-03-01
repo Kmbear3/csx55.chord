@@ -23,6 +23,7 @@ public class TaskThread implements Runnable {
             Task task = tasks.poll();
             if(task != null){
                 miner.mine(task);
+                System.out.println(task.toString());
                 stats.incrementCompletedTasks();
             }
         }

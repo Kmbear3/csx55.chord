@@ -88,7 +88,7 @@ public class Registry implements Node {
             vertex.setTaskComplete();
 
             if(vertexList.allTasksAreComplete()){
-                Thread.sleep(15000);
+                Thread.sleep(5000);
                 
                 TaskSummaryRequest summaryRequest = new TaskSummaryRequest();
                 vertexList.sendAllNodes(summaryRequest);

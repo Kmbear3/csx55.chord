@@ -55,7 +55,6 @@ public class TaskManager implements Runnable{
             node.sendClockwise(nodeTask.getBytes());
             balancer.setNewRound(numberOfTasks);
 
-            System.out.println("Tasks created: " + numberOfTasks);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -64,12 +63,9 @@ public class TaskManager implements Runnable{
 
     synchronized public void receiveRoundCompleteMessage(RoundIncrement roundIncrement) throws IOException{
         this.receivedRoundInrementMessage  = receivedRoundInrementMessage + 1;
-        System.out.println("Recievd Round increment: " + roundIncrement.getID());
-        System.out.println("ME: " + node.getID());
 
         
         if(!roundIncrement.getID().equals(node.getID())){
-            System.out.println("Sending: " + roundIncrement.getID());
             node.sendClockwise(roundIncrement.getBytes());
         }
 
@@ -92,7 +88,6 @@ public class TaskManager implements Runnable{
                     roundNumber++;
                 }
                 else if(tasks.size() == 0 && createNewRound == false && receivedPermission){
-                    System.out.println("Tasks are completed... Sending Round Increment Directive");
                     RoundIncrement roundIncrement = new RoundIncrement(node.getMessagingNodeIP(), node.getMessagingNodePort(), roundNumber);
                     node.sendClockwise(roundIncrement.getBytes());
                     receivedPermission = false;
@@ -104,7 +99,6 @@ public class TaskManager implements Runnable{
             
             TaskComplete complete = new TaskComplete(node.getMessagingNodeIP(), node.getMessagingNodePort());
             node.sendRegistryMessage(complete);
-            System.out.println("Tasks are complete! - " + node.getID());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
