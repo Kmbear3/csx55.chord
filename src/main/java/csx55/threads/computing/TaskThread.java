@@ -4,12 +4,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import csx55.threads.hashing.Miner;
 import csx55.threads.hashing.Task;
+import csx55.threads.util.StatisticsCollectorAndDisplay;
 
 public class TaskThread implements Runnable {
     ConcurrentLinkedQueue<Task> tasks;
+    StatisticsCollectorAndDisplay stats;
 
-    public TaskThread(ConcurrentLinkedQueue<Task> tasks) {
+    public TaskThread(ConcurrentLinkedQueue<Task> tasks, StatisticsCollectorAndDisplay stats) {
         this.tasks = tasks;
+        this.stats = stats;
     }
 
     @Override
@@ -20,6 +23,7 @@ public class TaskThread implements Runnable {
             Task task = tasks.poll();
             if(task != null){
                 miner.mine(task);
+                stats.incrementCompletedTasks();
             }
         }
     }

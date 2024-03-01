@@ -51,6 +51,8 @@ public class EventFactory {
                     return new NodeTasks(marshalledBytes);
                 case Protocol.TASKS:
                     return new Tasks(marshalledBytes);
+                case Protocol.ROUND_INCREMENT:
+                    return new RoundIncrement(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

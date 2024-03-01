@@ -50,6 +50,10 @@ public class NodeTasks implements Protocol, Event{
     public String getId(){
         return this.id;
     }
+
+    public int getRoundNumber(){
+        return this.roundNumber;
+    }
     
     @Override
     public int getType() {

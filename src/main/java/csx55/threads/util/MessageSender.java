@@ -65,8 +65,8 @@ public class MessageSender implements Runnable {
 
                 vertex.sendMessage(message.getBytes());
 
-                stats.incrementSendTracker();
-                stats.addSendSum(message.getPayload());
+                // stats.incrementSendTracker();
+                // stats.addSendSum(message.getPayload());
             }
         }
 
@@ -82,8 +82,8 @@ public class MessageSender implements Runnable {
                 ArrayList<String> routePlan = message.getRoutePlan();
 
                 if(routePlan.get(routePlan.size() - 1).equals(node.getID())){ // Last node in route --> destination node 
-                    stats.incrementReceivedTracker();
-                    stats.addReceiveSum(message.getPayload());
+                    // stats.incrementReceivedTracker();
+                    // stats.addReceiveSum(message.getPayload());
                 }
                 else{
 
@@ -93,7 +93,7 @@ public class MessageSender implements Runnable {
                     Vertex vertex = peerList.get(routePlan.get(nextNode)); // Next step in the route. 
 
                     vertex.sendMessage(message.getBytes());
-                    stats.incrementRelayed();
+                    // stats.incrementRelayed();
                 }
             }
         }

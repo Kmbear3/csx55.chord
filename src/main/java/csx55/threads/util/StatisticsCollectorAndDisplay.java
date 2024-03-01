@@ -10,11 +10,11 @@ import csx55.threads.wireformats.TaskSummaryResponse;
 public class StatisticsCollectorAndDisplay {
     // Add all summations
 
-    private int sendTracker;  // number of messages sent
-    private int receiveTracker;  // number of messages that were received
-    private int relayTracker; // Number of messages that were relayed.
-    private long sendSummation; // Sum of value that it has sent
-    private long receiveSummation;  // Sum of the payloads that it has received
+    private int numberOfGeneratedTasks;  // number of messages sent
+    private int numberOfPulledTasks;  // number of messages that were received
+    private int numberOfPushedTasks; // Number of messages that were relayed.
+    private int numberOfCompletedTasks; // Sum of value that it has sent
+    // private long percentTotalTasksPerformed;  // Sum of the payloads that it has received
 
     ConcurrentHashMap<String, ArrayList<String>> nodes = new ConcurrentHashMap<>();
 
@@ -22,64 +22,54 @@ public class StatisticsCollectorAndDisplay {
 
 
     public StatisticsCollectorAndDisplay(){
-        this.sendTracker = 0;
-        this.receiveTracker = 0;
-        this.relayTracker = 0;
-        this.sendSummation = 0;
-        this.receiveSummation = 0;
+        this.numberOfGeneratedTasks = 0;
+        this.numberOfPulledTasks = 0;
+        this.numberOfPushedTasks = 0;
+        this.numberOfCompletedTasks = 0;
     }
 
     public StatisticsCollectorAndDisplay(VertexList vertexList) {
         this.registry = vertexList;
     }
 
-    synchronized public int getReceiveTracker(){
-        return receiveTracker;
+    synchronized public int getNumberOfGeneratedTasks(){
+        return numberOfGeneratedTasks;
     }
-    synchronized public int getRelayTracker(){
-        return relayTracker;
-    }
-
-    synchronized public long getSendSum(){
-        return sendSummation;
+    synchronized public int getNumberOfPulledTasks(){
+        return numberOfPulledTasks;
     }
 
-    synchronized public long getReceivedSum(){
-        return receiveSummation;
+    synchronized public int getNumberOfPushedTasks(){
+        return numberOfPushedTasks;
     }
 
-    synchronized public int getSendTracker(){
-        return sendTracker;
+    synchronized public int getNumberOfCompletedTasks(){
+        return numberOfCompletedTasks;
     }
 
     synchronized public void displayStats(){
-        System.out.println("receiveTracker: " + receiveTracker);
-        System.out.println("sendTracker: " + sendTracker);
-        System.out.println("receivedSummation: " + receiveSummation);
-        System.out.println("sendSummation: " + sendSummation);
-        System.out.println("relayedMessages: " + relayTracker);
+        System.out.println("Generated Tasks: " + numberOfGeneratedTasks);
+        System.out.println("Pulled Tasks: " + numberOfPulledTasks);
+        System.out.println("Pushed Tasks: " + numberOfPushedTasks);
+        System.out.println("Completed Tasks: " + numberOfCompletedTasks);
     }
 
-    synchronized public void incrementSendTracker(){
-        this.sendTracker = this.sendTracker + 1;
+    synchronized public void incrementGeneratedTasks(int generatedTasks){
+        this.numberOfGeneratedTasks = this.numberOfGeneratedTasks + generatedTasks;
     }
 
-    synchronized public void incrementReceivedTracker(){
-        this.receiveTracker = this.receiveTracker + 1;
+    synchronized public void incrementPulledTasks(){
+        this.numberOfPulledTasks = this.numberOfPulledTasks + 1;
     }
 
-    synchronized public void addSendSum(long messageVal){
-        this.sendSummation = this.sendSummation + messageVal;
+    synchronized public void incrementPushedTasks(){
+        this.numberOfPushedTasks = this.numberOfPushedTasks + 1;
     }
 
-    synchronized public void addReceiveSum(long messageVal){
-        this.receiveSummation = this.receiveSummation + messageVal;
+    synchronized public void incrementCompletedTasks(){
+        this.numberOfCompletedTasks = this.numberOfCompletedTasks + 1;
     }
 
-    synchronized public void incrementRelayed(){
-        this.relayTracker = this.relayTracker + 1;
-    }
-    
     synchronized public void nodeStats(Event event) {
         try {
 
@@ -107,59 +97,49 @@ public class StatisticsCollectorAndDisplay {
 
     synchronized public void displayTotalSums() {
 
-        long sendMessagesSum = 0;
-        long receivedMessagesSum = 0;
-        long relayedSum = 0;
-        long sendSummationTotal = 0;
-        long receivedSummationTotal = 0;
+        int totalNumberOfGeneratedTasks = 0;
+        int totalNumberOfPulledTasks = 0;
+        int totalNumberOfPushedTasks = 0;
+        int totalNumberOfCompletedTasks = 0;
+        double totalPercentageOfCompletedTasks = 0;
+
+        for(ArrayList<String> nodeStats : nodes.values()){
+            totalNumberOfGeneratedTasks =  totalNumberOfGeneratedTasks + Integer.parseInt(nodeStats.get(0));
+            totalNumberOfPulledTasks = totalNumberOfPulledTasks + Integer.parseInt(nodeStats.get(1));
+            totalNumberOfPushedTasks = totalNumberOfPushedTasks + Integer.parseInt(nodeStats.get(2));
+            totalNumberOfCompletedTasks = totalNumberOfCompletedTasks + Integer.parseInt(nodeStats.get(3));
+        }
 
 
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println("                                                          Registry Traffic Summary                                                    ");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------so----");
+        System.out.println("                                                                    Registry Traffic Summary                                                       ");
         System.out.println("                                                                                                                                      ");
 
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22s |", "Node" ,"Messages Sent", "Messages Received", "Sent Messages Sum", "Received Messages Sum", "Messages Relayed"));
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println(String.format("| %-20s | %20s | %22s | %22s | %22s | %22s |", "Node" ,"Generated Tasks","Pulled Tasks", "Pushed Tasks", "Completed Tasks",  "Task Completion %"));
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------");
         
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
             i ++;
-            String nodeName = "Node " + i;
+            String nodeName =  nodeStats.get(4);
+            double percentageOfCompleteTask = Double.parseDouble(nodeStats.get(3)) / totalNumberOfCompletedTasks * 100;
+            totalPercentageOfCompletedTasks = totalPercentageOfCompletedTasks + percentageOfCompleteTask;
 
-            System.out.println(String.format("| %-10s | %20s | %22s | %22s | %22s | %22s |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), nodeStats.get(4)));
+            System.out.println(String.format("| %-20s | %20s | %22s | %22s | %22s | %22f |", nodeName, nodeStats.get(0), nodeStats.get(1), nodeStats.get(2), nodeStats.get(3), percentageOfCompleteTask));
 
         }
 
-        for(ArrayList<String> nodeStats : nodes.values()){
-            sendMessagesSum =  sendMessagesSum + Long.parseLong(nodeStats.get(0));
-            receivedMessagesSum = receivedMessagesSum + Long.parseLong(nodeStats.get(1));
-            sendSummationTotal = sendSummationTotal + Long.parseLong(nodeStats.get(2));
-            receivedSummationTotal = receivedSummationTotal + Long.parseLong(nodeStats.get(3));
-            relayedSum = relayedSum + Long.parseLong(nodeStats.get(4));
-        }
+        System.out.println(String.format("| %-20s | %20d | %22d | %22d | %22d | %22f |", "Totals: ", totalNumberOfGeneratedTasks, totalNumberOfPulledTasks, totalNumberOfPushedTasks, totalNumberOfCompletedTasks, totalPercentageOfCompletedTasks));
 
-        System.out.println(String.format("| %-10s | %20d | %22d | %22d | %22d | %22d |", "Totals: ", sendMessagesSum, receivedMessagesSum, sendSummationTotal, receivedSummationTotal, relayedSum));
-
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
     synchronized public void resetCounters(){
-        this.sendTracker = 0;
-        this.receiveTracker = 0;
-        this.relayTracker = 0;
-        this.sendSummation = 0;
-        this.receiveSummation = 0;
+        this.numberOfGeneratedTasks = 0;
+        this.numberOfPulledTasks = 0;
+        this.numberOfPushedTasks = 0;
+        this.numberOfCompletedTasks = 0;
     }
-
-
-// Message Type: TRAFFIC_SUMMARY
-// Node IP address:
-// Node Port number:
-// Number of messages sent
-// Summation of sent messages
-// Number of messages received
-// Summation of received messages
-// Number of messages relayed
     
 }
