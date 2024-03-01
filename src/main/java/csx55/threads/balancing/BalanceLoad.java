@@ -31,7 +31,6 @@ public class BalanceLoad {
     }
     
     synchronized public void addToSum(NodeTasks nodeTasks){
-        // System.out.println("NodeTask received: " + receivedNodeMessage + "Round: " + nodeTasks.getRoundNumber());
         try {
             receivedNodeMessage = receivedNodeMessage + 1;
             totalTasksInOverlay += nodeTasks.getNumberOfTasks();
@@ -58,15 +57,7 @@ public class BalanceLoad {
 
     synchronized public void calculateAverage(){
         this.average = totalTasksInOverlay / numberOfNodesInOverlay;
-        System.out.println("Average messages: " + this.average);
-        System.out.println("TotalTasks in Overlay messages: " + this.totalTasksInOverlay);
         this.totalTasksInOverlay = 0;
-
-
-        //Using numberOftasks here might cause issues.... This is the number of tasks that the node created, not the number that it currently has. 
-
-        // System.out.println("number of messages: " + this.tasks.size());
-        // System.out.println("number of created tasks: " + this.tasksCreatedForRound);
 
         if((this.tasksCreatedForRound + accumulatedTasksForRound) > average){
             int difference = (this.tasksCreatedForRound + accumulatedTasksForRound) - average;
@@ -87,9 +78,6 @@ public class BalanceLoad {
             }
         }
 
-        // System.out.println("Number of tasks sending clockwise: " + taskList.size());
-        // System.out.println("Tasks For this round:" + (this.tasksCreatedForRound + this.accumulatedTasksForRound));
-
         Tasks taskMessage = new Tasks(taskList);
 
         try {
@@ -102,10 +90,7 @@ public class BalanceLoad {
     }
 
     synchronized public void receiveTasks(ArrayList<Task> taskList) throws IOException{
-        // ArrayList<Task> taskList = receivedTasks.getTaskList();
         ArrayList<Task> relayTasks = new ArrayList<>();
-
-        // System.out.println("Received: " + taskList.size());
         
         for(int i = 0; i < taskList.size(); i++){
             Task task = taskList.get(i);
@@ -117,7 +102,6 @@ public class BalanceLoad {
             }
             else if(this.computeNode.originated(task)){
                 this.accumulatedTasksForRound ++;
-                System.out.println("Suppressing messages");
                 tasks.add(task);
                 stats.incrementPulledTasks();
             }else{
@@ -126,15 +110,8 @@ public class BalanceLoad {
         }
 
         if(relayTasks.size() != 0){
-            System.out.println("Relaying: " + relayTasks.size());
             Tasks relayTasksMessage = new Tasks(relayTasks);
             computeNode.sendClockwise(relayTasksMessage.getBytes());
         }
-
-        System.out.println("Tasks for round after shifting: " + (this.tasksCreatedForRound + this.accumulatedTasksForRound));
-        System.out.println("Total tasks for round after shifting: " + this.tasks.size());
-
-        // System.out.println("Percentage: " + (this.tasks.size() / (double)this.totalTasksInOverlay)  * 100);
-
     }
 }
