@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
+import csx55.threads.Registry;
 import csx55.threads.node.Node;
-import csx55.threads.node.Registry;
 import csx55.threads.transport.TCPSender;
 import csx55.threads.wireformats.MessagingNodesList;
 

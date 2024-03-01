@@ -1,8 +1,9 @@
-package csx55.threads.node;
+package csx55.threads;
 
 import java.io.IOException;
 import java.net.Socket;
 
+import csx55.threads.node.Node;
 import csx55.threads.transport.TCPSender;
 import csx55.threads.transport.TCPServerThread;
 import csx55.threads.util.CLIHandler;

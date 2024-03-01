@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.threads.ComputeNode;
 import csx55.threads.dijkstra.RoutingCache;
 import csx55.threads.dijkstra.ShortestPath;
-import csx55.threads.node.ComputeNode;
 import csx55.threads.wireformats.Message;
 import csx55.threads.wireformats.Poke;
 import csx55.threads.wireformats.TaskComplete;

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import csx55.threads.node.ComputeNode;
+import csx55.threads.ComputeNode;
+import csx55.threads.Registry;
 import csx55.threads.node.Node;
-import csx55.threads.node.Registry;
 import csx55.threads.wireformats.Deregister;
 import csx55.threads.wireformats.TaskInitiate;
 

@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import csx55.threads.Registry;
 import csx55.threads.node.Node;
-import csx55.threads.node.Registry;
 import csx55.threads.wireformats.Event;
 import csx55.threads.wireformats.EventFactory;
 import csx55.threads.wireformats.Message;

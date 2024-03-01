@@ -3,8 +3,8 @@ package csx55.threads.computing;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.threads.ComputeNode;
 import csx55.threads.hashing.Task;
-import csx55.threads.node.ComputeNode;
 
 public class TaskPool {
     ConcurrentLinkedQueue<Task> tasks;
