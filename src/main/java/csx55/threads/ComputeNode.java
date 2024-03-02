@@ -40,6 +40,7 @@ public class ComputeNode implements Node{
     private BalanceLoad balancer;
     private int numberOfNodesInOverlay;
     private TaskManager taskManager;
+    private String IPAddress;
 
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
@@ -56,6 +57,11 @@ public class ComputeNode implements Node{
 
             this.messagingNodeIP = this.server.getIP();
             this.messagingNodePort = this.server.getPort();
+            this.IPAddress = this.server.getIPAddress();
+
+            // System.out.println("IP address: " + this.IPAddress);
+            // System.out.println("Hostname address: " + this.messagingNodeIP);
+
 
             RegistrationRequest regReq = new RegistrationRequest(messagingNodeIP, messagingNodePort);
             registrySender.sendData(regReq.getBytes());
@@ -90,7 +96,7 @@ public class ComputeNode implements Node{
                     poke.printPoke();
                     break;
                 case Protocol.PULL_TRAFFIC_SUMMARY:
-                    TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats);
+                    TaskSummaryResponse summaryResponse = new TaskSummaryResponse(messagingNodeIP, messagingNodePort, this.stats, this.IPAddress);
                     registrySender.sendData(summaryResponse.getBytes());
                     stats.resetCounters();
                     break;
@@ -147,8 +153,8 @@ public class ComputeNode implements Node{
         }
         
         System.out.println("All connections are established. Number of connections: " + peers.size());
-        System.out.println("Clockwise neighbor: " + peers.get(0).getID());
-        System.out.println("Compute Node: " + this.getID());
+        // System.out.println("Clockwise neighbor: " + peers.get(0).getID());
+        // System.out.println("Compute Node: " + this.getID());
 
         this.clockwiseNeighbor = peers.get(0); 
 
@@ -235,8 +241,8 @@ public class ComputeNode implements Node{
     synchronized public boolean originated(Task task){
        
         if(task.getIp().equals(messagingNodeIP) && task.getPort() == messagingNodePort){
-            System.out.println("Inside originated: " + task.getIp() + ":" + task.getPort());
-            System.out.println("My IP and port: " + messagingNodeIP + ":" + messagingNodePort);
+            // System.out.println("Inside originated: " + task.getIp() + ":" + task.getPort());
+            // System.out.println("My IP and port: " + messagingNodeIP + ":" + messagingNodePort);
     
             return true;
         }

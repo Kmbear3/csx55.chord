@@ -122,7 +122,7 @@ public class StatisticsCollectorAndDisplay {
         int i = 0;
         for(ArrayList<String> nodeStats : nodes.values()){
             i ++;
-            String nodeName =  nodeStats.get(4);
+            String nodeName =  nodeStats.get(5);
             double percentageOfCompleteTask = Double.parseDouble(nodeStats.get(3)) / totalNumberOfCompletedTasks * 100;
             totalPercentageOfCompletedTasks = totalPercentageOfCompletedTasks + percentageOfCompleteTask;
 

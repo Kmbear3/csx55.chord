@@ -20,6 +20,8 @@ public class TaskSummaryResponse implements Event, Protocol {
     int numberOfPushedTasks;
     int numberOfCompletedTasks;
 
+    String IPAddress; 
+
 
     public TaskSummaryResponse(byte[] marshalledBytes) throws IOException {
         ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
@@ -43,11 +45,16 @@ public class TaskSummaryResponse implements Event, Protocol {
         this.numberOfPushedTasks = din.readInt();
         this.numberOfCompletedTasks = din.readInt();
 
+        int IPAddressLength = din.readInt();
+        byte[] IPAddressBytes = new byte[IPAddressLength];
+        din.readFully(IPAddressBytes);
+        this.IPAddress = new String(IPAddressBytes);
+        
         baInputStream.close();
         din.close();
     }   
 
-    public TaskSummaryResponse(String ip, int port, StatisticsCollectorAndDisplay stats) {
+    public TaskSummaryResponse(String ip, int port, StatisticsCollectorAndDisplay stats, String IPAddress) {
         this.ip = ip;
         this.port = port;
 
@@ -55,6 +62,8 @@ public class TaskSummaryResponse implements Event, Protocol {
         this.numberOfPulledTasks = stats.getNumberOfPulledTasks();
         this.numberOfPushedTasks = stats.getNumberOfPushedTasks();
         this.numberOfCompletedTasks = stats.getNumberOfCompletedTasks();
+
+        this.IPAddress = IPAddress;
     }
 
     public ArrayList<String> getStats() {
@@ -65,6 +74,7 @@ public class TaskSummaryResponse implements Event, Protocol {
         stats.add("" + numberOfPushedTasks);
         stats.add("" + numberOfCompletedTasks);
         stats.add("" + getName());
+        stats.add(IPAddress);
 
         return stats;
     }
@@ -97,6 +107,11 @@ public class TaskSummaryResponse implements Event, Protocol {
         dout.writeInt(this.numberOfPulledTasks);
         dout.writeInt(this.numberOfPushedTasks);
         dout.writeInt(this.numberOfCompletedTasks);
+
+        byte[] IPAddress = this.IPAddress.getBytes();
+        int IPAddressLength = IPAddress.length;
+        dout.writeInt(IPAddressLength);
+        dout.write(IPAddress);
 
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();

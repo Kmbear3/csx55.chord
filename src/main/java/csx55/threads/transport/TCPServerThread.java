@@ -51,6 +51,19 @@ public class TCPServerThread implements Runnable{
         return "Error inside TCPServerThread.getIP()";
     }
 
+    public String getIPAddress(){
+        try {
+
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            return inetAddress.getHostAddress();
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return "Error inside TCPServerThread.getIP()";
+    }
+
+
     @Override
     public void run() {
         try{
