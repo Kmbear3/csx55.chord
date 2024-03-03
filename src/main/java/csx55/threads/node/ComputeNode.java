@@ -146,8 +146,6 @@ public class ComputeNode implements Node{
         }
         
         System.out.println("All connections are established. Number of connections: " + peers.size());
-        System.out.println("Clockwise neighbor: " + peers.get(0).getID());
-        System.out.println("Compute Node: " + this.getID());
 
         this.clockwiseNeighbor = peers.get(0); 
 
