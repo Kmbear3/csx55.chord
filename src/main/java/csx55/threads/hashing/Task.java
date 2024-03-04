@@ -1,5 +1,7 @@
 package csx55.threads.hashing;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
 public class Task {
@@ -57,8 +59,20 @@ public class Task {
         return nonce;
     }
 
+    public String convertHostname(String hostname){
+        try {
+            InetAddress address = InetAddress.getByName(hostname);
+            return address.getHostAddress();
+
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public String toString() {
-        return ip + ":" + port + ":" + roundNumber + ":" + payload + ":" + timestamp + ":" + threadId + ":" + nonce;
+        return convertHostname(ip) + ":" + port + ":" + roundNumber + ":" + payload + ":" + timestamp + ":" + threadId + ":" + nonce;
     }
 
     public byte[] toBytes() {
