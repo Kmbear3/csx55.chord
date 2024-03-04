@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.threads.ComputeNode;
 import csx55.threads.hashing.Task;
-import csx55.threads.node.ComputeNode;
 import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.wireformats.NodeTasks;
 import csx55.threads.wireformats.Tasks;

@@ -1,4 +1,4 @@
-package csx55.threads.node;
+package csx55.threads;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -20,6 +20,7 @@ import csx55.threads.balancing.BalanceLoad;
 import csx55.threads.computing.TaskManager;
 import csx55.threads.computing.TaskPool;
 import csx55.threads.hashing.*;
+import csx55.threads.node.Node;
 
 public class ComputeNode implements Node{
 

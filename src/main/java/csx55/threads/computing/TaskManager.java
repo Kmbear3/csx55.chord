@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import csx55.threads.ComputeNode;
 import csx55.threads.balancing.BalanceLoad;
 import csx55.threads.hashing.Task;
-import csx55.threads.node.ComputeNode;
 import csx55.threads.util.StatisticsCollectorAndDisplay;
 import csx55.threads.wireformats.NodeTasks;
 import csx55.threads.wireformats.RoundIncrement;
