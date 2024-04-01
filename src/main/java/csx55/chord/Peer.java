@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import csx55.chord.balancing.BalanceLoad;
-import csx55.chord.computing.TaskManager;
-import csx55.chord.computing.TaskPool;
-import csx55.chord.hashing.*;
 import csx55.chord.node.Node;
 import csx55.chord.transport.TCPReceiverThread;
 import csx55.chord.transport.TCPSender;
@@ -31,15 +27,11 @@ public class Peer implements Node{
     private TCPSender registrySender;
 
     private VertexList peerList = new VertexList();
-    private ConcurrentLinkedQueue<Task> tasks = new ConcurrentLinkedQueue<>();
+    // private ConcurrentLinkedQueue<Task> tasks = new ConcurrentLinkedQueue<>();
 
     private MessageSender sender;
-    private TaskPool threadPool;
-    private Vertex clockwiseNeighbor;
 
-    private BalanceLoad balancer;
     private int numberOfNodesInOverlay;
-    private TaskManager taskManager;
 
 
     StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
@@ -78,13 +70,6 @@ public class Peer implements Node{
                 case Protocol.INITIATE_PEER_CONNECTION:
                     initiatePeerConnections(event, socket);
                     break;
-                case Protocol.MESSAGING_NODES_LIST:
-                    createConnectionsAndThreadPool(event);
-                    break;
-                case Protocol.TASK_INITIATE:
-                    TaskInitiate task = new TaskInitiate(event.getBytes());
-                    createTasks(task.getNumberOfRounds());
-                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -103,15 +88,6 @@ public class Peer implements Node{
                         System.exit(0);
                     }
                     break;
-                case Protocol.NODE_TASKS:
-                    balancer.addToSum(new NodeTasks(event.getBytes()));
-                    break;
-                case Protocol.TASKS:
-                    balancer.receiveTasks(new Tasks(event.getBytes()).getTaskList());
-                    break;
-                case Protocol.ROUND_INCREMENT:
-                    taskManager.receiveRoundCompleteMessage(new RoundIncrement(event.getBytes()));
-                    break;
                 default:
                     System.out.println("Protocol Unmatched! " + event.getType());
                     System.out.println("Please try again");
@@ -123,12 +99,6 @@ public class Peer implements Node{
         }
     }
 
-    private void createTasks(int numberOfRounds) {
-        this.taskManager = new TaskManager(numberOfRounds, this, this.tasks, this.balancer, this.numberOfNodesInOverlay, this.stats);
-        Thread taskManagerThread = new Thread(taskManager);
-        taskManagerThread.start();
-    }
-
     synchronized public void initiatePeerConnections(Event event, Socket socket) throws IOException{
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
         Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
@@ -136,31 +106,6 @@ public class Peer implements Node{
         this.peerList.addToList(vertex);
     }
 
-    synchronized public void createConnectionsAndThreadPool(Event event) throws IOException{
-        MessagingNodesList nodesList = (MessagingNodesList)event;
-
-        ArrayList<Vertex> peers = nodesList.getPeers();
-        
-        for (Vertex peer : peers) {
-            this.peerList.addToList(peer);
-            sendInitiateConnectionRequest(peer);
-        }
-        
-        System.out.println("All connections are established. Number of connections: " + peers.size());
-
-        this.clockwiseNeighbor = peers.get(0); 
-
-        this.balancer = new BalanceLoad(nodesList.getNumberOfNodes(), this, this.tasks, this.stats);
-        this.numberOfNodesInOverlay = nodesList.getNumberOfNodes();
-
-        this.threadPool = new TaskPool(this, tasks, nodesList.getNumberOfThreads());
-        threadPool.createThreads();
-    }
-
-
-    synchronized public void sendClockwise(byte[] marshalledBytes){
-        clockwiseNeighbor.sendMessage(marshalledBytes);
-    }
 
     synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
         InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
@@ -225,19 +170,8 @@ public class Peer implements Node{
         this.registrySender.sendData(event.getBytes());
     }
 
-
     public MessageSender getSender(){
         return this.sender;
-    }
-
-    synchronized public boolean originated(Task task){
-       
-        if(task.getIp().equals(messagingNodeIP) && task.getPort() == messagingNodePort){
-            return true;
-        }
-        else{
-            return false;
-        }
     }
 
     public static void main(String[] args){
