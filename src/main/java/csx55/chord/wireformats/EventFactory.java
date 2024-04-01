@@ -29,12 +29,8 @@ public class EventFactory {
                     return new RegistrationRequest(marshalledBytes);
                 case Protocol.REGISTER_RESPONSE:
                     return new RegisterationResponse(marshalledBytes);
-                case Protocol.MESSAGING_NODES_LIST:
-                    return new MessagingNodesList(marshalledBytes);
                 case Protocol.INITIATE_PEER_CONNECTION:
                     return new InitiatePeerConnection(marshalledBytes);
-                case Protocol.TASK_INITIATE:
-                    return new TaskInitiate(marshalledBytes);
                 case Protocol.POKE:
                     return new Poke(marshalledBytes);
                 case Protocol.PULL_TRAFFIC_SUMMARY:

@@ -8,13 +8,11 @@ import csx55.chord.Discovery;
 import csx55.chord.Peer;
 import csx55.chord.node.Node;
 import csx55.chord.wireformats.Deregister;
-import csx55.chord.wireformats.TaskInitiate;
 
 public class CLIHandler {
     private Scanner scan;
     private Discovery registry;
     private Peer node;
-    private OverlayCreator overlayCreator; 
 
 
     public CLIHandler(Discovery registry){
@@ -36,31 +34,6 @@ public class CLIHandler {
         switch(result[0]){
             case "exit":
                 System.exit(0);
-                break;
-            case "list-messaging-nodes":
-                registry.printRegistry();
-                break;
-            case "setup-overlay":
-            case "so":
-                if(result.length > 1){
-                    int numberOfThreads = Integer.parseInt(result[1]);
-                    System.out.println("number of threads in thread pool: " + numberOfThreads);
-                    this.overlayCreator = new OverlayCreator(this.registry, numberOfThreads);
-                    break;
-                }else{
-                    int numberOfThreads = 4;
-                    System.out.println("number of threads in thread pool: " + numberOfThreads);
-                    this.overlayCreator = new OverlayCreator(this.registry, numberOfThreads);
-                }
-                break;
-            case "start":
-                if(result.length > 1) {
-                    int numberOfRounds = Integer.parseInt(result[1]);
-                    TaskInitiate taskInitiate = new TaskInitiate(numberOfRounds);
-                    registry.onEvent(taskInitiate, null);
-                }else {
-                    System.out.println("Incorrect Instruction! please specify number of rounds.");
-                }
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
