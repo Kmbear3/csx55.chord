@@ -2,11 +2,9 @@ package csx55.chord.util;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 import csx55.chord.Discovery;
 import csx55.chord.Peer;
-import csx55.chord.node.Node;
 import csx55.chord.wireformats.Deregister;
 
 public class CLIHandler {

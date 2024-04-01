@@ -14,7 +14,7 @@ import csx55.chord.util.VertexList;
 import csx55.chord.wireformats.Deregister;
 import csx55.chord.wireformats.DeregisterResponse;
 import csx55.chord.wireformats.Event;
-import csx55.chord.wireformats.Protocol;
+import csx55.chord .wireformats.Protocol;
 import csx55.chord.wireformats.TaskComplete;
 import csx55.chord.wireformats.TaskSummaryRequest;
 
