@@ -37,18 +37,10 @@ public class EventFactory {
                     return new TaskSummaryRequest(marshalledBytes);
                 case Protocol.TRAFFIC_SUMMARY:
                     return new TaskSummaryResponse(marshalledBytes);
-                case Protocol.TASK_COMPLETE:
-                    return new TaskComplete(marshalledBytes);
                 case Protocol.DEREGISTER_REQUEST:
                     return new Deregister(marshalledBytes);
                 case Protocol.DEREGISTER_RESPONSE:
                     return new DeregisterResponse(marshalledBytes);
-                case Protocol.NODE_TASKS:
-                    return new NodeTasks(marshalledBytes);
-                case Protocol.TASKS:
-                    return new Tasks(marshalledBytes);
-                case Protocol.ROUND_INCREMENT:
-                    return new RoundIncrement(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

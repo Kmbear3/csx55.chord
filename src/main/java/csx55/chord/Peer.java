@@ -12,7 +12,6 @@ import csx55.chord.transport.TCPReceiverThread;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.transport.TCPServerThread;
 import csx55.chord.util.CLIHandler;
-import csx55.chord.util.MessageSender;
 import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.Vertex;
 import csx55.chord.util.VertexList;
@@ -29,7 +28,6 @@ public class Peer implements Node{
     private VertexList peerList = new VertexList();
     // private ConcurrentLinkedQueue<Task> tasks = new ConcurrentLinkedQueue<>();
 
-    private MessageSender sender;
 
     private int numberOfNodesInOverlay;
 
@@ -154,24 +152,8 @@ public class Peer implements Node{
         return this.stats;
     }
 
-
-    synchronized public void printConnections(int[][] matrix){
-
-        for(int i = 0; i < matrix.length; i++){
-            for(int j = 0; j < matrix.length; j ++){
-                System.out.print(" | " + matrix[i][j] + " | ");
-            }
-            System.out.println();
-        }
-
-    }
-
     synchronized public void sendRegistryMessage(Event event) throws IOException{
         this.registrySender.sendData(event.getBytes());
-    }
-
-    public MessageSender getSender(){
-        return this.sender;
     }
 
     public static void main(String[] args){
