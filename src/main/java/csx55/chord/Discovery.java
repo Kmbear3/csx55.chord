@@ -37,58 +37,34 @@ public class Discovery implements Node {
                 case Protocol.REGISTER_REQUEST:
                     vertexList.registerVertex(event, socket);
                     break;
-                case Protocol.DEREGISTER_REQUEST:
-                    Deregister deregister = new Deregister(event.getBytes());
-                    deregisterNode(deregister, socket);
-                    break;
+                // case Protocol.DEREGISTER_REQUEST:
+                //     Deregister deregister = new Deregister(event.getBytes());
+                //     deregisterNode(deregister, socket);
+                //     break;
                 default:
                     System.out.println("Protocol Unmatched!");
                     System.exit(0);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
     
-    public void deregisterNode(Deregister deregister, Socket socket){
-        try {
-
-            String additionalInfo = vertexList.deregisterVertex(deregister.getID(), deregister.getIP(), socket);
-            DeregisterResponse deregisterResponse = new DeregisterResponse(deregister.getStatus(), additionalInfo);
-
-            TCPSender send = new TCPSender(socket);
-            send.sendData(deregisterResponse.getBytes());
-
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-    }
-
-    // public void checkNodesStatus(Event event){
+    // public void deregisterNode(Deregister deregister, Socket socket){
     //     try {
-    //         TaskComplete task = new TaskComplete(event.getBytes());
-    //         Vertex vertex = this.vertexList.get(task.getID());
-    //         vertex.setTaskComplete();
 
-    //         if(vertexList.allTasksAreComplete()){
-    //             Thread.sleep(5000);
-                
-    //             TaskSummaryRequest summaryRequest = new TaskSummaryRequest();
-    //             vertexList.sendAllNodes(summaryRequest);
-    //         }
-        
+    //         String additionalInfo = vertexList.deregisterVertex(deregister.getID(), deregister.getIP(), socket);
+    //         DeregisterResponse deregisterResponse = new DeregisterResponse(deregister.getStatus(), additionalInfo);
+
+    //         TCPSender send = new TCPSender(socket);
+    //         send.sendData(deregisterResponse.getBytes());
+
+
     //     } catch (IOException e) {
     //         // TODO Auto-generated catch block
     //         e.printStackTrace();
-    //     } catch (InterruptedException e) {
-    //         // TODO Auto-generated catch block
-    //         e.printStackTrace();
     //     }
-        
     // }
 
     public void configureServer(Node node, int port){
@@ -110,10 +86,6 @@ public class Discovery implements Node {
         vertexList.removeFromList(socketId);
     }   
 
-    public void printRegistry(){
-        vertexList.printVertexList();
-    }
-
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         Discovery registry = new Discovery(port);
@@ -122,5 +94,9 @@ public class Discovery implements Node {
         while(true){
             cli.readInstructionsRegistry();
         }
+    }
+
+    public void printPeerNodes() {
+        vertexList.printVertexList();
     }
 }

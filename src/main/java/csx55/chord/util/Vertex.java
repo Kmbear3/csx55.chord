@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import csx55.chord.transport.TCPSender;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex>{
     private final Socket socket;
     private final String IP;
     private final int port;
@@ -104,5 +104,10 @@ public class Vertex {
 
     public boolean isTaskComplete(){
         return this.taskComplete;
+    }
+
+    @Override
+    public int compareTo(Vertex otherVertex) {
+        return Integer.compare(getID(), otherVertex.getID());
     }
 }

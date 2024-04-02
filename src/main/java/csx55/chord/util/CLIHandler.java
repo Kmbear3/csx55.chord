@@ -9,13 +9,13 @@ import csx55.chord.wireformats.Deregister;
 
 public class CLIHandler {
     private Scanner scan;
-    private Discovery registry;
+    private Discovery discovery;
     private Peer node;
 
 
-    public CLIHandler(Discovery registry){
+    public CLIHandler(Discovery discovery){
        this.scan = new Scanner(System.in);
-       this.registry = registry;
+       this.discovery = discovery;
     }
 
     public CLIHandler(Peer messagingNode){
@@ -30,8 +30,8 @@ public class CLIHandler {
         // System.out.println("Instruction: " + result[0]);
 
         switch(result[0]){
-            case "exit":
-                System.exit(0);
+            case "peer-nodes":
+                discovery.printPeerNodes();
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");

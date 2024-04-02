@@ -5,15 +5,15 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 import csx55.chord.wireformats.Event;
 import csx55.chord.wireformats.RegisterationResponse;
 import csx55.chord.wireformats.RegistrationRequest;
 
-public class VertexList {
+public class VertexList{
     ConcurrentHashMap<Integer, Vertex> registeredVertexs;  
-    ArrayList<String> vertexIDs; 
 
     public VertexList(){
         this.registeredVertexs = new ConcurrentHashMap<>();
@@ -60,7 +60,7 @@ public class VertexList {
             int port = vertex.getPort(); 
             int collisionID = vertex.getID();
 
-            while(registeredVertexs.contains(collisionID)){
+            while(registeredVertexs.containsKey(collisionID)){
                 Ip = Ip + "0";
                 collisionID = (Ip + ":" + port).hashCode();
             }
@@ -85,23 +85,19 @@ public class VertexList {
         return registeredVertexs.values();
     }
 
-    public ArrayList<String> getVertexNames(){
-        return vertexIDs;
-    }
-
-    public String deregisterVertex(String id, String ip, Socket socket){
-        if(!correctIP(socket, ip)){
-            return deRegistrationInfo(StatusCodes.FAILURE_IP);
-        }
-        else if(!registeredVertexs.containsKey(id)){
-            return deRegistrationInfo(StatusCodes.FAILURE);
-        }
-        else{
-            registeredVertexs.remove(id);
-            vertexIDs.remove(id);
-            return deRegistrationInfo(StatusCodes.SUCCESS);
-        }
-    }
+    // public String deregisterVertex(String id, String ip, Socket socket){
+    //     if(!correctIP(socket, ip)){
+    //         return deRegistrationInfo(StatusCodes.FAILURE_IP);
+    //     }
+    //     else if(!registeredVertexs.containsKey(id)){
+    //         return deRegistrationInfo(StatusCodes.FAILURE);
+    //     }
+    //     else{
+    //         registeredVertexs.remove(id);
+    //         vertexIDs.remove(id);
+    //         return deRegistrationInfo(StatusCodes.SUCCESS);
+    //     }
+    // }
 
     public boolean inList(Vertex vertex){
         return registeredVertexs.containsKey(vertex.getID());
@@ -160,13 +156,17 @@ public class VertexList {
         return registeredVertexs.size();
     }
 
-    public Vertex get(String keyName){
-        return registeredVertexs.get(keyName);
+    public Vertex get(int peerID){
+        return registeredVertexs.get(peerID);
     }
 
     synchronized public void printVertexList(){
-        for(String name : this.vertexIDs){
-            System.out.println(name);
+        ArrayList<Vertex> vertexes = new ArrayList<>();
+        vertexes.addAll(registeredVertexs.values());
+
+        Collections.sort(vertexes);
+        for(Vertex vertex : vertexes){
+            System.out.println(vertex.getID() + " " + vertex.getIP() + ":" + vertex.getPort());
         }
     }
 
@@ -210,7 +210,6 @@ public class VertexList {
             if(portSocket == portVertex && vertexIP.equals(socketIP)){
                 System.out.println(vertex.getID());
                 registeredVertexs.remove(vertex.getID());
-                vertexIDs.remove(vertex.getID());
                 System.out.println("Unexpected Connection loss, removing from overlay. " + registeredVertexs.size());
             }
         }

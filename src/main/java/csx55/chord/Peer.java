@@ -118,12 +118,12 @@ public class Peer implements Node{
         return this.peerList;
     }
 
-    synchronized public String getRandomPeerID(){
-        Random rand = new Random();
-        int randomPeer = rand.nextInt(peerList.size());
-        ArrayList<String> peerNames = peerList.getVertexNames();
-        return peerNames.get(randomPeer);
-    }
+    // synchronized public String getRandomPeerID(){
+    //     Random rand = new Random();
+    //     int randomPeer = rand.nextInt(peerList.size());
+    //     ArrayList<String> peerNames = peerList.getVertexNames();
+    //     return peerNames.get(randomPeer);
+    // }
 
     public String getName(){
         return this.peerIP + ":" + this.peerPort;
