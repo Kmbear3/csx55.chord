@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import csx55.chord.wireformats.Event;
@@ -32,12 +33,14 @@ public class VertexList{
                 int peerID = addToList(vertex);
                 byte statusCode = StatusCodes.SUCCESS;
                 String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
-                registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID);
+
+                Vertex randomPeer = randomPeer(vertex);
+                registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID, randomPeer);
             }   
             else{
                 byte statusCode = StatusCodes.FAILURE_IP;
                 String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
-                registerationResponse = new RegisterationResponse(statusCode, additionalInfo, -1);
+                registerationResponse = new RegisterationResponse(statusCode, additionalInfo, -1, null);
             }
             
             vertex.sendMessage(registerationResponse.getBytes());
@@ -49,6 +52,27 @@ public class VertexList{
         }
     }
     
+    synchronized private Vertex randomPeer(Vertex me) {
+        Random rand = new Random();
+        ArrayList<Vertex> vertexes = new ArrayList<>();
+        vertexes.addAll(registeredVertexs.values());
+
+        int randomPeer = rand.nextInt(vertexes.size());
+
+        if(vertexes.size() == 1 && vertexes.get(0).equals(me)){
+            return me;
+        }
+
+        Vertex peerNode;
+        while (true) {
+            peerNode = vertexes.get(randomPeer);
+            if(!peerNode.equals(me)){
+                return peerNode;
+            }
+            randomPeer = rand.nextInt(vertexes.size());
+        }
+    }
+
     synchronized public int addToList(Vertex vertex){
         if(registeredVertexs.get(vertex.getID()) == null){
             registeredVertexs.put(vertex.getID(), vertex);

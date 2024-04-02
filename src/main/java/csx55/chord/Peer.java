@@ -21,16 +21,10 @@ public class Peer implements Node{
 
     private String peerIP;
     private int peerPort;
-
     private int peerID; 
 
     private TCPServerThread server;
     private TCPSender registrySender;
-
-    private VertexList peerList = new VertexList();
-    // private ConcurrentLinkedQueue<Task> tasks = new ConcurrentLinkedQueue<>();
-
-    StatisticsCollectorAndDisplay stats = new StatisticsCollectorAndDisplay();
 
     public Peer(String registryIP, int registryPort){
         try {
@@ -67,14 +61,12 @@ public class Peer implements Node{
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     handleRegisterationResponse(regRes);
                     break;
-
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
                     break;
                 case Protocol.DEREGISTER_RESPONSE:
                     DeregisterResponse deResponse = new DeregisterResponse(event.getBytes());
-
                     System.out.println(deResponse.getAdditionalInfo());
 
                     if(deResponse.exitOverlay()){
@@ -104,6 +96,9 @@ public class Peer implements Node{
         if(registeredPeerID != this.peerID){
             this.peerID = registeredPeerID;
         }
+
+        // Handle registration
+
     }
 
     public String getMessagingNodeIP(){
@@ -114,23 +109,8 @@ public class Peer implements Node{
         return this.peerPort;
     }
 
-    public VertexList getPeerList(){
-        return this.peerList;
-    }
-
-    // synchronized public String getRandomPeerID(){
-    //     Random rand = new Random();
-    //     int randomPeer = rand.nextInt(peerList.size());
-    //     ArrayList<String> peerNames = peerList.getVertexNames();
-    //     return peerNames.get(randomPeer);
-    // }
-
     public String getName(){
         return this.peerIP + ":" + this.peerPort;
-    }
-
-    synchronized public StatisticsCollectorAndDisplay getStats(){
-        return this.stats;
     }
 
     synchronized public void sendRegistryMessage(Event event) throws IOException{

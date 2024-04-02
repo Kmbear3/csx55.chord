@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import csx55.chord.transport.TCPSender;
 
 public class Vertex implements Comparable<Vertex>{
-    private final Socket socket;
+    private Socket socket;
     private final String IP;
-    private final int port;
+    private int port;
     private int numberOfConnections = 0;
     private boolean taskComplete = false;
 
@@ -26,6 +26,13 @@ public class Vertex implements Comparable<Vertex>{
         this.peerID = peerID;
     }
 
+    public Vertex(int peerID, String IP, int port){
+        this.IP = IP;
+        this.port = port;
+        this.vertexConnections = new ArrayList<>();
+        this.peerID = peerID;
+    }
+
 
     public int getID(){
         return peerID;
@@ -33,6 +40,10 @@ public class Vertex implements Comparable<Vertex>{
 
     public void setID(int id){
         this.peerID = id;
+    }
+
+    public void setPort(int port){
+        this.port = port;
     }
 
     synchronized public Socket getSocket(){
@@ -83,7 +94,7 @@ public class Vertex implements Comparable<Vertex>{
     }
 
     public boolean equals(Vertex vertex){
-        if(this.peerID == vertex.getID()) {
+        if(this.peerID == vertex.getID() && this.port == vertex.getPort() && this.IP.equals(vertex.getIP())) {
             return true;
         }else{
             return false;

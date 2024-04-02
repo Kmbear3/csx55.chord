@@ -1,21 +1,13 @@
 package csx55.chord;
 
-import java.io.IOException;
 import java.net.Socket;
-
 import csx55.chord.node.Node;
-import csx55.chord.transport.TCPSender;
 import csx55.chord.transport.TCPServerThread;
 import csx55.chord.util.CLIHandler;
 import csx55.chord.util.StatisticsCollectorAndDisplay;
-import csx55.chord.util.StatusCodes;
-import csx55.chord.util.Vertex;
 import csx55.chord.util.VertexList;
-import csx55.chord.wireformats.Deregister;
-import csx55.chord.wireformats.DeregisterResponse;
 import csx55.chord.wireformats.Event;
 import csx55.chord .wireformats.Protocol;
-import csx55.chord.wireformats.TaskSummaryRequest;
 
 public class Discovery implements Node {
     int port;
