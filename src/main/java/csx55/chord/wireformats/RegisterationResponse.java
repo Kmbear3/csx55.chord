@@ -8,6 +8,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import csx55.chord.util.Vertex;
+
 public class RegisterationResponse implements Event, Protocol{
 
     // Message Type (int): REGISTER_RESPONSE
@@ -18,11 +20,16 @@ public class RegisterationResponse implements Event, Protocol{
     byte statusCode;
     String additionalInfo;
     int peerID; 
+
+    Vertex connectingPeer;
+
+
     
-    public RegisterationResponse(byte statusCode, String additionalInfo, int peerID){      
+    public RegisterationResponse(byte statusCode, String additionalInfo, int peerID, Vertex randomPeer){      
         this.statusCode = statusCode;
         this.additionalInfo = additionalInfo;
         this.peerID = peerID;
+        this.connectingPeer = randomPeer;
     }
     
 
@@ -41,6 +48,18 @@ public class RegisterationResponse implements Event, Protocol{
             this.additionalInfo = new String(infoBytes);
 
             this.peerID = din.readInt();
+
+
+            // Reading Random Peer node
+            int peerId = din.readInt();
+            int peerPort = din.readInt();
+
+            int IPlenth = din.readInt();
+            byte[] ipbytes = new byte[IPlenth];
+            din.readFully(ipbytes);
+            String peerIP = new String(ipbytes);
+
+            this.connectingPeer = new Vertex(peerId, peerIP, peerPort);
 
             baInputStream.close();
             din.close();
@@ -69,7 +88,19 @@ public class RegisterationResponse implements Event, Protocol{
         dout.write(additionalInfoBytes);
        
         dout.writeInt(this.peerID);
+
+        // Writing connecting peer information
+
+        dout.writeInt(connectingPeer.getID());
+        dout.writeInt(connectingPeer.getPort());
+
+        byte[] peernodeIP = this.connectingPeer.getIP().getBytes();
+        int IPlenth = peernodeIP.length;
+        dout.writeInt(IPlenth);
+        dout.write(peernodeIP);
        
+        // Done writing connection peer 
+
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();
         baOutputStream.close();
@@ -84,5 +115,9 @@ public class RegisterationResponse implements Event, Protocol{
 
     public int getPeerID(){
         return this.peerID;
+    }
+
+    public Vertex getVertex(){
+        return this.connectingPeer;
     }
 }
