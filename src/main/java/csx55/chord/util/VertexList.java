@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import csx55.chord.transport.TCPSender;
 import csx55.chord.wireformats.Event;
 import csx55.chord.wireformats.RegisterationResponse;
 import csx55.chord.wireformats.RegistrationRequest;
@@ -29,40 +28,47 @@ public class VertexList {
 
             System.out.println("- Received RegReq -\n" + regReq.getIP() + "\n" + regReq.getPort() + "\n" + regReq.getPeerId());
             
-            // if(correctIP(vertex) == true){
-            //     int peerID = addToList(vertex);
-            //     byte statusCode = StatusCodes.SUCCESS;
-            //     String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
-            //     registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID);
-            // }   
-            // else{
-            //     byte statusCode = StatusCodes.FAILURE_IP;
-            //     String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
-            //     registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID);
-            // }
+            if(correctIP(vertex) == true){
+                int peerID = addToList(vertex);
+                byte statusCode = StatusCodes.SUCCESS;
+                String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
+                registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID);
+            }   
+            else{
+                byte statusCode = StatusCodes.FAILURE_IP;
+                String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
+                registerationResponse = new RegisterationResponse(statusCode, additionalInfo, -1);
+            }
             
-
-            // vertex.sendMessage(registerationResponse.getBytes());
-
-
-
+            vertex.sendMessage(registerationResponse.getBytes());
+            
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
     
-    // synchronized public int addToList(Vertex vertex){
-    //     if(registeredVertexs.get(vertex.getID()) == null){
-    //         registeredVertexs.put(vertex.getID(), vertex);
-    //         return vertex.getID();
-    //     }else{
-    //         String Ip = vertex.getIP();
-    //         int port = vertex.getID();           
-    //     }
+    synchronized public int addToList(Vertex vertex){
+        if(registeredVertexs.get(vertex.getID()) == null){
+            registeredVertexs.put(vertex.getID(), vertex);
+            return vertex.getID();
+        }else{
+            // The case of a collision
 
-    //     registeredVertexs.put(vertex.getID(), vertex);
-    // }
+            String Ip = vertex.getIP();
+            int port = vertex.getPort(); 
+            int collisionID = vertex.getID();
+
+            while(registeredVertexs.contains(collisionID)){
+                Ip = Ip + "0";
+                collisionID = (Ip + ":" + port).hashCode();
+            }
+
+            vertex.setID(collisionID);
+            registeredVertexs.put(vertex.getID(), vertex);
+            return vertex.getID();
+        }
+    }
 
     public boolean allTasksAreComplete(){
         for(Vertex vertex : this.getValues()){

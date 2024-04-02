@@ -57,6 +57,10 @@ public class Vertex {
         return this.IP;
     }
 
+    public int getPort(){
+        return this.port;
+    }
+
     synchronized public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + " ---");
         // System.out.println("--- Vertex Socket: " + getSocket() + " ---");

@@ -65,13 +65,9 @@ public class Peer implements Node{
             switch(event.getType()){
                 case Protocol.REGISTER_RESPONSE:
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
-                    regRes.getInfo();
-                    // Deal with collisions here
-
+                    handleRegisterationResponse(regRes);
                     break;
-                // case Protocol.INITIATE_PEER_CONNECTION:
-                //     initiatePeerConnections(event, socket);
-                //     break;
+
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -95,29 +91,20 @@ public class Peer implements Node{
             e.printStackTrace();
         }
     }
-
-    // synchronized public void initiatePeerConnections(Event event, Socket socket) throws IOException{
-    //     InitiatePeerConnection peerConnection = new InitiatePeerConnection(event.getBytes());
-    //     Vertex vertex = new Vertex(peerConnection.getIP(), peerConnection.getPort(), socket);
-
-    //     this.peerList.addToList(vertex);
-    // }
-
-
-    // synchronized public void sendInitiateConnectionRequest(Vertex vertex) throws IOException {
-    //     InitiatePeerConnection peerConnection = new InitiatePeerConnection(this.messagingNodeIP, this.messagingNodePort);
-
-    //     TCPReceiverThread receiver = new TCPReceiverThread(this,  vertex.getSocket());
-    //     Thread receiverThread = new Thread(receiver);
-    //     receiverThread.start();
-
-    //     vertex.sendMessage(peerConnection.getBytes());
-    // }
-
     public void configureServer(Node node){
         this.server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
         serverThread.start();
+    }
+
+    public void handleRegisterationResponse(RegisterationResponse regRes){
+        int registeredPeerID = regRes.getPeerID();
+        System.out.println("Registered ID: " + registeredPeerID);
+
+        if(registeredPeerID != this.peerID){
+            this.peerID = registeredPeerID;
+        }
+        
     }
 
     public String getMessagingNodeIP(){

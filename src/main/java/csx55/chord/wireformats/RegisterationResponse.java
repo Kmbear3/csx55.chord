@@ -81,4 +81,8 @@ public class RegisterationResponse implements Event, Protocol{
     public void getInfo(){
         System.out.println(additionalInfo);
     }
+
+    public int getPeerID(){
+        return this.peerID;
+    }
 }
