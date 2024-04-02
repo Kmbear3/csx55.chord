@@ -12,6 +12,7 @@ import csx55.chord.transport.TCPReceiverThread;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.transport.TCPServerThread;
 import csx55.chord.util.CLIHandler;
+import csx55.chord.util.FingerTable;
 import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.Vertex;
 import csx55.chord.util.VertexList;
@@ -25,6 +26,9 @@ public class Peer implements Node{
 
     private TCPServerThread server;
     private TCPSender registrySender;
+
+
+    private FingerTable fingerTable; 
 
     public Peer(String registryIP, int registryPort){
         try {
@@ -97,8 +101,12 @@ public class Peer implements Node{
             this.peerID = registeredPeerID;
         }
 
-        // Handle registration
-
+        // Handle creating findertable
+        Vertex responsePeer = regRes.getVertex();
+        if(responsePeer.getID() == this.peerID){
+            this.fingerTable = new FingerTable();
+        }
+        else this.fingerTable = new FingerTable(responsePeer);
     }
 
     public String getMessagingNodeIP(){
