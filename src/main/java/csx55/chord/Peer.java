@@ -104,7 +104,6 @@ public class Peer implements Node{
         if(registeredPeerID != this.peerID){
             this.peerID = registeredPeerID;
         }
-        
     }
 
     public String getMessagingNodeIP(){
