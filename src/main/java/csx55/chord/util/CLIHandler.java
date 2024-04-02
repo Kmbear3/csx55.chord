@@ -47,8 +47,8 @@ public class CLIHandler {
                 System.exit(0);
                 break;
             case "poke-neighbors":
-                MessageSender sendMessages = new MessageSender(node);
-                sendMessages.sendPoke();
+                // MessageSender sendMessages = new MessageSender(node);
+                // sendMessages.sendPoke();
                break;
             case "exit-overlay":
                 sendDeregisterRequest(StatusCodes.EXIT_OVERLAY);

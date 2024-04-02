@@ -15,7 +15,6 @@ import csx55.chord.wireformats.Deregister;
 import csx55.chord.wireformats.DeregisterResponse;
 import csx55.chord.wireformats.Event;
 import csx55.chord .wireformats.Protocol;
-import csx55.chord.wireformats.TaskComplete;
 import csx55.chord.wireformats.TaskSummaryRequest;
 
 public class Discovery implements Node {
@@ -37,19 +36,6 @@ public class Discovery implements Node {
             switch(event.getType()){
                 case Protocol.REGISTER_REQUEST:
                     vertexList.registerVertex(event, socket);
-                    break;
-                case Protocol.TASK_INITIATE:
-                    vertexList.sendAllNodes(event);
-                    break;
-                case Protocol.TASK_COMPLETE:
-                    checkNodesStatus(event);
-                    break;
-                case Protocol.TRAFFIC_SUMMARY:
-                    stats.nodeStats(event);
-
-                    if(stats.receivedAllStats()){
-                        stats.displayTotalSums();
-                    }
                     break;
                 case Protocol.DEREGISTER_REQUEST:
                     Deregister deregister = new Deregister(event.getBytes());
@@ -82,28 +68,28 @@ public class Discovery implements Node {
         
     }
 
-    public void checkNodesStatus(Event event){
-        try {
-            TaskComplete task = new TaskComplete(event.getBytes());
-            Vertex vertex = this.vertexList.get(task.getID());
-            vertex.setTaskComplete();
+    // public void checkNodesStatus(Event event){
+    //     try {
+    //         TaskComplete task = new TaskComplete(event.getBytes());
+    //         Vertex vertex = this.vertexList.get(task.getID());
+    //         vertex.setTaskComplete();
 
-            if(vertexList.allTasksAreComplete()){
-                Thread.sleep(5000);
+    //         if(vertexList.allTasksAreComplete()){
+    //             Thread.sleep(5000);
                 
-                TaskSummaryRequest summaryRequest = new TaskSummaryRequest();
-                vertexList.sendAllNodes(summaryRequest);
-            }
+    //             TaskSummaryRequest summaryRequest = new TaskSummaryRequest();
+    //             vertexList.sendAllNodes(summaryRequest);
+    //         }
         
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    //     } catch (IOException e) {
+    //         // TODO Auto-generated catch block
+    //         e.printStackTrace();
+    //     } catch (InterruptedException e) {
+    //         // TODO Auto-generated catch block
+    //         e.printStackTrace();
+    //     }
         
-    }
+    // }
 
     public void configureServer(Node node, int port){
         TCPServerThread tcpServer = new TCPServerThread(this, port);

@@ -11,22 +11,28 @@ public class Vertex {
     private final Socket socket;
     private final String IP;
     private final int port;
-    private final String id;
     private int numberOfConnections = 0;
     private boolean taskComplete = false;
 
+    private int peerID;
+
     ArrayList<Vertex> vertexConnections;
 
-    public Vertex(String IP, int port, Socket socket){
+    public Vertex(int peerID, String IP, int port, Socket socket){
         this.IP = IP;
         this.port = port;
-        this.id = IP + ":" + port;
         this.socket = socket;
         this.vertexConnections = new ArrayList<>();
+        this.peerID = peerID;
     }
 
-    public String getID(){
-        return this.id;
+
+    public int getID(){
+        return peerID;
+    }
+
+    public void setID(int id){
+        this.peerID = id;
     }
 
     synchronized public Socket getSocket(){
@@ -51,6 +57,10 @@ public class Vertex {
         return this.IP;
     }
 
+    public int getPort(){
+        return this.port;
+    }
+
     synchronized public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + " ---");
         // System.out.println("--- Vertex Socket: " + getSocket() + " ---");
@@ -73,7 +83,7 @@ public class Vertex {
     }
 
     public boolean equals(Vertex vertex){
-        if(this.id.equals(vertex.getID())) {
+        if(this.peerID == vertex.getID()) {
             return true;
         }else{
             return false;

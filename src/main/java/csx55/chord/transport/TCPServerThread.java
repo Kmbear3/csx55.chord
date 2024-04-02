@@ -43,7 +43,7 @@ public class TCPServerThread implements Runnable{
         try {
 
             InetAddress inetAddress = InetAddress.getLocalHost();
-            return inetAddress.getHostName();
+            return inetAddress.getHostAddress();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
