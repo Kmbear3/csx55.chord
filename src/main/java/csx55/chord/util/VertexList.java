@@ -7,48 +7,44 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.swing.plaf.nimbus.State;
-
 import csx55.chord.transport.TCPSender;
 import csx55.chord.wireformats.Event;
 import csx55.chord.wireformats.RegisterationResponse;
 import csx55.chord.wireformats.RegistrationRequest;
 
 public class VertexList {
-    ConcurrentHashMap<String, Vertex> registeredVertexs;  
+    ConcurrentHashMap<Integer, Vertex> registeredVertexs;  
     ArrayList<String> vertexIDs; 
 
     public VertexList(){
         this.registeredVertexs = new ConcurrentHashMap<>();
-        this.vertexIDs = new ArrayList<>();
     }
 
     public void registerVertex(Event event, Socket socket){
         try {
             RegistrationRequest regReq = new RegistrationRequest(event.getBytes());
-            Vertex vertex = new Vertex(regReq.getIP(), regReq.getPort(), socket);
+            Vertex vertex = new Vertex(regReq.getPeerId(), regReq.getIP(), regReq.getPort(), socket);
 
             RegisterationResponse registerationResponse;
-            
-            if(inList(vertex) == false && correctIP(vertex) == true){
-                addToList(vertex);
-                byte statusCode = StatusCodes.SUCCESS;
-                String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
-                registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
-            }   
-            else if(correctIP(vertex) == false){
-                byte statusCode = StatusCodes.FAILURE_IP;
-                String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
-                registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
-            }
-            else{
-                // Already in Overlay
-                byte statusCode = StatusCodes.FAILURE;
-                String additionalInfo = registrationInfo(StatusCodes.FAILURE);
-                registerationResponse = new RegisterationResponse(statusCode, additionalInfo);
-            }
 
-            vertex.sendMessage(registerationResponse.getBytes());
+            System.out.println("- Received RegReq -\n" + regReq.getIP() + "\n" + regReq.getPort() + "\n" + regReq.getPeerId());
+            
+            // if(correctIP(vertex) == true){
+            //     int peerID = addToList(vertex);
+            //     byte statusCode = StatusCodes.SUCCESS;
+            //     String additionalInfo = registrationInfo(StatusCodes.SUCCESS);
+            //     registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID);
+            // }   
+            // else{
+            //     byte statusCode = StatusCodes.FAILURE_IP;
+            //     String additionalInfo = registrationInfo(StatusCodes.FAILURE_IP);
+            //     registerationResponse = new RegisterationResponse(statusCode, additionalInfo, peerID);
+            // }
+            
+
+            // vertex.sendMessage(registerationResponse.getBytes());
+
+
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -56,10 +52,17 @@ public class VertexList {
         }
     }
     
-    synchronized public void addToList(Vertex vertex){
-        registeredVertexs.put(vertex.getID(), vertex);
-        vertexIDs.add(vertex.getID());
-    }
+    // synchronized public int addToList(Vertex vertex){
+    //     if(registeredVertexs.get(vertex.getID()) == null){
+    //         registeredVertexs.put(vertex.getID(), vertex);
+    //         return vertex.getID();
+    //     }else{
+    //         String Ip = vertex.getIP();
+    //         int port = vertex.getID();           
+    //     }
+
+    //     registeredVertexs.put(vertex.getID(), vertex);
+    // }
 
     public boolean allTasksAreComplete(){
         for(Vertex vertex : this.getValues()){
@@ -101,13 +104,9 @@ public class VertexList {
         // Checks to see if node ip match socket ip
         Socket socket = vertex.getSocket(); 
         InetAddress inAd = socket.getInetAddress();
-        String remoteAdd = inAd.getHostName();
+        String remoteAdd = inAd.getHostAddress();
 
-        int endIndex = remoteAdd.indexOf(".");
-        String requestString = vertex.getIP();
-        String socketString = remoteAdd.substring(0, endIndex);
-
-        return requestString.equals(socketString);
+        return remoteAdd.equals(vertex.getIP());
     }
 
     //  Refactor

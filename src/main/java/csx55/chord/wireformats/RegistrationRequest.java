@@ -8,7 +8,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import javax.sound.sampled.Port;
 
 public class RegistrationRequest implements Event, Protocol {
 
@@ -19,12 +18,15 @@ public class RegistrationRequest implements Event, Protocol {
     final int MESSAGE_TYPE = Protocol.REGISTER_REQUEST;
     String IP;
     int port;
+    int peerID;
+
     byte[] marshalledBytes;
 
-    public RegistrationRequest(String IP, int port){
+    public RegistrationRequest(String IP, int port, int peerID){
         try {
             this.IP = IP;
             this.port = port;
+            this.peerID = peerID;
 
             marshalledBytes = getBytes();
         } catch (IOException e) {
@@ -44,6 +46,8 @@ public class RegistrationRequest implements Event, Protocol {
         this.IP = new String(IPBytes);
 
         this.port = din.readInt();
+
+        this.peerID = din.readInt();
         
         baInputStream.close();
         din.close();
@@ -69,6 +73,8 @@ public class RegistrationRequest implements Event, Protocol {
 
         dout.writeInt(this.port);
 
+        dout.writeInt(this.peerID);
+
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();
         baOutputStream.close();
@@ -83,5 +89,9 @@ public class RegistrationRequest implements Event, Protocol {
 
     public int getPort(){
         return this.port;
+    }
+
+    public int getPeerId(){
+        return this. peerID;
     }
 }

@@ -17,18 +17,12 @@ public class RegisterationResponse implements Event, Protocol{
     int MESSAGE_TYPE = Protocol.REGISTER_RESPONSE;
     byte statusCode;
     String additionalInfo;
-    byte[] marshalledBytes;
+    int peerID; 
     
-    public RegisterationResponse(byte statusCode, String additionalInfo){
-        try {
-        
+    public RegisterationResponse(byte statusCode, String additionalInfo, int peerID){      
         this.statusCode = statusCode;
         this.additionalInfo = additionalInfo;
-        this.marshalledBytes = getBytes();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.peerID = peerID;
     }
     
 
@@ -45,6 +39,8 @@ public class RegisterationResponse implements Event, Protocol{
             byte[] infoBytes = new byte[infoLength];
             din.readFully(infoBytes);
             this.additionalInfo = new String(infoBytes);
+
+            this.peerID = din.readInt();
 
             baInputStream.close();
             din.close();
@@ -71,8 +67,10 @@ public class RegisterationResponse implements Event, Protocol{
         int elementLength = additionalInfoBytes.length;
         dout.writeInt(elementLength);
         dout.write(additionalInfoBytes);
+       
+        dout.writeInt(this.peerID);
+       
         dout.flush();
-
         marshalledBytes = baOutputStream.toByteArray();
         baOutputStream.close();
         dout.close();
