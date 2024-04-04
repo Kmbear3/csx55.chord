@@ -13,6 +13,7 @@ import csx55.chord.transport.TCPSender;
 import csx55.chord.transport.TCPServerThread;
 import csx55.chord.util.CLIHandler;
 import csx55.chord.util.FingerTable;
+import csx55.chord.util.PeerEntry;
 import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.Vertex;
 import csx55.chord.util.VertexList;
@@ -65,6 +66,12 @@ public class Peer implements Node{
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     handleRegisterationResponse(regRes);
                     break;
+                case Protocol.INSERT_REQUEST:
+                    handleNodeAddition(new InsertRequest(event.getBytes()));
+                    break;
+                case Protocol.INSERT_RESPONSE:
+                    this.fingerTable.updateFingerTableWithSuccessorInfo(new InsertResponse(event.getBytes()));
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -87,6 +94,11 @@ public class Peer implements Node{
             e.printStackTrace();
         }
     }
+
+    private void handleNodeAddition(InsertRequest insertRequest) {
+        // Needs to find the successor of peerID 
+    }
+
     public void configureServer(Node node){
         this.server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
@@ -104,7 +116,8 @@ public class Peer implements Node{
         // Handle creating findertable
         Vertex responsePeer = regRes.getVertex();
         if(responsePeer.getID() == this.peerID){
-            this.fingerTable = new FingerTable();
+            PeerEntry me = new PeerEntry(this.peerIP, this.peerPort, null, this.peerID);
+            this.fingerTable = new FingerTable(me);
         }
         else this.fingerTable = new FingerTable(responsePeer);
     }

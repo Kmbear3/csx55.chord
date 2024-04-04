@@ -11,25 +11,19 @@ public class Vertex implements Comparable<Vertex>{
     private Socket socket;
     private final String IP;
     private int port;
-    private int numberOfConnections = 0;
-    private boolean taskComplete = false;
 
     private int peerID;
-
-    ArrayList<Vertex> vertexConnections;
 
     public Vertex(int peerID, String IP, int port, Socket socket){
         this.IP = IP;
         this.port = port;
         this.socket = socket;
-        this.vertexConnections = new ArrayList<>();
         this.peerID = peerID;
     }
 
     public Vertex(int peerID, String IP, int port){
         this.IP = IP;
         this.port = port;
-        this.vertexConnections = new ArrayList<>();
         this.peerID = peerID;
     }
 
@@ -74,23 +68,6 @@ public class Vertex implements Comparable<Vertex>{
 
     synchronized public void printVertex(){
         System.out.println("--- Vertex Id: " + getID() + " ---");
-        // System.out.println("--- Vertex Socket: " + getSocket() + " ---");
-        System.out.print("--- Neighbors: ");
-        for(Vertex neighbor : vertexConnections){
-            System.out.print(neighbor.getID() + ", ");
-        }
-        System.out.println(" ---");
-
-        // System.out.println("--- socket: " + this.socket + " ---");
-    }
-
-    synchronized public void addNeighbor(Vertex vertex){
-        if(this.equals(vertex)){
-            System.err.println("Trying to connect to self");
-        }
-
-        this.vertexConnections.add(vertex);
-        this.numberOfConnections = numberOfConnections + 1;
     }
 
     public boolean equals(Vertex vertex){
@@ -100,23 +77,6 @@ public class Vertex implements Comparable<Vertex>{
             return false;
         }
     }
-
-    public int getNumberOfConnections(){
-        return this.numberOfConnections;
-    }
-
-    public ArrayList<Vertex> getVertexConnections(){
-        return this.vertexConnections;
-    }
-
-    public void setTaskComplete(){
-        this.taskComplete = true;
-    }
-
-    public boolean isTaskComplete(){
-        return this.taskComplete;
-    }
-
     @Override
     public int compareTo(Vertex otherVertex) {
         return Integer.compare(getID(), otherVertex.getID());
