@@ -20,7 +20,8 @@ public interface Protocol {
     public static final int TASKS = 15;
     public static final int ROUND_INCREMENT = 16;
     public static final int INSERT_REQUEST = 17;
-    public static final int INSERT_RESPONSE= 18;
+    public static final int INSERT_RESPONSE = 18;
+    public static final int NEW_SUCCESSOR = 19;
 
 
 

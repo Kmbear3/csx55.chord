@@ -1,5 +1,9 @@
 package csx55.chord.util;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -36,6 +40,10 @@ public class PeerEntry {
         return this.peerID;
     }
 
+    public void print(){
+        System.out.println(this.peerID + " " + this.IP + ":" + this.port);
+    }
+
    synchronized public void sendMessage(byte[] marshalledBytes){
         try {
             if(this.socket == null){
@@ -50,5 +58,47 @@ public class PeerEntry {
             e.printStackTrace();
         }
     
+    }
+
+
+    public void marshallPeer(DataOutputStream dout){
+        try {
+            String peerIP = this.getIP();
+
+            byte[] peerBytes = peerIP.getBytes();
+            int length = peerBytes.length;
+            dout.writeInt(length);
+            dout.write(peerBytes);
+
+            int peerPort = this.getPort();
+            int ftPeerID = this.getID();
+
+            dout.writeInt(peerPort);
+            dout.writeInt(ftPeerID);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static PeerEntry unmarshallPeer(DataInputStream din){
+        try{
+            int peerIPLength = din.readInt();
+            byte[] peerIPBytes = new byte[peerIPLength];
+            din.readFully(peerIPBytes);
+            String peerIP = new String(peerIPBytes);
+
+            int peerPort = din.readInt();
+            int peerID = din.readInt();
+
+            PeerEntry peer = new PeerEntry(peerIP, peerPort, peerID);
+            return peer;
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }  
+        return null;
     }
 }

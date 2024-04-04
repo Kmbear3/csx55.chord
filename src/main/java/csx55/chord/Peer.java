@@ -27,8 +27,6 @@ public class Peer implements Node{
 
     private TCPServerThread server;
     private TCPSender registrySender;
-
-
     private FingerTable fingerTable; 
 
     public Peer(String registryIP, int registryPort){
@@ -67,10 +65,13 @@ public class Peer implements Node{
                     handleRegisterationResponse(regRes);
                     break;
                 case Protocol.INSERT_REQUEST:
-                    handleNodeAddition(new InsertRequest(event.getBytes()));
+                    this.fingerTable.handleNodeAdditionRequest(new InsertRequest(event.getBytes()));
                     break;
                 case Protocol.INSERT_RESPONSE:
-                    this.fingerTable.updateFingerTableWithSuccessorInfo(new InsertResponse(event.getBytes()));
+                    this.fingerTable.createFingerTableWithSuccessorInfo(new InsertResponse(event.getBytes()));
+                    break;
+                case Protocol.NEW_SUCCESSOR:
+                    this.fingerTable.newSucessor(new NewSuccessor(event.getBytes()));
                     break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
@@ -93,10 +94,6 @@ public class Peer implements Node{
             System.err.println("Error: MessagingNode.onEvent()");
             e.printStackTrace();
         }
-    }
-
-    private void handleNodeAddition(InsertRequest insertRequest) {
-        // Needs to find the successor of peerID 
     }
 
     public void configureServer(Node node){

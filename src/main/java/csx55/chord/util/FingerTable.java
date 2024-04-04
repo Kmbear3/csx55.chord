@@ -9,6 +9,7 @@ import csx55.chord.Peer;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.wireformats.InsertRequest;
 import csx55.chord.wireformats.InsertResponse;
+import csx55.chord.wireformats.NewSuccessor;
 
 public class FingerTable {
 
@@ -62,8 +63,40 @@ public class FingerTable {
         return null;
     }
 
-    public void updateFingerTableWithSuccessorInfo(InsertResponse insertResponse) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateFingerTableWithSuccessorInfo'");
+    public void createFingerTableWithSuccessorInfo(InsertResponse insertResponse) {
+        try{
+            this.fingerTable = insertResponse.getFingerTable();
+            this.succ = insertResponse.getSucc();
+            this.pred = insertResponse.getPred();
+
+            // Notify predecessor of my addition
+            NewSuccessor newSuccessor = new NewSuccessor(me);
+            pred.sendMessage(newSuccessor.getBytes());
+      
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    public void handleNodeAdditionRequest(InsertRequest insertRequest) {
+        try {
+
+            String newPredIP = insertRequest.getIP();
+            int newPredport = insertRequest.getPort();
+            int newPredID = insertRequest.getPeerId();
+
+            PeerEntry newPred = new PeerEntry(newPredIP, newPredport, newPredID);
+            InsertResponse newAddition = new InsertResponse(me.getIP(),me.getPort(),me.getID(), this.fingerTable, newPred.getIP(), newPred.getPort(), newPred.getID());
+            newPred.sendMessage(newAddition.getBytes());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void newSucessor(NewSuccessor newSuccessor) {
+        this.succ = newSuccessor.getNewSucc();
     }
 }

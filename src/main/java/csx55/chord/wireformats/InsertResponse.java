@@ -57,7 +57,31 @@ public class InsertResponse  implements Event, Protocol {
         this.port = din.readInt();
         this.peerID = din.readInt();
 
-        
+
+        this.fingerTable = new PeerEntry[32];
+
+        for(int i = 0; i < fingerTable.length; i ++){
+            
+            int peerIPLength = din.readInt();
+            byte[] peerIPBytes = new byte[peerIPLength];
+            din.readFully(peerIPBytes);
+            String peerIP = new String(peerIPBytes);
+
+            int peerPort = din.readInt();
+            int ftPeerID = din.readInt();
+
+            PeerEntry peer = new PeerEntry(peerIP, peerPort, ftPeerID);
+            fingerTable[i] = peer;
+        }
+
+
+        int predIPlenth = din.readInt();
+        byte[] predIPBytes = new byte[predIPlenth];
+        din.readFully(predIPBytes);
+        this.predecessorIP = new String(predIPBytes);
+
+        this.predPort = din.readInt();
+        this.predPeerID = din.readInt();
         
         baInputStream.close();
         din.close();
@@ -125,7 +149,19 @@ public class InsertResponse  implements Event, Protocol {
     }
 
     public int getPeerId(){
-        return this. peerID;
+        return this.peerID;
+    }
+
+    public PeerEntry[] getFingerTable(){
+        return this.fingerTable;
+    }
+
+    public PeerEntry getSucc(){
+        return new PeerEntry(this.IP, this.port, this.peerID);
+    }
+
+    public PeerEntry getPred(){
+        return new PeerEntry(this.predecessorIP, this.predPort, this.predPeerID);
     }
 }
 
