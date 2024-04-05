@@ -13,6 +13,7 @@ import csx55.chord.transport.TCPSender;
 import csx55.chord.transport.TCPServerThread;
 import csx55.chord.util.CLIHandler;
 import csx55.chord.util.FingerTable;
+import csx55.chord.util.PeerEntry;
 import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.Vertex;
 import csx55.chord.util.VertexList;
@@ -26,8 +27,6 @@ public class Peer implements Node{
 
     private TCPServerThread server;
     private TCPSender registrySender;
-
-
     private FingerTable fingerTable; 
 
     public Peer(String registryIP, int registryPort){
@@ -65,6 +64,15 @@ public class Peer implements Node{
                     RegisterationResponse regRes = new RegisterationResponse(event.getBytes());
                     handleRegisterationResponse(regRes);
                     break;
+                case Protocol.INSERT_REQUEST:
+                    this.fingerTable.handleNodeAdditionRequest(new InsertRequest(event.getBytes()));
+                    break;
+                case Protocol.INSERT_RESPONSE:
+                    this.fingerTable.createFingerTableWithSuccessorInfo(new InsertResponse(event.getBytes()));
+                    break;
+                case Protocol.NEW_SUCCESSOR:
+                    this.fingerTable.newSucessor(new NewSuccessor(event.getBytes()));
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -87,6 +95,7 @@ public class Peer implements Node{
             e.printStackTrace();
         }
     }
+
     public void configureServer(Node node){
         this.server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
@@ -103,10 +112,13 @@ public class Peer implements Node{
 
         // Handle creating findertable
         Vertex responsePeer = regRes.getVertex();
+
+        PeerEntry me = new PeerEntry(this.peerIP, this.peerPort, this.peerID);
+
         if(responsePeer.getID() == this.peerID){
-            this.fingerTable = new FingerTable();
+            this.fingerTable = new FingerTable(me);
         }
-        else this.fingerTable = new FingerTable(responsePeer);
+        else this.fingerTable = new FingerTable(responsePeer, me);
     }
 
     public String getMessagingNodeIP(){
@@ -135,5 +147,13 @@ public class Peer implements Node{
          while(true){
               cliHandler.readInstructionsMessagingNode();
          }
+    }
+
+    public void printFingerTable() {
+        this.fingerTable.print();
+    }
+
+    public void printNeighbors() {
+        this.fingerTable.neighbors();
     }
 }

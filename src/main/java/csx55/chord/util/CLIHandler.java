@@ -46,15 +46,17 @@ public class CLIHandler {
             case "exit":
                 System.exit(0);
                 break;
-            case "poke-neighbors":
-                // MessageSender sendMessages = new MessageSender(node);
-                // sendMessages.sendPoke();
-               break;
             case "exit-overlay":
                 sendDeregisterRequest(StatusCodes.EXIT_OVERLAY);
                 break;
             case "deregister":
                 sendDeregisterRequest(StatusCodes.DEREGISTER);
+                break;
+            case "finger-table":
+                node.printFingerTable();
+                break;
+            case "neighbors":
+                node.printNeighbors();
                 break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");

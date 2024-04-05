@@ -95,16 +95,6 @@ public class VertexList{
         }
     }
 
-    public boolean allTasksAreComplete(){
-        for(Vertex vertex : this.getValues()){
-            if(!vertex.isTaskComplete()){
-                return false;
-            }
-        }
-        return true; 
-    }
-
-
     public Collection<Vertex> getValues(){
         return registeredVertexs.values();
     }
