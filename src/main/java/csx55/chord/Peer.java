@@ -112,11 +112,13 @@ public class Peer implements Node{
 
         // Handle creating findertable
         Vertex responsePeer = regRes.getVertex();
+
+        PeerEntry me = new PeerEntry(this.peerIP, this.peerPort, this.peerID);
+
         if(responsePeer.getID() == this.peerID){
-            PeerEntry me = new PeerEntry(this.peerIP, this.peerPort, null, this.peerID);
             this.fingerTable = new FingerTable(me);
         }
-        else this.fingerTable = new FingerTable(responsePeer);
+        else this.fingerTable = new FingerTable(responsePeer, me);
     }
 
     public String getMessagingNodeIP(){
@@ -145,5 +147,9 @@ public class Peer implements Node{
          while(true){
               cliHandler.readInstructionsMessagingNode();
          }
+    }
+
+    public void printFingerTable() {
+        this.fingerTable.print();
     }
 }

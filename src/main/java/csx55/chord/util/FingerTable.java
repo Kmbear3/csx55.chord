@@ -26,12 +26,13 @@ public class FingerTable {
         constructInitialTable();
     }
 
-    public FingerTable(Vertex randomPeer){
+    public FingerTable(Vertex randomPeer, PeerEntry me){
         // Start constructing the finger table with a random peer
 
         try {
             Socket randomPeerConn = new Socket(randomPeer.getIP(), randomPeer.getPort());
             TCPSender sender = new TCPSender(randomPeerConn);
+            this.me = me;
             InsertRequest inReq = new InsertRequest(me.IP, me.port, me.peerID);
 
             sender.sendData(inReq.getBytes());
@@ -99,4 +100,11 @@ public class FingerTable {
     public void newSucessor(NewSuccessor newSuccessor) {
         this.succ = newSuccessor.getNewSucc();
     }
+
+    public void print(){
+        for(int i = 0; i < fingerTable.length; i++){
+            System.out.println((i + 1) + " " + fingerTable[i].peerID);
+        }
+    }
+
 }

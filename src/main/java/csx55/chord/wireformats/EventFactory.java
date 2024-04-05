@@ -41,6 +41,12 @@ public class EventFactory {
                     return new Deregister(marshalledBytes);
                 case Protocol.DEREGISTER_RESPONSE:
                     return new DeregisterResponse(marshalledBytes);
+                case Protocol.INSERT_REQUEST:
+                    return new InsertRequest(marshalledBytes);
+                case Protocol.INSERT_RESPONSE:
+                    return new InsertResponse(marshalledBytes);
+                case Protocol.NEW_SUCCESSOR:
+                    return new NewSuccessor(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;
