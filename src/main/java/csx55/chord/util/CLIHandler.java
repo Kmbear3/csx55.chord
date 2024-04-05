@@ -55,6 +55,9 @@ public class CLIHandler {
             case "finger-table":
                 node.printFingerTable();
                 break;
+            case "neighbors":
+                node.printNeighbors();
+                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }

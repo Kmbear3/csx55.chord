@@ -152,4 +152,8 @@ public class Peer implements Node{
     public void printFingerTable() {
         this.fingerTable.print();
     }
+
+    public void printNeighbors() {
+        this.fingerTable.neighbors();
+    }
 }

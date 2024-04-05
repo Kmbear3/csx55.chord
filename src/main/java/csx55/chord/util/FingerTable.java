@@ -107,4 +107,10 @@ public class FingerTable {
         }
     }
 
+    public void neighbors() {
+        System.out.println("predecessor: " + pred.peerID + " " + pred.IP + ":" + pred.port);
+        System.out.println("successor: " + succ.peerID + " " + succ.IP + ":" + succ.port);
+
+    }
+
 }
