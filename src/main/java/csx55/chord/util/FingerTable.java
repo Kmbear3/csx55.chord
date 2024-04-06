@@ -9,6 +9,7 @@ import csx55.chord.Peer;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.wireformats.InsertRequest;
 import csx55.chord.wireformats.InsertResponse;
+import csx55.chord.wireformats.NewAddition;
 import csx55.chord.wireformats.NewSuccessor;
 import csx55.chord.wireformats.SuccessorRequest;
 import csx55.chord.wireformats.SuccessorResponse;
@@ -73,19 +74,22 @@ public class FingerTable {
     }
 
     public void createFingerTableWithSuccessorInfo(InsertResponse insertResponse) {
-        // try{
+        try{
             this.fingerTable = insertResponse.getFingerTable();
             this.succ = insertResponse.getSucc();
             this.pred = insertResponse.getPred();
 
-            // Notify predecessor of my addition
-            // NewSuccessor newSuccessor = new NewSuccessor(me);
-            // pred.sendMessage(newSuccessor.getBytes());
+            NewSuccessor newSuccessor = new NewSuccessor(me);
+            pred.sendMessage(newSuccessor.getBytes());
+
+            succ.sendMessage(new NewAddition(me).getBytes());
+
+            this.tableCreated = true;
       
-        // } catch (IOException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
 
@@ -97,7 +101,8 @@ public class FingerTable {
             int newPredID = insertRequest.getPeerId();
 
             PeerEntry newPred = new PeerEntry(newPredIP, newPredport, newPredID);
-            InsertResponse newAddition = new InsertResponse(me.getIP(), me.getPort(), me.getID(), this.fingerTable, newPred.getIP(), newPred.getPort(), newPred.getID());
+            InsertResponse newAddition = new InsertResponse(me.getIP(), me.getPort(), me.getID(), this.fingerTable, pred.getIP(), pred.getPort(), pred.getID());
+            
             newPred.sendMessage(newAddition.getBytes());
 
             this.pred = newPred;
@@ -109,19 +114,7 @@ public class FingerTable {
     }
 
     public void newSucessor(NewSuccessor newSuccessor) {
-        System.out.print("New successor: ");
-        newSuccessor.getNewSucc().print();
-        System.out.print("My successor prior to assignment: ");
-        succ.print();
         this.succ = newSuccessor.getNewSucc();
-
-        System.out.print("My pred prior to assignment: ");
-        this.pred.print();
-
-        this.succ = newSuccessor.getNewSucc();
-        System.out.print("My successor after assignment: ");
-        this.succ.print();
-
     }
 
     public void print(){
@@ -174,7 +167,6 @@ public class FingerTable {
                 SuccessorResponse successorResponse = new SuccessorResponse(me);
                 PeerEntry requestingNode = successorRequest.getRequestingNode();
                 requestingNode.sendMessage(successorResponse.getBytes());
-                System.out.println("Senidng to requesting node");
             }
             else{
                 peer.sendMessage(successorRequest.getBytes());
@@ -200,7 +192,33 @@ public class FingerTable {
         }else{
             // DO other stuff
         }
+    }
+
+    public void addNewAddition(NewAddition newAddition) {
+        try {
+            if(!newAddition.getNode().equals(me)){
+                System.out.println("Updating table with new Addition: " + newAddition.getNode().toString());
+                updateTable(newAddition.getNode());
+                
+                if(!succ.equals(me)){
+                    succ.sendMessage(newAddition.getBytes());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
        
+    }
+
+    private void updateTable(PeerEntry node) {
+        for(int i = 0; i < fingerTable.length; i++){
+            int fingerTableRow = (int)(me.getID() + Math.pow(2, i));
+
+            if(isBetween(fingerTableRow, fingerTable[i].getID(), node.getID())){
+                fingerTable[i] = node;
+            }   
+        }
+        
     }
     
 

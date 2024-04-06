@@ -44,6 +44,11 @@ public class PeerEntry {
         System.out.println(this.peerID + " " + this.IP + ":" + this.port);
     }
 
+    public String toString(){
+        return this.peerID + " " + this.IP + ":" + this.port;
+    }
+
+
    synchronized public void sendMessage(byte[] marshalledBytes){
         try {
             if(this.socket == null){
@@ -100,5 +105,10 @@ public class PeerEntry {
             e.printStackTrace();
         }  
         return null;
+    }
+
+
+    public boolean equals(PeerEntry peer){
+        return peer.IP.equals(this.IP) && peer.port == this.port && peer.peerID == this.peerID;
     }
 }
