@@ -197,7 +197,6 @@ public class FingerTable {
     public void addNewAddition(NewAddition newAddition) {
         try {
             if(!newAddition.getNode().equals(me)){
-                System.out.println("Updating table with new Addition: " + newAddition.getNode().toString());
                 updateTable(newAddition.getNode());
                 
                 if(!succ.equals(me)){
@@ -212,7 +211,7 @@ public class FingerTable {
 
     private void updateTable(PeerEntry node) {
         for(int i = 0; i < fingerTable.length; i++){
-            int fingerTableRow = (int)(me.getID() + Math.pow(2, i));
+            int fingerTableRow = ((int)(me.getID() + Math.pow(2, i))) % (int) Math.pow(2, 32);
 
             if(isBetween(fingerTableRow, fingerTable[i].getID(), node.getID())){
                 fingerTable[i] = node;
