@@ -22,7 +22,7 @@ public interface Protocol {
     public static final int INSERT_REQUEST = 17;
     public static final int INSERT_RESPONSE = 18;
     public static final int NEW_SUCCESSOR = 19;
-
-
+    public static final int SUCCESSOR_REQUEST = 20;
+    public static final int SUCCESSOR_RESPONSE = 21;
 
 }

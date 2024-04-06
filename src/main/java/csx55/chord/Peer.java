@@ -73,6 +73,13 @@ public class Peer implements Node{
                 case Protocol.NEW_SUCCESSOR:
                     this.fingerTable.newSucessor(new NewSuccessor(event.getBytes()));
                     break;
+                case Protocol.SUCCESSOR_REQUEST:
+                    System.out.println("Made it here with a new successor request");
+                    this.fingerTable.successorRequest(new SuccessorRequest(event.getBytes()));
+                    break;
+                case Protocol.SUCCESSOR_RESPONSE:
+                    this.fingerTable.succesorResponse(new SuccessorResponse(event.getBytes()));
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
