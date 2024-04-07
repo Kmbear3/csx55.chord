@@ -53,6 +53,8 @@ public class EventFactory {
                     return new SuccessorResponse(marshalledBytes);
                 case Protocol.NEW_ADDITION:
                     return new NewAddition(marshalledBytes);
+                case Protocol.FORWARD_FILE:
+                    return new ForwardFile(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

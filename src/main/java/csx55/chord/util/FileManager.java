@@ -12,7 +12,7 @@ import csx55.chord.wireformats.ForwardFile;
 
 public class FileManager {
 
-    String storeagePath = "tmp/";
+    String storeagePath = "/tmp/";
 
     public FileManager(int peerID){
         try {
