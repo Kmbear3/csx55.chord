@@ -81,6 +81,9 @@ public class Peer implements Node{
                 case Protocol.SUCCESSOR_RESPONSE:
                     this.fingerTable.succesorResponse(new SuccessorResponse(event.getBytes()));
                     break;
+                case Protocol.FORWARD_FILE:
+                    this.fileManager.receivedFile(new ForwardFile(event.getBytes()), this.fingerTable);
+                    break;
                 case Protocol.NEW_ADDITION:
                     this.fingerTable.addNewAddition(new NewAddition(event.getBytes()));
                     break;

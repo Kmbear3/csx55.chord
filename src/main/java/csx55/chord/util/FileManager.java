@@ -84,6 +84,25 @@ public class FileManager {
             System.out.println(file.getName() + " " + file.getName().hashCode());
         }
     }
+
+    public void receivedFile(ForwardFile forwardFile, FingerTable fingerTable) {
+        String filename = forwardFile.getFilename();
+
+        PeerEntry peer = fingerTable.lookup(filename.hashCode());
+
+        if(peer.equals(fingerTable.me)){
+            writeToDisk(storeagePath + filename, forwardFile.getFile());
+        }
+        else{
+            try {
+                peer.sendMessage(forwardFile.getBytes());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+    }
     
 }
 

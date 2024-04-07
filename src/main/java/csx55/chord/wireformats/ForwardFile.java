@@ -41,7 +41,7 @@ public class ForwardFile implements Protocol, Event {
             
             baInputStream.close();
             din.close();
-            
+
         }catch(IOException e){
             System.err.println("Exception inside ForwardFile: " + e.getMessage());
         }
@@ -78,6 +78,14 @@ public class ForwardFile implements Protocol, Event {
         dout.close();
         
         return marshalledBytes;
+    }
+
+    public String getFilename(){
+        return this.filename;
+    }
+
+    public byte[] getFile(){
+        return this.file;
     }
     
 }
