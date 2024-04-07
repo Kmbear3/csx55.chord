@@ -66,13 +66,6 @@ public class FingerTable {
         this.tableCreated = true;
     }
 
-
-    public PeerEntry successor(int peerID){
-        //TODO 
-
-        return null;
-    }
-
     public void createFingerTableWithSuccessorInfo(InsertResponse insertResponse) {
         try{
             this.fingerTable = insertResponse.getFingerTable();
@@ -150,15 +143,15 @@ public class FingerTable {
         return isBetween(pred.getID(), me.getID(), ID);
     }
 
-    public PeerEntry lookup(PeerEntry lookupNode){
-        if(IamSuccessor(lookupNode.getID())) {
+    public PeerEntry lookup(int target){
+        if(IamSuccessor(target)) {
             return me;
         }
 
         PeerEntry peer = this.succ;
     
         for(int i = 0; i < fingerTable.length; i++){
-            if(isBetween(me.getID(), lookupNode.getID(), fingerTable[i].getID())){
+            if(isBetween(me.getID(), target, fingerTable[i].getID())){
                 peer = fingerTable[i];
             }
         }
@@ -168,7 +161,7 @@ public class FingerTable {
     }
 
     public void successorRequest(SuccessorRequest successorRequest) {
-        PeerEntry peer = lookup(successorRequest.getTargetNode());
+        PeerEntry peer = lookup(successorRequest.getTargetNode().getID());
 
         try {
             if(peer.equals(me)){
@@ -229,6 +222,21 @@ public class FingerTable {
             System.out.println(i + " k: " + fingerTableRow + " succ: " + fingerTable[i].getID());
         }
         
+    }
+
+
+    public void manageFileUpload(String pathName, FileManager fileManager) {
+        String[] filePath = pathName.split("/");
+        int fileID = filePath[filePath.length - 1].hashCode();
+
+        PeerEntry peer = lookup(fileID);
+
+        if(peer.equals(me)){
+            fileManager.readStoreFile(pathName);
+        }
+        else{
+            fileManager.readFowardFile(pathName, peer);
+        }
     }
     
 

@@ -45,13 +45,19 @@ public class CLIHandler {
         switch(result[0]){
             case "exit":
                 System.exit(0);
+                // Delete file after migration occurrs
                 break;
-            case "exit-overlay":
-                sendDeregisterRequest(StatusCodes.EXIT_OVERLAY);
+            case "upload":
+                if(result.length != 2){
+                    System.err.println("Incorrect upload command - please try again");
+                }
+                else{
+                    node.uploadFile(result[1]);
+                }
                 break;
-            case "deregister":
-                sendDeregisterRequest(StatusCodes.DEREGISTER);
-                break;
+            case "files":
+                node.printFiles();
+                break; 
             case "finger-table":
                 node.printFingerTable();
                 break;
