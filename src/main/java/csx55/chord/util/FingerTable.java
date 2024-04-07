@@ -85,12 +85,20 @@ public class FingerTable {
             succ.sendMessage(new NewAddition(me).getBytes());
 
             this.tableCreated = true;
+
+            //Highly sus
+
+            updateTableWithSuccessor();
       
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
+    }
+
+    private void updateTableWithSuccessor() {
+        updateTable(this.succ);
     }
 
     public void handleNodeAdditionRequest(InsertRequest insertRequest) {
@@ -197,6 +205,7 @@ public class FingerTable {
     public void addNewAddition(NewAddition newAddition) {
         try {
             if(!newAddition.getNode().equals(me)){
+                System.out.println("Recieved new Addition notification: " + newAddition.getNode().getID());
                 updateTable(newAddition.getNode());
                 
                 if(!succ.equals(me)){
@@ -216,6 +225,8 @@ public class FingerTable {
             if(isBetween(fingerTableRow, fingerTable[i].getID(), node.getID())){
                 fingerTable[i] = node;
             }   
+
+            System.out.println(i + " k: " + fingerTableRow + " succ: " + fingerTable[i].getID());
         }
         
     }

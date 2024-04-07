@@ -80,7 +80,6 @@ public class Peer implements Node{
                     this.fingerTable.succesorResponse(new SuccessorResponse(event.getBytes()));
                     break;
                 case Protocol.NEW_ADDITION:
-                    System.out.println("Recieved new Addition notification");
                     this.fingerTable.addNewAddition(new NewAddition(event.getBytes()));
                     break;
                 case Protocol.POKE:
