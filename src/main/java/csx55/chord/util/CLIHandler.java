@@ -44,8 +44,7 @@ public class CLIHandler {
 
         switch(result[0]){
             case "exit":
-                System.exit(0);
-                // Delete file after migration occurrs
+                node.exitGracefully();
                 break;
             case "upload":
                 if(result.length != 2){

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import csx55.chord.wireformats.DownloadRequest;
 import csx55.chord.wireformats.DownloadResponse;
 import csx55.chord.wireformats.ForwardFile;
+import csx55.chord.wireformats.MigrateFile;
 
 
 public class FileManager {
@@ -184,7 +185,17 @@ public class FileManager {
             System.out.println("ERROR: Unable to locate file: " + downloadResponse.getFilename());
         }
     }
-    
+
+    public void receiveMigratedFile(MigrateFile migrateFile, FingerTable fingerTable) {
+
+        // Should probably check to see if I'm the one to store the file
+        writeToDisk(this.storeagePath+migrateFile.getFileName(), migrateFile.getFile());
+    }
+
+    public void migrateFiles() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'migrateFiles'");
+    }
 }
 
 

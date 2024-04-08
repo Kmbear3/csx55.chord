@@ -59,6 +59,8 @@ public class EventFactory {
                     return new DownloadRequest(marshalledBytes);
                 case Protocol.DOWNLOAD_RESPONSE:
                     return new DownloadResponse(marshalledBytes);
+                case Protocol.MIGRATE_FILE:
+                    return new MigrateFile(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

@@ -99,19 +99,10 @@ public class VertexList{
         return registeredVertexs.values();
     }
 
-    // public String deregisterVertex(String id, String ip, Socket socket){
-    //     if(!correctIP(socket, ip)){
-    //         return deRegistrationInfo(StatusCodes.FAILURE_IP);
-    //     }
-    //     else if(!registeredVertexs.containsKey(id)){
-    //         return deRegistrationInfo(StatusCodes.FAILURE);
-    //     }
-    //     else{
-    //         registeredVertexs.remove(id);
-    //         vertexIDs.remove(id);
-    //         return deRegistrationInfo(StatusCodes.SUCCESS);
-    //     }
-    // }
+    public void deregisterVertex(int peerID){
+        registeredVertexs.remove(peerID);
+        System.out.println("Peer Removed from Overlay: " + peerID);
+    }
 
     public boolean inList(Vertex vertex){
         return registeredVertexs.containsKey(vertex.getID());

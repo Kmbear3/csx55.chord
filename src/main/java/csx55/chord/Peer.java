@@ -93,6 +93,9 @@ public class Peer implements Node{
                 case Protocol.DOWNLOAD_RESPONSE:
                     this.fileManager.receiveDownload(new DownloadResponse(event.getBytes()), this.fingerTable);
                     break;
+                case Protocol.MIGRATE_FILE:
+                    this.fileManager.receiveMigratedFile(new MigrateFile(event.getBytes()), this.fingerTable);
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -187,5 +190,17 @@ public class Peer implements Node{
 
     public void downloadFile(String filename) {
         fileManager.downloadFile(filename, fingerTable);
+    }
+
+    public void exitGracefully() {
+        try {
+            this.fileManager.migrateFiles();
+            Deregister dereg = new Deregister(this.peerIP, this.peerPort, this.peerID);
+            this.registrySender.sendData(dereg.getBytes());
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
