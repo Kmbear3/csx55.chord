@@ -23,6 +23,13 @@ public class DownloadRequest implements Protocol, Event{
         hops.add(me);
     }
 
+    //This is the case where you add yourself to the hops after getting the ref to the hops list
+    // Not the first node
+    public DownloadRequest(String filename, ArrayList<PeerEntry> hops){
+        this.filename = filename;
+        this.hops = hops;
+    }
+
     public DownloadRequest(byte[] marshalledBytes){
          try {
             ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
@@ -83,6 +90,13 @@ public class DownloadRequest implements Protocol, Event{
         
         return marshalledBytes;
     }
-    
+
+    public String getFilename(){
+        return this.filename;
+    }
+
+    public ArrayList<PeerEntry> getHops(){
+        return this.hops;
+    }
     
 }
