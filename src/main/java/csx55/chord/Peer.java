@@ -178,4 +178,8 @@ public class Peer implements Node{
     public void printFiles(){
         fileManager.printFiles();
     }
+
+    public void downloadFile(String filename) {
+        fileManager.downloadFile(filename, fingerTable);
+    }
 }

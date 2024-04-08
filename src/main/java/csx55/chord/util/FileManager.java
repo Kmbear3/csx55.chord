@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import csx55.chord.wireformats.DownloadRequest;
 import csx55.chord.wireformats.ForwardFile;
 
 
@@ -102,6 +103,29 @@ public class FileManager {
             }
         }
         
+    }
+
+    public void downloadFile(String filename, FingerTable fingerTable) {
+        PeerEntry peer = fingerTable.lookup(filename.hashCode());
+
+        if(peer.equals(fingerTable.me)){
+            byte[] file = readFromDisk(storeagePath+filename);
+            String userDirectory = System.getProperty("user.dir");
+            writeToDisk(userDirectory+filename, file);
+        }
+        else{
+            fowardDownloadRequest(filename, fingerTable.me, peer);
+        }
+    }
+
+    private void fowardDownloadRequest(String filename, PeerEntry me, PeerEntry peer) {
+        DownloadRequest download = new DownloadRequest(filename, me);
+        try{
+            peer.sendMessage(download.getBytes());
+        }
+        catch(IOException e){
+            System.err.println("Error with forwarding download request " + e.getMessage());
+        }
     }
     
 }

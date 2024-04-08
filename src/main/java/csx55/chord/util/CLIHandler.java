@@ -64,6 +64,14 @@ public class CLIHandler {
             case "neighbors":
                 node.printNeighbors();
                 break;
+            case "download":
+                if(result.length != 2){
+                    System.err.println("Incorrect download command - please try again");
+                }
+                else{
+                    node.downloadFile(result[1]);
+                }
+                break;
             default:
                 System.out.println("Incorrect Instruction. Please try again.");
         }
