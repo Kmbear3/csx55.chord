@@ -87,6 +87,12 @@ public class Peer implements Node{
                 case Protocol.NEW_ADDITION:
                     this.fingerTable.addNewAddition(new NewAddition(event.getBytes()));
                     break;
+                case Protocol.DOWNLOAD_REQUEST:
+                    this.fileManager.receiveDownloadRequest(new DownloadRequest(event.getBytes()), this.fingerTable);
+                    break;
+                case Protocol.DOWNLOAD_RESPONSE:
+                    this.fileManager.receiveDownload(new DownloadResponse(event.getBytes()), this.fingerTable);
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();

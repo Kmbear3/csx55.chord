@@ -11,32 +11,28 @@ import java.util.ArrayList;
 
 import csx55.chord.util.PeerEntry;
 
-public class DownloadRequest implements Protocol, Event{
+public class DownloadResponse implements Event, Protocol{
 
-    ArrayList<PeerEntry> hops = new ArrayList<>();
-    String filename;
-    final int MESSAGE_TYPE = Protocol.DOWNLOAD_REQUEST;
-    
+    ArrayList<PeerEntry> hops;
+    boolean fileFound;
+    byte[] file;
+    String fileName;
+    final int MESSAGE_TYPE = Protocol.DOWNLOAD_RESPONSE;
 
-    public DownloadRequest(String filename, PeerEntry me) {
-        this.filename = filename;
-        hops.add(me);
-    }
-
-    //This is the case where you add yourself to the hops after getting the ref to the hops list
-    // Not the first node
-    public DownloadRequest(String filename, ArrayList<PeerEntry> hops){
-        this.filename = filename;
+    public DownloadResponse(String fileName, ArrayList<PeerEntry> hops, boolean fileFound, byte[] file) {
         this.hops = hops;
+        this.fileFound = fileFound;
+        this.file = file;
+        this.fileName = fileName;
     }
 
-    public DownloadRequest(byte[] marshalledBytes){
-         try {
+    public DownloadResponse(byte[] marshalledBytes){
+        try {
             ByteArrayInputStream baInputStream =  new ByteArrayInputStream(marshalledBytes);
             DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 
             if(din.readInt() != this.MESSAGE_TYPE){
-                System.err.println("Type mismatch in DownloadRequest!!");
+                System.err.println("Type mismatch in DownloadResponse!!");
             }
 
             hops = new ArrayList<>();
@@ -46,10 +42,21 @@ public class DownloadRequest implements Protocol, Event{
                 hops.add(peer);
             }
 
+            this.fileFound = din.readBoolean();
+
+            if(fileFound){
+                int fileLength = din.readInt();
+                this.file = new byte[fileLength];
+                din.readFully(file);
+            }
+            else{
+                this.file = null;
+            }
+
             int filenameLength = din.readInt();
             byte[] filenamebytes = new byte[filenameLength];
             din.readFully(filenamebytes);
-            this.filename = new String(filenamebytes);
+            this.fileName = new String(filenamebytes);
             
             baInputStream.close();
             din.close();
@@ -79,9 +86,15 @@ public class DownloadRequest implements Protocol, Event{
             hops.get(i).marshallPeer(dout);
         }
 
-        byte[] fileBytes = this.filename.getBytes();
-        int elementLength = fileBytes.length;
+        dout.writeBoolean(fileFound);
+
+        int elementLength = file.length;
         dout.writeInt(elementLength);
+        dout.write(file);
+
+        byte[] fileBytes = this.fileName.getBytes();
+        int filenameLength = fileBytes.length;
+        dout.writeInt(filenameLength);
         dout.write(fileBytes);
 
         dout.flush();
@@ -92,12 +105,21 @@ public class DownloadRequest implements Protocol, Event{
         return marshalledBytes;
     }
 
-    public String getFilename(){
-        return this.filename;
+    public byte[] getFile(){
+        return this.file;
     }
 
     public ArrayList<PeerEntry> getHops(){
         return this.hops;
     }
-    
+
+    public boolean getFileStatus(){
+        return this.fileFound;
+    }
+
+    public String getFilename(){
+        return this.fileName;
+    }
+
+
 }

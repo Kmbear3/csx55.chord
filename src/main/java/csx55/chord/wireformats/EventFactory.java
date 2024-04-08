@@ -55,6 +55,10 @@ public class EventFactory {
                     return new NewAddition(marshalledBytes);
                 case Protocol.FORWARD_FILE:
                     return new ForwardFile(marshalledBytes);
+                case Protocol.DOWNLOAD_REQUEST:
+                    return new DownloadRequest(marshalledBytes);
+                case Protocol.DOWNLOAD_RESPONSE:
+                    return new DownloadResponse(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

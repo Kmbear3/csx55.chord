@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import csx55.chord.wireformats.DownloadRequest;
+import csx55.chord.wireformats.DownloadResponse;
 import csx55.chord.wireformats.ForwardFile;
 
 
@@ -125,6 +127,61 @@ public class FileManager {
         }
         catch(IOException e){
             System.err.println("Error with forwarding download request " + e.getMessage());
+        }
+    }
+
+    public void receiveDownloadRequest(DownloadRequest downloadRequest, FingerTable fingerTable) {
+
+        PeerEntry peer = fingerTable.lookup(downloadRequest.getFilename().hashCode());
+        ArrayList<PeerEntry> hops = downloadRequest.getHops();
+        hops.add(fingerTable.me);
+
+        try{ 
+            //If I'm the successor, store the file
+            if(peer.equals(fingerTable.me)){
+                String filePath = storeagePath+downloadRequest.getFilename();
+                File f = new File(filePath);
+                if(f.exists() && !f.isDirectory()) { 
+                    boolean fileFound = true;
+                    byte[] file = readFromDisk(filePath);
+                    DownloadResponse response = new DownloadResponse(downloadRequest.getFilename(), hops, fileFound, file);
+                    hops.get(0).sendMessage(response.getBytes());
+
+                } else{
+                    boolean fileFound = false;
+                    DownloadResponse response = new DownloadResponse(downloadRequest.getFilename(), hops, fileFound, null);
+                    hops.get(0).sendMessage(response.getBytes());
+                }
+            }else{
+                // Forward the file to the next peer in table
+                DownloadRequest forwardRequest = new DownloadRequest(downloadRequest.getFilename(), hops);
+                peer.sendMessage(forwardRequest.getBytes());
+            }
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        
+    }
+
+    public void receiveDownload(DownloadResponse downloadResponse, FingerTable fingerTable) {
+        if(downloadResponse.getFileStatus()){
+            String filename = downloadResponse.getFilename();
+            byte[] file = downloadResponse.getFile();
+
+            String userDirectory = System.getProperty("user.dir");
+            writeToDisk(userDirectory+filename, file);
+
+            // PRint all hops
+            ArrayList<PeerEntry> hops = downloadResponse.getHops();
+            for(int i = 0; i < hops.size(); i ++){
+                System.out.println(hops.get(i).peerID);
+            }
+
+        }else{
+            System.out.println("ERROR: Unable to locate file: " + downloadResponse.getFilename());
         }
     }
     
