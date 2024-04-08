@@ -194,10 +194,12 @@ public class Peer implements Node{
 
     public void exitGracefully() {
         try {
-            this.fileManager.migrateFiles();
+            this.fileManager.migrateFiles(this.fingerTable);
             Deregister dereg = new Deregister(this.peerIP, this.peerPort, this.peerID);
             this.registrySender.sendData(dereg.getBytes());
-            
+
+            // How to notify other nodes that I'm leaving the system??? 
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

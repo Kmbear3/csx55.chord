@@ -192,9 +192,20 @@ public class FileManager {
         writeToDisk(this.storeagePath+migrateFile.getFileName(), migrateFile.getFile());
     }
 
-    public void migrateFiles() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'migrateFiles'");
+    public void migrateFiles(FingerTable fingerTable) {
+        try{
+            File parentDirectory = new File(storeagePath);
+            File[] files = parentDirectory.listFiles();
+
+            for(File file : files){
+                byte[] fileBytes = readFromDisk(this.storeagePath+file.getName());
+                MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
+                fingerTable.succ.sendMessage(migratingFile.getBytes());
+            }
+        }catch(IOException e){
+            System.err.println("Error trying to migrate files: " + e.getMessage());
+        }
+
     }
 }
 
