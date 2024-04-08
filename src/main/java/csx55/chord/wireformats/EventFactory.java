@@ -47,6 +47,18 @@ public class EventFactory {
                     return new InsertResponse(marshalledBytes);
                 case Protocol.NEW_SUCCESSOR:
                     return new NewSuccessor(marshalledBytes);
+                case Protocol.SUCCESSOR_REQUEST:
+                    return new SuccessorRequest(marshalledBytes);
+                case Protocol.SUCCESSOR_RESPONSE:
+                    return new SuccessorResponse(marshalledBytes);
+                case Protocol.NEW_ADDITION:
+                    return new NewAddition(marshalledBytes);
+                case Protocol.FORWARD_FILE:
+                    return new ForwardFile(marshalledBytes);
+                case Protocol.DOWNLOAD_REQUEST:
+                    return new DownloadRequest(marshalledBytes);
+                case Protocol.DOWNLOAD_RESPONSE:
+                    return new DownloadResponse(marshalledBytes);
                 default:
                     System.err.println("Didn't have an event!" + messageType);
                     return null;

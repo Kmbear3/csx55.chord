@@ -12,6 +12,7 @@ import csx55.chord.transport.TCPReceiverThread;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.transport.TCPServerThread;
 import csx55.chord.util.CLIHandler;
+import csx55.chord.util.FileManager;
 import csx55.chord.util.FingerTable;
 import csx55.chord.util.PeerEntry;
 import csx55.chord.util.StatisticsCollectorAndDisplay;
@@ -28,6 +29,7 @@ public class Peer implements Node{
     private TCPServerThread server;
     private TCPSender registrySender;
     private FingerTable fingerTable; 
+    private FileManager fileManager;
 
     public Peer(String registryIP, int registryPort){
         try {
@@ -73,6 +75,24 @@ public class Peer implements Node{
                 case Protocol.NEW_SUCCESSOR:
                     this.fingerTable.newSucessor(new NewSuccessor(event.getBytes()));
                     break;
+                case Protocol.SUCCESSOR_REQUEST:
+                    this.fingerTable.successorRequest(new SuccessorRequest(event.getBytes()));
+                    break;
+                case Protocol.SUCCESSOR_RESPONSE:
+                    this.fingerTable.succesorResponse(new SuccessorResponse(event.getBytes()));
+                    break;
+                case Protocol.FORWARD_FILE:
+                    this.fileManager.receivedFile(new ForwardFile(event.getBytes()), this.fingerTable);
+                    break;
+                case Protocol.NEW_ADDITION:
+                    this.fingerTable.addNewAddition(new NewAddition(event.getBytes()));
+                    break;
+                case Protocol.DOWNLOAD_REQUEST:
+                    this.fileManager.receiveDownloadRequest(new DownloadRequest(event.getBytes()), this.fingerTable);
+                    break;
+                case Protocol.DOWNLOAD_RESPONSE:
+                    this.fileManager.receiveDownload(new DownloadResponse(event.getBytes()), this.fingerTable);
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -109,11 +129,11 @@ public class Peer implements Node{
         if(registeredPeerID != this.peerID){
             this.peerID = registeredPeerID;
         }
-
         // Handle creating findertable
         Vertex responsePeer = regRes.getVertex();
 
         PeerEntry me = new PeerEntry(this.peerIP, this.peerPort, this.peerID);
+        this.fileManager = new FileManager(me.getID());
 
         if(responsePeer.getID() == this.peerID){
             this.fingerTable = new FingerTable(me);
@@ -155,5 +175,17 @@ public class Peer implements Node{
 
     public void printNeighbors() {
         this.fingerTable.neighbors();
+    }
+
+    public void uploadFile(String pathName) {
+        fingerTable.manageFileUpload(pathName, this.fileManager);
+    }
+
+    public void printFiles(){
+        fileManager.printFiles();
+    }
+
+    public void downloadFile(String filename) {
+        fileManager.downloadFile(filename, fingerTable);
     }
 }
