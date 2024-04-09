@@ -29,5 +29,6 @@ public interface Protocol {
     public static final int DOWNLOAD_REQUEST = 24;
     public static final int DOWNLOAD_RESPONSE = 25;
     public static final int MIGRATE_FILE = 26;
+    public static final int EXIT_NOTIFICATION = 27;
 
 }

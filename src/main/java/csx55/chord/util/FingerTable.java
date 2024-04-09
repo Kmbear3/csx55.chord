@@ -238,6 +238,24 @@ public class FingerTable {
             fileManager.readFowardFile(pathName, peer);
         }
     }
-    
+  
+    public void sendSucc(byte[] bytes) {
+        this.succ.sendMessage(bytes);
+    }
 
+    public void handleNodeExit(PeerEntry leavingPeer, PeerEntry leavingPeerSucc) {
+        for(PeerEntry peer : fingerTable){
+            if(peer.equals(leavingPeer)){
+                peer = leavingPeerSucc;
+            }
+        }
+    }   
+
+    public PeerEntry getMe() {
+        return this.me;
+    }
+
+    public PeerEntry getSucc() {
+        return this.succ;
+    }
 }

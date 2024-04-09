@@ -96,6 +96,9 @@ public class Peer implements Node{
                 case Protocol.MIGRATE_FILE:
                     this.fileManager.receiveMigratedFile(new MigrateFile(event.getBytes()), this.fingerTable);
                     break;
+                case Protocol.EXIT_NOTIFICATION:
+                    receiveExitingMessage(new ExitNotification(event.getBytes()));
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -198,11 +201,25 @@ public class Peer implements Node{
             Deregister dereg = new Deregister(this.peerIP, this.peerPort, this.peerID);
             this.registrySender.sendData(dereg.getBytes());
 
-            // How to notify other nodes that I'm leaving the system??? 
+            ExitNotification exiting = new ExitNotification(this.fingerTable.getMe(), this.fingerTable.getSucc());
+            this.fingerTable.sendSucc(exiting.getBytes());
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+
+    public void receiveExitingMessage(ExitNotification exit){
+        System.out.println("Recieved Exiting message: " + exit.getLeavingPeer().getID());
+        if(exit.getLeavingPeer().getID() == this.peerID){
+            System.exit(0);
+        }else{
+            this.fingerTable.handleNodeExit(exit.getLeavingPeer(), exit.getLeavingPeerSucc());
+            try {
+                this.fingerTable.sendSucc(exit.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
