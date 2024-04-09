@@ -173,7 +173,10 @@ public class FileManager {
             byte[] file = downloadResponse.getFile();
 
             String userDirectory = System.getProperty("user.dir");
-            writeToDisk(userDirectory+filename, file);
+            System.out.println("Received download: " + userDirectory);
+            System.out.println("Bytes: " + file);
+
+            writeToDisk(userDirectory+"/"+filename, file);
 
             // PRint all hops
             ArrayList<PeerEntry> hops = downloadResponse.getHops();

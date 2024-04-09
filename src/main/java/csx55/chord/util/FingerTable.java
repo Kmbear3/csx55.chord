@@ -244,11 +244,14 @@ public class FingerTable {
     }
 
     public void handleNodeExit(PeerEntry leavingPeer, PeerEntry leavingPeerSucc) {
-        for(PeerEntry peer : fingerTable){
-            if(peer.equals(leavingPeer)){
-                peer = leavingPeerSucc;
+        for(int i = 0 ; i < fingerTable.length; i++){
+            if(fingerTable[i].equals(leavingPeer)){
+                fingerTable[i] = leavingPeerSucc;
+
             }
         }
+
+        //TOD0: Pred is also not being updated
     }   
 
     public PeerEntry getMe() {

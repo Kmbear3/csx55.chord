@@ -210,13 +210,13 @@ public class Peer implements Node{
     }
 
     public void receiveExitingMessage(ExitNotification exit){
-        System.out.println("Recieved Exiting message: " + exit.getLeavingPeer().getID());
+        System.out.println("Recieved Exiting message: " + exit.getLeavingPeer());
         if(exit.getLeavingPeer().getID() == this.peerID){
             System.exit(0);
         }else{
-            this.fingerTable.handleNodeExit(exit.getLeavingPeer(), exit.getLeavingPeerSucc());
             try {
                 this.fingerTable.sendSucc(exit.getBytes());
+                this.fingerTable.handleNodeExit(exit.getLeavingPeer(), exit.getLeavingPeerSucc());
             } catch (IOException e) {
                 e.printStackTrace();
             }
