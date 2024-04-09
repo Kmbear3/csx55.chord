@@ -201,9 +201,12 @@ public class Peer implements Node{
             Deregister dereg = new Deregister(this.peerIP, this.peerPort, this.peerID);
             this.registrySender.sendData(dereg.getBytes());
 
+            // NotifySuccessor notifySucc = new NotifySuccessor(this.fingerTable.getMe(), this.fingerTable.getPred());
+
             ExitNotification exiting = new ExitNotification(this.fingerTable.getMe(), this.fingerTable.getSucc());
             this.fingerTable.sendSucc(exiting.getBytes());
 
+            // Thread.sleep(1000);
         } catch (IOException e) {
             e.printStackTrace();
         }
