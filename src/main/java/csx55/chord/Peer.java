@@ -223,7 +223,6 @@ public class Peer implements Node{
     }
 
     public void receiveExitingMessage(ExitNotification exit){
-        System.out.println("Recieved Exiting message: " + exit.getLeavingPeer());
         if(exit.getLeavingPeer().getID() == this.peerID){
             System.exit(0);
         }else{
