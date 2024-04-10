@@ -272,5 +272,8 @@ public class FingerTable {
     public void setPred(PeerEntry newPred) {
         this.pred = newPred;
     }
-    
+
+    public void sendPred(byte[] message){
+        this.pred.sendMessage(message);
+    }
 }
