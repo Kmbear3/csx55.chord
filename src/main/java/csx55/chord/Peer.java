@@ -3,10 +3,6 @@ package csx55.chord;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import csx55.chord.node.Node;
 import csx55.chord.transport.TCPReceiverThread;
 import csx55.chord.transport.TCPSender;
@@ -15,9 +11,7 @@ import csx55.chord.util.CLIHandler;
 import csx55.chord.util.FileManager;
 import csx55.chord.util.FingerTable;
 import csx55.chord.util.PeerEntry;
-import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.Vertex;
-import csx55.chord.util.VertexList;
 import csx55.chord.wireformats.*;
 
 public class Peer implements Node{
