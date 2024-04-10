@@ -244,6 +244,9 @@ public class FingerTable {
     }
 
     public void handleNodeExit(PeerEntry leavingPeer, PeerEntry leavingPeerSucc) {
+        if(leavingPeer.equals(this.succ)){
+            this.succ = leavingPeerSucc;
+        }
         for(int i = 0 ; i < fingerTable.length; i++){
             if(fingerTable[i].equals(leavingPeer)){
                 fingerTable[i] = leavingPeerSucc;
@@ -261,4 +264,13 @@ public class FingerTable {
     public PeerEntry getSucc() {
         return this.succ;
     }
+
+    public PeerEntry getPred() {
+        return this.pred;
+    }
+
+    public void setPred(PeerEntry newPred) {
+        this.pred = newPred;
+    }
+    
 }

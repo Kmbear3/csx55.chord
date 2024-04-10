@@ -99,6 +99,9 @@ public class Peer implements Node{
                 case Protocol.EXIT_NOTIFICATION:
                     receiveExitingMessage(new ExitNotification(event.getBytes()));
                     break;
+                case Protocol.NOTIFY_SUCCESSOR:
+                    receiveSuccessorExitingMessage(new NotifySuccessor(event.getBytes()));
+                    break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
                     poke.printPoke();
@@ -119,6 +122,17 @@ public class Peer implements Node{
         } catch (IOException e) {
             System.err.println("Error: MessagingNode.onEvent()");
             e.printStackTrace();
+        }
+    }
+
+    private void receiveSuccessorExitingMessage(NotifySuccessor notifySuccessor) {
+        // My predecessor is leaving, I need to set my pred to their pred
+        PeerEntry myPred = this.fingerTable.getPred();
+
+        if(myPred.equals(notifySuccessor.getLeavingPeer())){
+            this.fingerTable.setPred(notifySuccessor.getLeavingPeerPred());
+        }else{
+            System.err.println("Predecessor unmatched! Received Wrong message");
         }
     }
 
@@ -201,7 +215,9 @@ public class Peer implements Node{
             Deregister dereg = new Deregister(this.peerIP, this.peerPort, this.peerID);
             this.registrySender.sendData(dereg.getBytes());
 
-            // NotifySuccessor notifySucc = new NotifySuccessor(this.fingerTable.getMe(), this.fingerTable.getPred());
+            // Notifying Successor Leaving, predesssesor needs to be updated. 
+            NotifySuccessor notifySucc = new NotifySuccessor(this.fingerTable.getMe(), this.fingerTable.getPred());
+            this.fingerTable.sendPred(notifySucc.getBytes());
 
             ExitNotification exiting = new ExitNotification(this.fingerTable.getMe(), this.fingerTable.getSucc());
             this.fingerTable.sendSucc(exiting.getBytes());
