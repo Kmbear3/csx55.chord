@@ -13,7 +13,7 @@ import csx55.chord.util.PeerEntry;
 
 public class NotifySuccessor implements Event, Protocol{
 
-    int MESSAGE_TYPE = Protocol.EXIT_NOTIFICATION;
+    int MESSAGE_TYPE = Protocol.NOTIFY_SUCCESSOR;
 
     PeerEntry me;
     PeerEntry pred;

@@ -246,6 +246,8 @@ public class FingerTable {
     public void handleNodeExit(PeerEntry leavingPeer, PeerEntry leavingPeerSucc) {
         if(leavingPeer.equals(this.succ)){
             this.succ = leavingPeerSucc;
+            System.out.println("New successor: " + leavingPeerSucc.toString());
+            System.out.println("Old successor: " + leavingPeer.toString());
         }
         for(int i = 0 ; i < fingerTable.length; i++){
             if(fingerTable[i].equals(leavingPeer)){

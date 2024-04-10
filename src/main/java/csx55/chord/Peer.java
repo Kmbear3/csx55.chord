@@ -130,8 +130,15 @@ public class Peer implements Node{
         PeerEntry myPred = this.fingerTable.getPred();
 
         if(myPred.equals(notifySuccessor.getLeavingPeer())){
+            System.out.println("New Predecessor: " + notifySuccessor.getLeavingPeerPred().toString());
             this.fingerTable.setPred(notifySuccessor.getLeavingPeerPred());
+            System.out.println("Old Predecessor: " + myPred.toString());
+            
+            System.out.println("set pred: " + this.fingerTable.getPred().toString());
+
         }else{
+            System.out.println("My pred: " + myPred.toString());
+            System.out.println("Leaving node: " + notifySuccessor.getLeavingPeer().toString());
             System.err.println("Predecessor unmatched! Received Wrong message");
         }
     }
@@ -217,7 +224,7 @@ public class Peer implements Node{
 
             // Notifying Successor Leaving, predesssesor needs to be updated. 
             NotifySuccessor notifySucc = new NotifySuccessor(this.fingerTable.getMe(), this.fingerTable.getPred());
-            this.fingerTable.sendPred(notifySucc.getBytes());
+            this.fingerTable.sendSucc(notifySucc.getBytes());
 
             ExitNotification exiting = new ExitNotification(this.fingerTable.getMe(), this.fingerTable.getSucc());
             this.fingerTable.sendSucc(exiting.getBytes());
