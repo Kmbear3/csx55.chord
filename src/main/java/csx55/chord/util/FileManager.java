@@ -208,7 +208,6 @@ public class FileManager {
         }catch(IOException e){
             System.err.println("Error trying to migrate files: " + e.getMessage());
         }
-
     }
 }
 

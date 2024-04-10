@@ -1,5 +1,6 @@
 package csx55.chord.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -9,6 +10,7 @@ import csx55.chord.Peer;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.wireformats.InsertRequest;
 import csx55.chord.wireformats.InsertResponse;
+import csx55.chord.wireformats.MigrateFile;
 import csx55.chord.wireformats.NewAddition;
 import csx55.chord.wireformats.NewSuccessor;
 import csx55.chord.wireformats.SuccessorRequest;
@@ -195,7 +197,7 @@ public class FingerTable {
         }
     }
 
-    public void addNewAddition(NewAddition newAddition) {
+    public void addNewAddition(NewAddition newAddition, FileManager fileManager) {
         try {
             if(!newAddition.getNode().equals(me)){
                 System.out.println("Recieved new Addition notification: " + newAddition.getNode().getID());
@@ -273,6 +275,21 @@ public class FingerTable {
 
     public void setPred(PeerEntry newPred) {
         this.pred = newPred;
+        // If my predecessor changes, I need to send it files I'm responsible for. 
+
+
+        // if(!fileHash.isBetween(me and pred))
+        // Send file to pred, condition is no longer correct. 
+
+        // File parentDirectory = new File(storeagePath);
+        // File[] files = parentDirectory.listFiles();
+
+        // for(File file : files){
+        //     byte[] fileBytes = readFromDisk(this.storeagePath+file.getName());
+        //     MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
+        //     fingerTable.succ.sendMessage(migratingFile.getBytes());
+        // }
+        
     }
 
     public void sendPred(byte[] message){

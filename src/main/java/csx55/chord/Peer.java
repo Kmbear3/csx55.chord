@@ -79,7 +79,7 @@ public class Peer implements Node{
                     this.fileManager.receivedFile(new ForwardFile(event.getBytes()), this.fingerTable);
                     break;
                 case Protocol.NEW_ADDITION:
-                    this.fingerTable.addNewAddition(new NewAddition(event.getBytes()));
+                    this.fingerTable.addNewAddition(new NewAddition(event.getBytes()), this.fileManager);
                     break;
                 case Protocol.DOWNLOAD_REQUEST:
                     this.fileManager.receiveDownloadRequest(new DownloadRequest(event.getBytes()), this.fingerTable);
