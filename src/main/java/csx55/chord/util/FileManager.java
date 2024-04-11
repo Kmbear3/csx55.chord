@@ -30,7 +30,7 @@ public class FileManager {
         }
     }
 
-    public byte[] readFromDisk(String filepath){
+    public static byte[] readFromDisk(String filepath){
         try {
             byte[] bytes = Files.readAllBytes(Paths.get(filepath));
             return bytes;
@@ -42,7 +42,7 @@ public class FileManager {
 
     }
 
-    public void writeToDisk(String outputFilePath, byte[] bytes){
+    public static void writeToDisk(String outputFilePath, byte[] bytes){
 
         File outputFile = new File(outputFilePath);
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
@@ -185,6 +185,7 @@ public class FileManager {
             }
 
         }else{
+            // Need to test this! 
             System.out.println("ERROR: Unable to locate file: " + downloadResponse.getFilename());
         }
     }

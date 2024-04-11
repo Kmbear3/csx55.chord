@@ -15,6 +15,7 @@ import csx55.chord.wireformats.NewAddition;
 import csx55.chord.wireformats.NewSuccessor;
 import csx55.chord.wireformats.SuccessorRequest;
 import csx55.chord.wireformats.SuccessorResponse;
+import csx55.chord.util.FileManager;;
 
 public class FingerTable {
 
@@ -72,7 +73,10 @@ public class FingerTable {
         try{
             this.fingerTable = insertResponse.getFingerTable();
             this.succ = insertResponse.getSucc();
-            this.pred = insertResponse.getPred();
+            // this.pred = insertResponse.getPred();
+
+            setPred(insertResponse.getPred());
+
 
             NewSuccessor newSuccessor = new NewSuccessor(me);
             pred.sendMessage(newSuccessor.getBytes());
@@ -108,7 +112,8 @@ public class FingerTable {
             
             newPred.sendMessage(newAddition.getBytes());
 
-            this.pred = newPred;
+            // this.pred = newPred;
+            setPred(newPred);
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -275,21 +280,22 @@ public class FingerTable {
 
     public void setPred(PeerEntry newPred) {
         this.pred = newPred;
-        // If my predecessor changes, I need to send it files I'm responsible for. 
-
-
-        // if(!fileHash.isBetween(me and pred))
-        // Send file to pred, condition is no longer correct. 
-
-        // File parentDirectory = new File(storeagePath);
-        // File[] files = parentDirectory.listFiles();
-
-        // for(File file : files){
-        //     byte[] fileBytes = readFromDisk(this.storeagePath+file.getName());
-        //     MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
-        //     fingerTable.succ.sendMessage(migratingFile.getBytes());
-        // }
         
+        String storeagePath = "/tmp/" + me.peerID + "/";
+        File parentDirectory = new File(storeagePath);
+        File[] files = parentDirectory.listFiles();
+
+        try{
+            for(File file : files){
+                if(!isBetween(me.peerID, pred.peerID, file.getName().hashCode())){
+                    byte[] fileBytes = FileManager.readFromDisk(storeagePath+file.getName());
+                    MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
+                    this.pred.sendMessage(migratingFile.getBytes());
+                }
+            }
+        }catch(IOException e){
+            System.err.println("Error experienced migrating files to pred: " + e.getMessage());
+        }
     }
 
     public void sendPred(byte[] message){
