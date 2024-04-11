@@ -300,8 +300,9 @@ public class FingerTable {
                     byte[] fileBytes = FileManager.readFromDisk(storeagePath+file.getName());
                     MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
                     this.pred.sendMessage(migratingFile.getBytes());
-                    
+
                     // Remove file after sending
+                    // I DO NOT LIKE THIS REMOVE!!!!!
                     file.delete();
                 }
             }
