@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import csx55.chord.Peer;
@@ -73,10 +75,7 @@ public class FingerTable {
         try{
             this.fingerTable = insertResponse.getFingerTable();
             this.succ = insertResponse.getSucc();
-            // this.pred = insertResponse.getPred();
-
-            setPred(insertResponse.getPred());
-
+            this.pred = insertResponse.getPred();
 
             NewSuccessor newSuccessor = new NewSuccessor(me);
             pred.sendMessage(newSuccessor.getBytes());
@@ -101,6 +100,9 @@ public class FingerTable {
     }
 
     public void handleNodeAdditionRequest(InsertRequest insertRequest) {
+        // THis is when my new predecessor joins
+        // I am its successor, and I give it my fingertable and my predecessor information
+        // Transfer any files that need to be transferred to the new pred
         try {
 
             String newPredIP = insertRequest.getIP();
@@ -113,9 +115,11 @@ public class FingerTable {
             newPred.sendMessage(newAddition.getBytes());
 
             // this.pred = newPred;
+            System.out.println("Setting my NEW pred: " + newPred.toString());
+            Thread.sleep(1000);
             setPred(newPred);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -168,9 +172,11 @@ public class FingerTable {
     }
 
     public void successorRequest(SuccessorRequest successorRequest) {
+        // Looking for a nodes sucessor
         PeerEntry peer = lookup(successorRequest.getTargetNode().getID());
 
         try {
+            // If the peer is me, I am the new nodes successor responsed
             if(peer.equals(me)){
                 SuccessorResponse successorResponse = new SuccessorResponse(me);
                 PeerEntry requestingNode = successorRequest.getRequestingNode();
@@ -287,10 +293,16 @@ public class FingerTable {
 
         try{
             for(File file : files){
-                if(!isBetween(me.peerID, pred.peerID, file.getName().hashCode())){
+                System.out.println("file: " + file.getName() + " " + file.getName().hashCode());
+                System.out.println("this is my pred: " + this.pred.getID());
+                if(isBetween(me.peerID, this.pred.peerID, file.getName().hashCode())){
+                    System.out.println("file need to be sent to pred!");
                     byte[] fileBytes = FileManager.readFromDisk(storeagePath+file.getName());
                     MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
                     this.pred.sendMessage(migratingFile.getBytes());
+                    
+                    // Remove file after sending
+                    file.delete();
                 }
             }
         }catch(IOException e){
