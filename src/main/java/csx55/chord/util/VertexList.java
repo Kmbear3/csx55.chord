@@ -27,7 +27,7 @@ public class VertexList{
 
             RegisterationResponse registerationResponse;
 
-            System.out.println("- Received RegReq -\n" + regReq.getIP() + "\n" + regReq.getPort() + "\n" + regReq.getPeerId());
+            // System.out.println("- Received RegReq -\n" + regReq.getIP() + "\n" + regReq.getPort() + "\n" + regReq.getPeerId());
             
             if(correctIP(vertex) == true){
                 int peerID = addToList(vertex);
@@ -44,7 +44,7 @@ public class VertexList{
             }
             
             vertex.sendMessage(registerationResponse.getBytes());
-            System.out.println("Number of Nodes is Overlay: " + registeredVertexs.size());
+            // System.out.println("Number of Nodes is Overlay: " + registeredVertexs.size());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -101,7 +101,7 @@ public class VertexList{
 
     public void deregisterVertex(int peerID){
         registeredVertexs.remove(peerID);
-        System.out.println("Peer Removed from Overlay: " + peerID);
+        // System.out.println("Peer Removed from Overlay: " + peerID);
     }
 
     public boolean inList(Vertex vertex){

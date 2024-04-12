@@ -173,8 +173,8 @@ public class FileManager {
             byte[] file = downloadResponse.getFile();
 
             String userDirectory = System.getProperty("user.dir");
-            System.out.println("Received download: " + userDirectory);
-            System.out.println("Bytes: " + file);
+            // System.out.println("Received download: " + userDirectory);
+            // System.out.println("Bytes: " + file);
 
             writeToDisk(userDirectory+"/"+filename, file);
 

@@ -115,7 +115,7 @@ public class FingerTable {
             newPred.sendMessage(newAddition.getBytes());
 
             // this.pred = newPred;
-            System.out.println("Setting my NEW pred: " + newPred.toString());
+            // System.out.println("Setting my NEW pred: " + newPred.toString());
             Thread.sleep(1000);
             setPred(newPred);
 
@@ -211,7 +211,7 @@ public class FingerTable {
     public void addNewAddition(NewAddition newAddition, FileManager fileManager) {
         try {
             if(!newAddition.getNode().equals(me)){
-                System.out.println("Recieved new Addition notification: " + newAddition.getNode().getID());
+                // System.out.println("Recieved new Addition notification: " + newAddition.getNode().getID());
                 updateTable(newAddition.getNode());
                 
                 if(!succ.equals(me)){
@@ -232,7 +232,7 @@ public class FingerTable {
                 fingerTable[i] = node;
             }   
 
-            System.out.println(i + " k: " + fingerTableRow + " succ: " + fingerTable[i].getID());
+            // System.out.println(i + " k: " + fingerTableRow + " succ: " + fingerTable[i].getID());
         }
         
     }
@@ -259,8 +259,8 @@ public class FingerTable {
     public void handleNodeExit(PeerEntry leavingPeer, PeerEntry leavingPeerSucc) {
         if(leavingPeer.equals(this.succ)){
             this.succ = leavingPeerSucc;
-            System.out.println("New successor: " + leavingPeerSucc.toString());
-            System.out.println("Old successor: " + leavingPeer.toString());
+            // System.out.println("New successor: " + leavingPeerSucc.toString());
+            // System.out.println("Old successor: " + leavingPeer.toString());
         }
         for(int i = 0 ; i < fingerTable.length; i++){
             if(fingerTable[i].equals(leavingPeer)){
@@ -293,10 +293,10 @@ public class FingerTable {
 
         try{
             for(File file : files){
-                System.out.println("file: " + file.getName() + " " + file.getName().hashCode());
-                System.out.println("this is my pred: " + this.pred.getID());
+                // System.out.println("file: " + file.getName() + " " + file.getName().hashCode());
+                // System.out.println("this is my pred: " + this.pred.getID());
                 if(isBetween(me.peerID, this.pred.peerID, file.getName().hashCode())){
-                    System.out.println("file need to be sent to pred!");
+                    // System.out.println("file need to be sent to pred!");
                     byte[] fileBytes = FileManager.readFromDisk(storeagePath+file.getName());
                     MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
                     this.pred.sendMessage(migratingFile.getBytes());

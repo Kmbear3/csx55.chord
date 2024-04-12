@@ -40,7 +40,7 @@ public class Peer implements Node{
             this.peerID = getName().hashCode();
 
 
-            System.out.println("My IP: " + this.peerIP + "\nMy Port: " + this.peerPort + "\nMy PeerID: " + this.peerID);
+            // System.out.println("My IP: " + this.peerIP + "\nMy Port: " + this.peerPort + "\nMy PeerID: " + this.peerID);
 
             RegistrationRequest regReq = new RegistrationRequest(peerIP, peerPort, peerID);
             registrySender.sendData(regReq.getBytes());
@@ -138,7 +138,7 @@ public class Peer implements Node{
 
     public void handleRegisterationResponse(RegisterationResponse regRes){
         int registeredPeerID = regRes.getPeerID();
-        System.out.println("Registered ID: " + registeredPeerID);
+        // System.out.println("Registered ID: " + registeredPeerID);
 
         if(registeredPeerID != this.peerID){
             this.peerID = registeredPeerID;
