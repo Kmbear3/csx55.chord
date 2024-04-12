@@ -8,6 +8,8 @@ import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.VertexList;
 import csx55.chord.wireformats.Event;
 import csx55.chord .wireformats.Protocol;
+import csx55.chord .wireformats.Deregister;
+
 
 public class Discovery implements Node {
     int port;
@@ -29,10 +31,10 @@ public class Discovery implements Node {
                 case Protocol.REGISTER_REQUEST:
                     vertexList.registerVertex(event, socket);
                     break;
-                // case Protocol.DEREGISTER_REQUEST:
-                //     Deregister deregister = new Deregister(event.getBytes());
-                //     deregisterNode(deregister, socket);
-                //     break;
+                case Protocol.DEREGISTER_REQUEST:
+                    Deregister deregister = new Deregister(event.getBytes());
+                    deregisterNode(deregister, socket);
+                    break;
                 default:
                     System.out.println("Protocol Unmatched!");
                     System.exit(0);
@@ -43,21 +45,9 @@ public class Discovery implements Node {
 
     }
     
-    // public void deregisterNode(Deregister deregister, Socket socket){
-    //     try {
-
-    //         String additionalInfo = vertexList.deregisterVertex(deregister.getID(), deregister.getIP(), socket);
-    //         DeregisterResponse deregisterResponse = new DeregisterResponse(deregister.getStatus(), additionalInfo);
-
-    //         TCPSender send = new TCPSender(socket);
-    //         send.sendData(deregisterResponse.getBytes());
-
-
-    //     } catch (IOException e) {
-    //         // TODO Auto-generated catch block
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void deregisterNode(Deregister deregister, Socket socket){
+        vertexList.deregisterVertex(deregister.getPeerID());
+    }
 
     public void configureServer(Node node, int port){
         TCPServerThread tcpServer = new TCPServerThread(this, port);

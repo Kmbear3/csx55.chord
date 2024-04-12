@@ -1,18 +1,23 @@
 package csx55.chord.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import csx55.chord.Peer;
 import csx55.chord.transport.TCPSender;
 import csx55.chord.wireformats.InsertRequest;
 import csx55.chord.wireformats.InsertResponse;
+import csx55.chord.wireformats.MigrateFile;
 import csx55.chord.wireformats.NewAddition;
 import csx55.chord.wireformats.NewSuccessor;
 import csx55.chord.wireformats.SuccessorRequest;
 import csx55.chord.wireformats.SuccessorResponse;
+import csx55.chord.util.FileManager;;
 
 public class FingerTable {
 
@@ -95,6 +100,9 @@ public class FingerTable {
     }
 
     public void handleNodeAdditionRequest(InsertRequest insertRequest) {
+        // THis is when my new predecessor joins
+        // I am its successor, and I give it my fingertable and my predecessor information
+        // Transfer any files that need to be transferred to the new pred
         try {
 
             String newPredIP = insertRequest.getIP();
@@ -106,9 +114,12 @@ public class FingerTable {
             
             newPred.sendMessage(newAddition.getBytes());
 
-            this.pred = newPred;
+            // this.pred = newPred;
+            // System.out.println("Setting my NEW pred: " + newPred.toString());
+            Thread.sleep(1000);
+            setPred(newPred);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -161,9 +172,11 @@ public class FingerTable {
     }
 
     public void successorRequest(SuccessorRequest successorRequest) {
+        // Looking for a nodes sucessor
         PeerEntry peer = lookup(successorRequest.getTargetNode().getID());
 
         try {
+            // If the peer is me, I am the new nodes successor responsed
             if(peer.equals(me)){
                 SuccessorResponse successorResponse = new SuccessorResponse(me);
                 PeerEntry requestingNode = successorRequest.getRequestingNode();
@@ -195,10 +208,10 @@ public class FingerTable {
         }
     }
 
-    public void addNewAddition(NewAddition newAddition) {
+    public void addNewAddition(NewAddition newAddition, FileManager fileManager) {
         try {
             if(!newAddition.getNode().equals(me)){
-                System.out.println("Recieved new Addition notification: " + newAddition.getNode().getID());
+                // System.out.println("Recieved new Addition notification: " + newAddition.getNode().getID());
                 updateTable(newAddition.getNode());
                 
                 if(!succ.equals(me)){
@@ -219,7 +232,7 @@ public class FingerTable {
                 fingerTable[i] = node;
             }   
 
-            System.out.println(i + " k: " + fingerTableRow + " succ: " + fingerTable[i].getID());
+            // System.out.println(i + " k: " + fingerTableRow + " succ: " + fingerTable[i].getID());
         }
         
     }
@@ -238,6 +251,67 @@ public class FingerTable {
             fileManager.readFowardFile(pathName, peer);
         }
     }
-    
+  
+    public void sendSucc(byte[] bytes) {
+        this.succ.sendMessage(bytes);
+    }
 
+    public void handleNodeExit(PeerEntry leavingPeer, PeerEntry leavingPeerSucc) {
+        if(leavingPeer.equals(this.succ)){
+            this.succ = leavingPeerSucc;
+            // System.out.println("New successor: " + leavingPeerSucc.toString());
+            // System.out.println("Old successor: " + leavingPeer.toString());
+        }
+        for(int i = 0 ; i < fingerTable.length; i++){
+            if(fingerTable[i].equals(leavingPeer)){
+                fingerTable[i] = leavingPeerSucc;
+
+            }
+        }
+
+        //TOD0: Pred is also not being updated
+    }   
+
+    public PeerEntry getMe() {
+        return this.me;
+    }
+
+    public PeerEntry getSucc() {
+        return this.succ;
+    }
+
+    public PeerEntry getPred() {
+        return this.pred;
+    }
+
+    public void setPred(PeerEntry newPred) {
+        this.pred = newPred;
+        
+        String storeagePath = "/tmp/" + me.peerID + "/";
+        File parentDirectory = new File(storeagePath);
+        File[] files = parentDirectory.listFiles();
+
+        try{
+            for(File file : files){
+                // System.out.println("file: " + file.getName() + " " + file.getName().hashCode());
+                // System.out.println("this is my pred: " + this.pred.getID());
+                if(isBetween(me.peerID, this.pred.peerID, file.getName().hashCode())){
+                    // System.out.println("file need to be sent to pred!");
+                    byte[] fileBytes = FileManager.readFromDisk(storeagePath+file.getName());
+                    MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
+                    this.pred.sendMessage(migratingFile.getBytes());
+
+                    // Remove file after sending
+                    // I DO NOT LIKE THIS REMOVE!!!!!
+                    file.delete();
+                }
+            }
+        }catch(IOException e){
+            System.err.println("Error experienced migrating files to pred: " + e.getMessage());
+        }
+    }
+
+    public void sendPred(byte[] message){
+        this.pred.sendMessage(message);
+    }
 }

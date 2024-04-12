@@ -18,12 +18,12 @@ public class Deregister implements Event, Protocol{
     final int MESSAGE_TYPE = Protocol.DEREGISTER_REQUEST;
     String IP;
     int port;
-    int STATUS;
+    int peerID;
 
-    public Deregister(String IP, int port, int statusCode){
+    public Deregister(String IP, int port, int peerID){
         this.IP = IP;
         this.port = port;
-        this.STATUS = statusCode;
+        this.peerID = peerID;
     }
 
     public Deregister(byte[] marshalledBytes) throws IOException {
@@ -43,7 +43,7 @@ public class Deregister implements Event, Protocol{
 
         this.port = din.readInt();
 
-        this.STATUS = din.readInt();
+        this.peerID = din.readInt();
 
         baInputStream.close();
         din.close();
@@ -62,8 +62,8 @@ public class Deregister implements Event, Protocol{
         return this.IP + ":" + this.port;
     }
 
-    public int getStatus(){
-        return this.STATUS;
+    public int getPeerID(){
+        return this.peerID;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Deregister implements Event, Protocol{
         dout.write(IPBytes);
 
         dout.writeInt(this.port);
-        dout.writeInt(this.STATUS);
+        dout.writeInt(this.peerID);
         
         dout.flush();
         marshalledBytes = baOutputStream.toByteArray();

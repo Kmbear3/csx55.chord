@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import csx55.chord.wireformats.DownloadRequest;
 import csx55.chord.wireformats.DownloadResponse;
 import csx55.chord.wireformats.ForwardFile;
+import csx55.chord.wireformats.MigrateFile;
 
 
 public class FileManager {
@@ -29,7 +30,7 @@ public class FileManager {
         }
     }
 
-    public byte[] readFromDisk(String filepath){
+    public static byte[] readFromDisk(String filepath){
         try {
             byte[] bytes = Files.readAllBytes(Paths.get(filepath));
             return bytes;
@@ -41,7 +42,7 @@ public class FileManager {
 
     }
 
-    public void writeToDisk(String outputFilePath, byte[] bytes){
+    public static void writeToDisk(String outputFilePath, byte[] bytes){
 
         File outputFile = new File(outputFilePath);
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
@@ -172,7 +173,10 @@ public class FileManager {
             byte[] file = downloadResponse.getFile();
 
             String userDirectory = System.getProperty("user.dir");
-            writeToDisk(userDirectory+filename, file);
+            // System.out.println("Received download: " + userDirectory);
+            // System.out.println("Bytes: " + file);
+
+            writeToDisk(userDirectory+"/"+filename, file);
 
             // PRint all hops
             ArrayList<PeerEntry> hops = downloadResponse.getHops();
@@ -181,10 +185,31 @@ public class FileManager {
             }
 
         }else{
+            // Need to test this! 
             System.out.println("ERROR: Unable to locate file: " + downloadResponse.getFilename());
         }
     }
-    
+
+    public void receiveMigratedFile(MigrateFile migrateFile, FingerTable fingerTable) {
+
+        // Should probably check to see if I'm the one to store the file
+        writeToDisk(this.storeagePath+migrateFile.getFileName(), migrateFile.getFile());
+    }
+
+    public void migrateFiles(FingerTable fingerTable) {
+        try{
+            File parentDirectory = new File(storeagePath);
+            File[] files = parentDirectory.listFiles();
+
+            for(File file : files){
+                byte[] fileBytes = readFromDisk(this.storeagePath+file.getName());
+                MigrateFile migratingFile = new MigrateFile(file.getName(), fileBytes);
+                fingerTable.succ.sendMessage(migratingFile.getBytes());
+            }
+        }catch(IOException e){
+            System.err.println("Error trying to migrate files: " + e.getMessage());
+        }
+    }
 }
 
 

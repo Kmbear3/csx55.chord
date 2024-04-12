@@ -28,4 +28,9 @@ public interface Protocol {
     public static final int FORWARD_FILE = 23;
     public static final int DOWNLOAD_REQUEST = 24;
     public static final int DOWNLOAD_RESPONSE = 25;
+    public static final int MIGRATE_FILE = 26;
+    public static final int EXIT_NOTIFICATION = 27;
+    public static final int NOTIFY_SUCCESSOR = 28;
+
+
 }

@@ -3,10 +3,6 @@ package csx55.chord;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import csx55.chord.node.Node;
 import csx55.chord.transport.TCPReceiverThread;
 import csx55.chord.transport.TCPSender;
@@ -15,9 +11,7 @@ import csx55.chord.util.CLIHandler;
 import csx55.chord.util.FileManager;
 import csx55.chord.util.FingerTable;
 import csx55.chord.util.PeerEntry;
-import csx55.chord.util.StatisticsCollectorAndDisplay;
 import csx55.chord.util.Vertex;
-import csx55.chord.util.VertexList;
 import csx55.chord.wireformats.*;
 
 public class Peer implements Node{
@@ -46,7 +40,7 @@ public class Peer implements Node{
             this.peerID = getName().hashCode();
 
 
-            System.out.println("My IP: " + this.peerIP + "\nMy Port: " + this.peerPort + "\nMy PeerID: " + this.peerID);
+            // System.out.println("My IP: " + this.peerIP + "\nMy Port: " + this.peerPort + "\nMy PeerID: " + this.peerID);
 
             RegistrationRequest regReq = new RegistrationRequest(peerIP, peerPort, peerID);
             registrySender.sendData(regReq.getBytes());
@@ -85,13 +79,22 @@ public class Peer implements Node{
                     this.fileManager.receivedFile(new ForwardFile(event.getBytes()), this.fingerTable);
                     break;
                 case Protocol.NEW_ADDITION:
-                    this.fingerTable.addNewAddition(new NewAddition(event.getBytes()));
+                    this.fingerTable.addNewAddition(new NewAddition(event.getBytes()), this.fileManager);
                     break;
                 case Protocol.DOWNLOAD_REQUEST:
                     this.fileManager.receiveDownloadRequest(new DownloadRequest(event.getBytes()), this.fingerTable);
                     break;
                 case Protocol.DOWNLOAD_RESPONSE:
                     this.fileManager.receiveDownload(new DownloadResponse(event.getBytes()), this.fingerTable);
+                    break;
+                case Protocol.MIGRATE_FILE:
+                    this.fileManager.receiveMigratedFile(new MigrateFile(event.getBytes()), this.fingerTable);
+                    break;
+                case Protocol.EXIT_NOTIFICATION:
+                    receiveExitingMessage(new ExitNotification(event.getBytes()));
+                    break;
+                case Protocol.NOTIFY_SUCCESSOR:
+                    receiveSuccessorExitingMessage(new NotifySuccessor(event.getBytes()));
                     break;
                 case Protocol.POKE:
                     Poke poke = new Poke(event.getBytes());
@@ -116,6 +119,17 @@ public class Peer implements Node{
         }
     }
 
+    private void receiveSuccessorExitingMessage(NotifySuccessor notifySuccessor) {
+        // My predecessor is leaving, I need to set my pred to their pred
+        PeerEntry myPred = this.fingerTable.getPred();
+
+        if(myPred.equals(notifySuccessor.getLeavingPeer())){
+            this.fingerTable.setPred(notifySuccessor.getLeavingPeerPred());
+        }else{
+            System.err.println("Predecessor unmatched! Received Wrong message");
+        }
+    }
+
     public void configureServer(Node node){
         this.server = new TCPServerThread(node); 
         Thread serverThread = new Thread(server);
@@ -124,7 +138,7 @@ public class Peer implements Node{
 
     public void handleRegisterationResponse(RegisterationResponse regRes){
         int registeredPeerID = regRes.getPeerID();
-        System.out.println("Registered ID: " + registeredPeerID);
+        // System.out.println("Registered ID: " + registeredPeerID);
 
         if(registeredPeerID != this.peerID){
             this.peerID = registeredPeerID;
@@ -187,5 +201,37 @@ public class Peer implements Node{
 
     public void downloadFile(String filename) {
         fileManager.downloadFile(filename, fingerTable);
+    }
+
+    public void exitGracefully() {
+        try {
+            this.fileManager.migrateFiles(this.fingerTable);
+            Deregister dereg = new Deregister(this.peerIP, this.peerPort, this.peerID);
+            this.registrySender.sendData(dereg.getBytes());
+
+            // Notifying Successor Leaving, predesssesor needs to be updated. 
+            NotifySuccessor notifySucc = new NotifySuccessor(this.fingerTable.getMe(), this.fingerTable.getPred());
+            this.fingerTable.sendSucc(notifySucc.getBytes());
+
+            ExitNotification exiting = new ExitNotification(this.fingerTable.getMe(), this.fingerTable.getSucc());
+            this.fingerTable.sendSucc(exiting.getBytes());
+
+            // Thread.sleep(1000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void receiveExitingMessage(ExitNotification exit){
+        if(exit.getLeavingPeer().getID() == this.peerID){
+            System.exit(0);
+        }else{
+            try {
+                this.fingerTable.sendSucc(exit.getBytes());
+                this.fingerTable.handleNodeExit(exit.getLeavingPeer(), exit.getLeavingPeerSucc());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
